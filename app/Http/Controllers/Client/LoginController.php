@@ -17,6 +17,7 @@ class LoginController extends Controller {
     {
         $this->userService = $userService;
     }
+    
 
     function login(Request $request){
         $request->validate([
