@@ -51,7 +51,9 @@
         "post-install-cmd": [
             "php artisan clear-compiled",
             "chmod -R 777 public/",
-            "composer dump-autoload"
+            "composer dump-autoload",
+            "php artisan cache:clear",
+            "php artisan route:cache"
         ]
     },
     "extra": {
