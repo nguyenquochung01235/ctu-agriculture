@@ -15,7 +15,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
 
 --
 -- Cơ sở dữ liệu: `agriculture`
@@ -29,13 +29,13 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uuid` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -45,9 +45,9 @@ CREATE TABLE `failed_jobs` (
 
 CREATE TABLE `migrations` (
   `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `migrations`
@@ -91,10 +91,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `password_resets` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -104,15 +104,15 @@ CREATE TABLE `password_resets` (
 
 CREATE TABLE `personal_access_tokens` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -122,12 +122,12 @@ CREATE TABLE `personal_access_tokens` (
 
 CREATE TABLE `tbl_account` (
   `id_account` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `code` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_account`
@@ -147,11 +147,11 @@ INSERT INTO `tbl_account` (`id_account`, `name`, `path`, `code`, `created_at`, `
 CREATE TABLE `tbl_category_vattu` (
   `id_category_vattu` bigint(20) UNSIGNED NOT NULL,
   `id_danhmucquydinh` bigint(20) UNSIGNED NOT NULL,
-  `name_category_vattu` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_category_vattu` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_category_vattu`
@@ -201,11 +201,11 @@ CREATE TABLE `tbl_danhgiacuoimua` (
   `thuyloiphi` bigint(20) NOT NULL,
   `tongsanluong` bigint(20) NOT NULL,
   `giaban` double NOT NULL,
-  `khokhan` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `kiennghi` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `khokhan` text COLLATE utf8_unicode_ci NOT NULL,
+  `kiennghi` text COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -216,11 +216,11 @@ CREATE TABLE `tbl_danhgiacuoimua` (
 CREATE TABLE `tbl_danhmucquydinh` (
   `id_danhmucquydinh` bigint(20) UNSIGNED NOT NULL,
   `id_thuonglai` bigint(20) UNSIGNED NOT NULL,
-  `name_danhmucquydinh` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_danhmucquydinh` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_danhmucquydinh`
@@ -242,18 +242,18 @@ CREATE TABLE `tbl_giaodichmuaban_lua` (
   `id_xavien` bigint(20) UNSIGNED NOT NULL,
   `id_thuonglai` bigint(20) UNSIGNED NOT NULL,
   `id_lichmuavu` bigint(20) UNSIGNED NOT NULL,
-  `name_lohang` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_lohang` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `soluong` bigint(20) NOT NULL,
   `price_lohang` bigint(20) NOT NULL,
-  `img_lohang` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description_giaodich` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `img_lohang` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description_giaodich` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `status` int(11) NOT NULL,
   `hoptacxa_xacnhan` int(11) NOT NULL,
   `nhacungcap_xacnhan` int(11) NOT NULL,
   `xavien_xacnhan` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -269,14 +269,14 @@ CREATE TABLE `tbl_giaodichmuaban_vattu` (
   `id_category_vattu` bigint(20) UNSIGNED NOT NULL,
   `soluong` int(11) NOT NULL,
   `price` bigint(20) NOT NULL,
-  `description_giaodich` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description_giaodich` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `status` int(11) NOT NULL,
   `hoptacxa_xacnhan` int(11) NOT NULL,
   `nhacungcap_xacnhan` int(11) NOT NULL,
   `xavien_xacnhan` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -295,8 +295,8 @@ CREATE TABLE `tbl_giaodich_luagiong` (
   `hoptacxa_xacnhan` int(11) NOT NULL,
   `nhacungcap_xacnhan` int(11) NOT NULL,
   `xavien_xacnhan` int(11) NOT NULL,
-  `description_giaodich` text COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `description_giaodich` text COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -306,10 +306,10 @@ CREATE TABLE `tbl_giaodich_luagiong` (
 
 CREATE TABLE `tbl_gionglua` (
   `id_gionglua` bigint(20) UNSIGNED NOT NULL,
-  `name_gionglua` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_gionglua` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_gionglua`
@@ -330,15 +330,15 @@ INSERT INTO `tbl_gionglua` (`id_gionglua`, `name_gionglua`, `created_at`, `updat
 CREATE TABLE `tbl_hoatdongmuavu` (
   `id_hoatdongmuavu` bigint(20) UNSIGNED NOT NULL,
   `id_lichmuavu` bigint(20) UNSIGNED NOT NULL,
-  `name_hoatdong` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description_hoatdong` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_hoatdong` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description_hoatdong` text COLLATE utf8_unicode_ci NOT NULL,
   `date_start` date NOT NULL,
   `date_end` date NOT NULL,
-  `status` varchar(225) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attach` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(225) COLLATE utf8_unicode_ci NOT NULL,
+  `attach` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_hoatdongmuavu`
@@ -362,14 +362,14 @@ CREATE TABLE `tbl_hopdongmuaban` (
   `id_lichmuavu` bigint(20) UNSIGNED NOT NULL,
   `id_danhmucquydinh` bigint(20) UNSIGNED NOT NULL,
   `id_gionglua` bigint(20) UNSIGNED NOT NULL,
-  `title_hopdongmuaban` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description_hopdongmuaban` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title_hopdongmuaban` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description_hopdongmuaban` longtext COLLATE utf8_unicode_ci NOT NULL,
   `thuonglai_xacnhan` int(11) NOT NULL,
   `hoptacxa_xacnhan` int(11) NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_hopdongmuaban`
@@ -386,17 +386,17 @@ INSERT INTO `tbl_hopdongmuaban` (`id_hopdongmuaban`, `id_thuonglai`, `id_hoptacx
 
 CREATE TABLE `tbl_hoptacxa` (
   `id_hoptacxa` bigint(20) UNSIGNED NOT NULL,
-  `name_hoptacxa` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `thumbnail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `img_background` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name_hoptacxa` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `phone_number` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `thumbnail` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `img_background` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_hoptacxa`
@@ -419,13 +419,13 @@ CREATE TABLE `tbl_lichmuavu` (
   `id_lichmuavu` bigint(20) UNSIGNED NOT NULL,
   `id_hoptacxa` bigint(20) UNSIGNED NOT NULL,
   `id_gionglua` bigint(20) UNSIGNED NOT NULL,
-  `name_lichmuavu` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_lichmuavu` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `date_start` date DEFAULT NULL,
   `date_end` date DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_lichmuavu`
@@ -444,12 +444,12 @@ INSERT INTO `tbl_lichmuavu` (`id_lichmuavu`, `id_hoptacxa`, `id_gionglua`, `name
 
 CREATE TABLE `tbl_menu_client` (
   `id_menu` bigint(20) UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `href` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `href` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `parent_id` bigint(20) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_menu_client`
@@ -468,14 +468,14 @@ INSERT INTO `tbl_menu_client` (`id_menu`, `title`, `href`, `parent_id`, `created
 CREATE TABLE `tbl_nhacungcapvattu` (
   `id_nhacungcapvattu` bigint(20) UNSIGNED NOT NULL,
   `id_user` bigint(20) UNSIGNED NOT NULL,
-  `name_daily` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `thumbnail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `img_background` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name_daily` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `thumbnail` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `img_background` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -489,16 +489,16 @@ CREATE TABLE `tbl_nhatkydongruong` (
   `id_thuadat` bigint(20) UNSIGNED NOT NULL,
   `id_xavien` bigint(20) UNSIGNED NOT NULL,
   `id_hoatdongmuavu` bigint(20) UNSIGNED DEFAULT NULL,
-  `name_hoatdong` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_hoatdong` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` text COLLATE utf8_unicode_ci NOT NULL,
   `date_start` date NOT NULL,
   `date_end` date NOT NULL,
   `status` int(11) NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `hoptacxa_xacnhan` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_nhatkydongruong`
@@ -527,13 +527,13 @@ INSERT INTO `tbl_nhatkydongruong` (`id_nhatkydongruong`, `id_lichmuavu`, `id_thu
 
 CREATE TABLE `tbl_notification` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` text COLLATE utf8_unicode_ci NOT NULL,
   `status` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  `link` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `link` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_notification`
@@ -566,10 +566,10 @@ INSERT INTO `tbl_notification` (`id`, `message`, `status`, `user`, `link`, `crea
 
 CREATE TABLE `tbl_rolexavien` (
   `id_role` bigint(20) UNSIGNED NOT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_rolexavien`
@@ -588,14 +588,14 @@ INSERT INTO `tbl_rolexavien` (`id_role`, `role`, `created_at`, `updated_at`) VAL
 CREATE TABLE `tbl_thuadat` (
   `id_thuadat` bigint(20) UNSIGNED NOT NULL,
   `id_xavien` bigint(20) UNSIGNED NOT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `thumbnail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `location` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `thumbnail` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_thuadat`
@@ -617,14 +617,14 @@ INSERT INTO `tbl_thuadat` (`id_thuadat`, `id_xavien`, `address`, `location`, `th
 CREATE TABLE `tbl_thuonglai` (
   `id_thuonglai` bigint(20) UNSIGNED NOT NULL,
   `id_user` bigint(20) UNSIGNED NOT NULL,
-  `name_thuonglai` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `thumbnail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `img_background` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name_thuonglai` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `thumbnail` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `img_background` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_thuonglai`
@@ -643,19 +643,19 @@ INSERT INTO `tbl_thuonglai` (`id_thuonglai`, `id_user`, `name_thuonglai`, `thumb
 
 CREATE TABLE `tbl_user` (
   `id_user` bigint(20) UNSIGNED NOT NULL,
-  `fullname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `wallet` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fullname` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `phone_number` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `remember_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `wallet` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `dob` date NOT NULL,
   `active` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_user`
@@ -688,7 +688,7 @@ CREATE TABLE `tbl_vattusudung` (
   `timeuse` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -700,13 +700,13 @@ CREATE TABLE `tbl_xavien` (
   `id_xavien` bigint(20) UNSIGNED NOT NULL,
   `id_user` bigint(20) UNSIGNED NOT NULL,
   `id_hoptacxa` bigint(20) UNSIGNED DEFAULT NULL,
-  `thumbnail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `img_background` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `thumbnail` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `img_background` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `active` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `tbl_xavien`
@@ -732,14 +732,14 @@ INSERT INTO `tbl_xavien` (`id_xavien`, `id_user`, `id_hoptacxa`, `thumbnail`, `i
 
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -751,7 +751,7 @@ CREATE TABLE `user_account` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id_user` bigint(20) UNSIGNED NOT NULL,
   `account_id_account` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `user_account`
@@ -784,7 +784,7 @@ CREATE TABLE `xavien_rolexavien` (
   `rolexavien_id_role` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `xavien_rolexavien`
@@ -1077,7 +1077,7 @@ ALTER TABLE `tbl_giaodichmuaban_lua`
 -- AUTO_INCREMENT cho bảng `tbl_giaodichmuaban_vattu`
 --
 ALTER TABLE `tbl_giaodichmuaban_vattu`
-  MODIFY `id_giaodichmuaban_vattu` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id_giaodichmuaban_vattu` bigint(20) UNSIGNED NOT NULL  ;
 
 --
 -- AUTO_INCREMENT cho bảng `tbl_giaodich_luagiong`
