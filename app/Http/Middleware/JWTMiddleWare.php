@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
-class JWTMiddleWare
+class JwtMiddleWare
 {
     /**
      * Handle an incoming request.
