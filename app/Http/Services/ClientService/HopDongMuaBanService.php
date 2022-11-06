@@ -114,7 +114,7 @@ class HopDongMuaBanService{
         $status_notify = 0;
         $link = "/hopdongmuaban";
         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
-        $this->notificationService->sendNotificationService($notify->id);
+        $this->notificationService->sendNotificationService(17);
       }
       return $this->getDetailHopDong($id_hopdongmuaban);
       
