@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-Route::middleware(['api'])->group(function(){
+Route::middleware(['auth.jwt'])->group(function(){
         Route::get('/me', [LoginController::class, 'me']);
         Route::get('/logout',[LoginController::class, 'logout']);
 
