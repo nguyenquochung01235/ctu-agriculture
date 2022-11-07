@@ -13,16 +13,44 @@ class ThuaDatService{
 
     protected $xaVienService;
     protected $commonService;
+    protected $hopTacXaService;
 
-    public function __construct(XaVienService $xaVienService, CommonService $commonService)
+    public function __construct(
+        XaVienService $xaVienService,
+        CommonService $commonService,
+        HopTacXaService $hopTacXaService)
     {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
+        $this->hopTacXaService = $hopTacXaService;
     }
 
     public function getListThuaDatOfXaVien($request){
         $id_xavien = $this->xaVienService->getIdXaVienByToken();
+         $page = $request->page;
+        $limit =  $request->limit;
+        $search = $request->search;
+        $order = $request->order;
+        $sort = $request->sort;
+
+        if($page == null || $page == 0 || $page < 0){
+            $page = 1;
+        }
+        if($limit == null || $limit == 0 || $limit < 0){
+            $limit = 15;
+        }
+        if($search == null){
+            $search = "";
+        }
+        if($order == null || $order == ""){
+            $order = "id_thuadat";
+        }
+        if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
+            $sort = "asc";
+        }
+
         if($request->id_xavien != null){
+
             $id_xavien = $request->id_xavien;
         }
         try {
@@ -38,6 +66,65 @@ class ThuaDatService{
         }
     }
 
+    public function getListThuaDatOfHTX($request){
+        $id_user = $this->commonService->getIDByToken();
+        $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+        $page = $request->page;
+        $limit =  $request->limit;
+        $search = $request->search;
+        $order = $request->order;
+        $sort = $request->sort;
+
+        if($page == null || $page == 0 || $page < 0){
+            $page = 1;
+        }
+        if($limit == null || $limit == 0 || $limit < 0){
+            $limit = 15;
+        }
+        if($search == null){
+            $search = "";
+        }
+        if($order == null || $order == ""){
+            $order = "id_thuadat";
+        }
+        if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
+            $sort = "asc";
+        }
+
+        
+        if(!$this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
+            Session::flash('error', 'Bạn không có quyền danh sách thửa đất !');
+            return false;
+        }
+
+        try {
+            $data = ThuaDat::join('tbl_xavien','tbl_xavien.id_xavien','=','tbl_thuadat.id_xavien')
+            ->join('tbl_user','tbl_user.id_user','=','tbl_xavien.id_user')
+            ->select("tbl_thuadat.*", "tbl_user.fullname","tbl_user.phone_number")
+            ->where('tbl_xavien.id_hoptacxa', $id_hoptacxa)
+            ->Search($request);
+
+            $total = $data->count();
+            $meta = $this->commonService->pagination($total,$page,$limit);
+            $result = $data
+            ->skip(($page-1)*$limit)
+            ->take($limit)
+            ->orderBy($order, $sort)
+            ->get();
+            
+
+            if($result != []){
+              return [$result,$meta];
+            }
+            Session::flash('error', 'Danh sách thửa đất rỗng !');
+            return false;
+          } catch (\Exception $error) {
+              Session::flash('error', 'Không lấy được danh sách thửa đất' . $error);
+              return false;
+          }
+    }
+
+
     public function createThuaDat($request){
         $id_user = $this->commonService->getIDByToken();
         $xavien = XaVien::where('id_user', $id_user)->first('id_xavien');
@@ -50,8 +137,30 @@ class ThuaDatService{
                 "location"=>$request->location,
                 "thumbnail" => $request->thumbnail,
                 "description" => $request->description,
-                "active" => 1,
+                "active" => 0,
             ]);
+            DB::commit();
+            return $thuadat;
+        } catch (\Exception $error) {
+            DB::rollBack();
+            Session::flash('error', $error);
+            return false;
+        }
+    }
+
+    public function activeThuaDat($request){
+        $id_thuadat = $request->id_thuadat;
+        try {
+            DB::beginTransaction();
+            $thuadat = ThuaDat::where('id_thuadat', $id_thuadat)->first();
+            if($thuadat->active == 1){
+                $active = 0;
+            }
+            if($thuadat->active == 0){
+                $active = 1;
+            }
+            $thuadat->active = $active;
+            $thuadat->save();
             DB::commit();
             return $thuadat;
         } catch (\Exception $error) {

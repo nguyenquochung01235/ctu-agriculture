@@ -8,5 +8,6 @@
 </head>
 <body>
     This is NNX-Backend Site
+    <img src="/storage/img/20221107074315.png" alt="">
 </body>
 </html>

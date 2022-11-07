@@ -87,7 +87,6 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::put("/make-done/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'toggleActiveNhatKyDongRuong']);
             Route::post("/create",[NhatKyDongRuongController::class, 'addNewNhatKyHoatDong']);
             Route::delete("/delete/{id}",[NhatKyDongRuongController::class, 'deleteNhatKyHoatDong']);
-        
         }); 
 
         Route::prefix("gionglua")->group(function(){
@@ -97,6 +96,8 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("thuadat")->group(function(){
             Route::post("/create",[ThuaDatController::class, 'createThuaDat']);
             Route::get("/get-list",[ThuaDatController::class, 'getListThuaDat']);
+            Route::get("/get-list/all",[ThuaDatController::class, 'getAllListThuaDat']);
+            Route::put("/active/{id_thuadat}",[ThuaDatController::class, 'activeThuaDat']);
         }); 
 
         Route::prefix("danhmucquydinh")->group(function(){
@@ -127,10 +128,6 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::put("/update/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'updateHopDong']);
             Route::delete("/delete/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'deleteHopDong']);
         }); 
-
-
-
-
 
 
 });

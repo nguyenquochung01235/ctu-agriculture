@@ -12,12 +12,18 @@ class LichMuaVuService{
     protected $xaVienService;
     protected $commonService;
     protected $hopTacXaService;
+    protected $notificationService;
 
-    public function __construct(XaVienService $xaVienService, CommonService $commonService, HopTacXaService $hopTacXaService)
+    public function __construct(
+        XaVienService $xaVienService,
+        CommonService $commonService,
+        HopTacXaService $hopTacXaService,
+        NotificationService $notificationService)
     {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
         $this->hopTacXaService = $hopTacXaService;
+        $this->notificationService = $notificationService;
     }
     public function isLichMuaVuExist($id_hoptacxa,$id_lichmuavu){
         try {
@@ -163,6 +169,19 @@ class LichMuaVuService{
                     'status' => $status
                 ]);
                 
+                // Send notify
+                if($lichmuavu != null){
+                    $message = "Chủ nhiệm hợp tác xã của bạn vừa tạo lịch mùa vụ mới. Mùa vụ số ". $lichmuavu->id_lichmuavu;
+                    $status_notify = 0;
+                    $link = "/lichmuavu";
+                    $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
+                    foreach ($list_user as $key => $user) {
+                        $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
+                        $this->notificationService->sendNotificationService($notify->id);
+                    }
+                    
+                }
+
                 DB::commit();
                 return $lichmuavu;
             }
@@ -214,6 +233,18 @@ class LichMuaVuService{
                     $lichmuavu->status = $status;
                 
                 $lichmuavu->save();
+
+                if($lichmuavu != null){
+                    $message = "Chủ nhiệm hợp tác xã của bạn vừa cập nhật lịch mùa vụ số ". $lichmuavu->id_lichmuavu;
+                    $status_notify = 0;
+                    $link = "/lichmuavu";
+                    $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
+                    foreach ($list_user as $key => $user) {
+                        $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
+                        $this->notificationService->sendNotificationService($notify->id);
+                    }
+                    
+                }
                 DB::commit();
                 return $lichmuavu;
             }
@@ -250,6 +281,18 @@ class LichMuaVuService{
 
             DB::beginTransaction();
             $lichmuavu->delete();
+            
+            if($lichmuavu != null){
+                $message = "Chủ nhiệm hợp tác xã của bạn vừa xóa lịch mùa vụ số ". $lichmuavu->id_lichmuavu;
+                $status_notify = 0;
+                $link = "/lichmuavu";
+                $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
+                foreach ($list_user as $key => $user) {
+                    $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
+                    $this->notificationService->sendNotificationService($notify->id);
+                }
+                
+            }
             DB::commit();
             return true;
            

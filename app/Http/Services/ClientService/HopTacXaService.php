@@ -7,6 +7,7 @@ use App\Models\HoatDongMuaVu;
 use App\Models\HopDongMuaBan;
 use App\Models\HopTacXa;
 use App\Models\LichMuaVu;
+use App\Models\ThuaDat;
 use App\Models\XaVien;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -144,6 +145,16 @@ class HopTacXaService{
         Session::flash('error', 'Không lấy được thông tin chủ nhiệm hợp tác xã');
         return false;
        }
+    }
+
+    public function getAllMemberOfHopTacXa($id_hoptacxa){
+        try {
+            $list_member = XaVien::where("id_hoptacxa", $id_hoptacxa)->get();
+            return $list_member;
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không lấy được thông tin member htx');
+            return false;
+        }
     }
 
 
@@ -319,7 +330,7 @@ class HopTacXaService{
                 // Update id_hoptacxa => Xa Vien
                 if(!$this->xaVienService->addXaVienToHopTacXa($id_user,$id_hoptacxa)){
                     DB::rollBack();
-                    Session::flash('error', 'Không update được id_hoptacxa cho xã viên');
+                    Session::flash('error', 'Không update được hoptacxa cho xã viên');
                     return false;
                 }
 
@@ -330,6 +341,19 @@ class HopTacXaService{
                     Session::flash('error', 'Không update được role cho xã viên');
                     return false;
                 }
+
+                // De-active thua dat cua xa vien khi vao htx
+                $list_thuadat_xavien = ThuaDat::join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_thuadat.id_xavien')
+                ->join('tbl_user', 'tbl_xavien.id_user', '=', 'tbl_user.id_user')
+                ->select('tbl_thuadat.*')
+                ->where('tbl_user.id_user', $id_user)
+                ->get();
+                
+                foreach ($list_thuadat_xavien as $key => $thuadat) {
+                    $thuadat->active = 0;
+                    $thuadat->save();
+                }
+                
                 DB::commit();
                 return true;
              }
