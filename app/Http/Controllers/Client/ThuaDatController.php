@@ -45,7 +45,6 @@ class ThuaDatController extends Controller
          }
     }
     public function getAllListThuaDat(Request $request){
-        // return dd($request->id_thuadat);
         try {
             $result = $this->thuaDatService->getListThuaDatOfHTX($request);
             if($result != false){

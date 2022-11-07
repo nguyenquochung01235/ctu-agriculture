@@ -102,5 +102,33 @@ class UserController extends Controller
             ],400);
          }
     }
+    public function updatePassword(Request $request){
+        try {
+            $result = $this->userService->updatePassword($request);
+            if($result){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Cập nhật mật khẩu thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Cập nhật mật khẩu không thành công",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
 
 }

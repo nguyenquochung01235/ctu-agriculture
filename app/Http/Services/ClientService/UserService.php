@@ -7,6 +7,7 @@ use App\Http\Services\UploadImageService;
 use App\Models\Account;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
@@ -151,6 +152,26 @@ class UserService{
         }
     }
 
+    public function updatePassword($request){
+       try {
+        $id_user = $this->commonService->getIDByToken();
+        $user = User::where('id_user', $id_user)->first();
+        $old_password = $request->old_password;
+        $new_password = $request->new_password;
+        if(!Hash::check($old_password, auth()->user()->password)){
+            Session::flash("error", "Mật khẩu cũ không chính xã");
+            return false;
+        }
+        #Update the new Password
+        User::where('id_user',$id_user)->update([
+            'password' => Hash::make($new_password)
+        ]);
+        return true;
+       } catch (\Exception $error) {
+        Session::flash('error', 'Không cập nhật được mật khẩu' . $error);
+        return false;
+       }
+    }
 
     public function isEmailExist($email){
         $isEmailExist = User::where('email', $email)->count();

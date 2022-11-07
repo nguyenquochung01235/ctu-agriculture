@@ -43,6 +43,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("user")->group(function(){
             Route::get("/detail", [UserController::class, 'getDetailUser']);
             Route::post("/update",[UserController::class, 'updateUser']);
+            Route::post("/change/password",[UserController::class, 'updatePassword']);
         }); 
 
         Route::prefix("auto-complete")->group(function(){

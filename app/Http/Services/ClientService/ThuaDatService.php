@@ -134,7 +134,7 @@ class ThuaDatService{
             $thuadat = ThuaDat::create([
                 "id_xavien" => $xavien->id_xavien,
                 "address" => $request->address,
-                "location"=>$request->location,
+                "location"=>"",
                 "thumbnail" => $request->thumbnail,
                 "description" => $request->description,
                 "active" => 0,
