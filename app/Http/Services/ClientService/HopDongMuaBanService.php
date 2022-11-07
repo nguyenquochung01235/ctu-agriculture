@@ -438,7 +438,7 @@ class HopDongMuaBanService{
           
           case 'id_hoptacxa':
             $message = "Hợp đồng số ". $id_hopdongmuaban . " vừa được cập nhật bởi hợp tác xã ";
-            $user = $hopDongMuaBan->id_thuonglai;
+            $user = ThuongLai::where('id_thuonglai', $hopDongMuaBan->id_thuonglai)->first()->id_user;
             break;
           
           default:

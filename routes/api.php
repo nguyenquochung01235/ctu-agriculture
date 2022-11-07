@@ -40,6 +40,11 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::put('/notification/make-read/{id}', [NotificationController::class, 'makeReadNotification']);
 
 
+        Route::prefix("user")->group(function(){
+            Route::get("/detail", [UserController::class, 'getDetailUser']);
+            Route::post("/update",[UserController::class, 'updateUser']);
+        }); 
+
         Route::prefix("auto-complete")->group(function(){
             Route::get("gionglua/get-list",[GiongLuaController::class, 'getListGiongLua']);
             Route::get("danhmucquydinh/get-list", [DanhMucQuyDinhController::class, 'getListDanhMucQuyDinh']);

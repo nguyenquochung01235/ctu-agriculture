@@ -41,6 +41,18 @@ class UserService{
         return User::with('account')->where('id_user',$id_user)->get();
     }
 
+    public function getDetail(){
+        $id_user = $this->commonService->getIDByToken();
+        try {
+            $user = User::where('id_user', $id_user)->first();
+            return $user;
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không lấy được thông tin tài !!!');
+            return false;
+        }
+
+    }
+
     public function createNewUser($request){
         try {
             $email = $request->input('email');
@@ -109,12 +121,35 @@ class UserService{
         return true;
     }
 
-    // public function updateUser(){
-    //     $user_id = $this->commonService->getIDByToken();
-    //     $user = User::where('user_id', $user_id)->first();
+    public function updateUser($request){
+        try {
+            $id_user = $this->commonService->getIDByToken();
+            $user = User::where('id_user', $id_user)->first();
 
+            $isEmailExist = User::where('email', $request->email)->whereNot('id_user', $id_user)->count();
+            if($isEmailExist > 0){
+                Session::flash('error', 'Email đã tồn tại');
+                return false;
+            }
 
-    // }
+            DB::beginTransaction();
+            $user->fullname = $request->fullname;
+            $user->email = $request->email;
+            $user->dob = $request->dob;
+            $user->address = $request->address;
+            if($request->avatar != null){
+            $this->uploadImageService->delete($user->avatar);
+            $user->avatar = $this->uploadImageService->store($request->avatar);
+            }
+            $user->save();
+            DB::commit();
+            return  $user;
+        } catch (\Exception $error) {
+            DB::rollBack();
+            Session::flash('error', 'Không cập nhật được tài khoản !!!' . $error);
+            return false;
+        }
+    }
 
 
     public function isEmailExist($email){

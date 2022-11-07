@@ -7,18 +7,33 @@ use Illuminate\Support\Facades\File;
 
 
 class UploadImageService{
+
+    public $BASE_URL = 'https://ctu-agriculture.s3.ap-northeast-1.amazonaws.com/';
     
-    public function store($request)
+    public function store($image)
     {
         try {
-            $type = pathinfo($request->file('image')->getClientOriginalName(), PATHINFO_EXTENSION);
+            $type = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
             $file_name = date('YmdHis');
-            $request->file('image')->storeAs(
-                'public/img', $file_name .'.'.$type
-            );
-            return '/storage/img/' . $file_name .'.'.$type;
+            $file_path = 'image/' . $file_name.'.'.$type;
+            $upload_img_result =Storage::disk('s3')->put($file_path, file_get_contents($image));
+            if($upload_img_result){
+                return $this->BASE_URL.$file_path;
+            }
         } catch (\Exception $error) {
             return false;
         }
     }
+
+    public function delete($file_path)
+    {
+        try {
+            $file_path = str_replace($this->BASE_URL,"",$file_path);
+            $delete_img_result =Storage::disk('s3')->delete($file_path);
+            return true;
+        } catch (\Exception $error) {
+            return false;
+        }
+    }
+    
 }

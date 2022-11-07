@@ -17,8 +17,6 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-
-
     public function createNewUser(RegisterFormRequest $request){
      try {
         $result = $this->userService->createNewUser($request);
@@ -46,6 +44,63 @@ class UserController extends Controller
             "data" => null
         ],400);
      }
+    }
+
+    public function getDetailUser(){
+        try {
+            $result = $this->userService->getDetail();
+            if($result){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Lấy thông tin thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không có thông tin !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc lấy thông tin",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
+    public function updateUser(Request $request){
+        try {
+            $result = $this->userService->updateUser($request);
+            if($result){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Lấy thông tin thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không có thông tin !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc lấy thông tin",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
     }
 
 }
