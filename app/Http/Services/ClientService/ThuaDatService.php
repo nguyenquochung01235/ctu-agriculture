@@ -169,7 +169,14 @@ class ThuaDatService{
     public function updateThuaDat($request){
         try {
 
-            $thuadat = ThuaDat::where('id_thuadat', $request->id_thuadat)->first();
+            $id_user = $this->commonService->getIDByToken();
+            $xavien = XaVien::where('id_user', $id_user)->first();
+
+            $thuadat = ThuaDat::where('id_thuadat', $request->id_thuadat)->where('id_xavien', $xavien->id_xavien)->first();
+            if($thuadat == null){
+                Session::flash('error',"Thửa đất không tồn tại");
+                return false;
+            }
 
             DB::beginTransaction();
             $thuadat->address = $request->address;
@@ -181,7 +188,7 @@ class ThuaDatService{
                     $thuadat->thumbnail = $this->uploadImageService->store($request->thumbnail);
                     }
             } catch (\Exception $error) {
-                Session::flash('error',"Lỗi ở đây " . $error);
+                Session::flash('error',"Lỗi ở upload hình ảnh");
                 return false;
             }
             $thuadat->save();
