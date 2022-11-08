@@ -43,6 +43,25 @@ class NotificationService{
             return false;
         }
     }
+    public function isReadAllNotify(){
+        try{
+            $id_user = $this->commonService->getIDByToken();
+            $non_read = Notification::where('user', $id_user)->where('status', 0)->count();
+            $is_read_all = false;
+            if($non_read == 0){
+                $is_read_all = true;
+            }
+            $result = ([
+                'non_read' => $non_read,
+                'is_read_all' => $is_read_all
+            ]);
+            return $result;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
+
+
 
     public function createNotificationService($message,$status,$user,$link){
         try {

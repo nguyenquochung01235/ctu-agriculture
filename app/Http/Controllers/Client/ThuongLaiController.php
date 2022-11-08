@@ -21,6 +21,36 @@ class ThuongLaiController extends Controller
         $this->hopDongMuaBanService = $hopDongMuaBanService;
    }
 
+   public function infoDashBoard(){
+    try {
+        $result = $this->thuongLaiService->getInfoDashBoard();
+        if($result){
+            return response()->json([
+                "statusCode" => 200,
+                "message" => "Lấy thông tin thành công",
+                "errorList" => [],
+                "data" => $result
+            ],200);
+        }
+
+        return response()->json([
+            "statusCode" => 400,
+            "message" => "Không có thông tin !",
+            "errorList" => [Session::get('error')],
+            "data" => null
+        ],400);
+     } catch (\Exception $error) {
+       
+        return response()->json([
+            "statusCode" => 400,
+            "message" => "Có lỗi trong lúc lấy thông tin",
+            "errorList" => [$error],
+            "data" => null
+        ],400);
+     }
+}
+   
+
    public function getDetailThuongLai(Request $request){
     try {
         $result = $this->thuongLaiService->getDetailThuongLai($request);

@@ -3,6 +3,7 @@
 namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
+use App\Http\Services\UploadImageService;
 use App\Models\GiongLua;
 use App\Models\ThuaDat;
 use App\Models\XaVien;
@@ -14,15 +15,18 @@ class ThuaDatService{
     protected $xaVienService;
     protected $commonService;
     protected $hopTacXaService;
+    protected $uploadImageService;
 
     public function __construct(
         XaVienService $xaVienService,
         CommonService $commonService,
-        HopTacXaService $hopTacXaService)
+        HopTacXaService $hopTacXaService,
+        UploadImageService $uploadImageService)
     {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
         $this->hopTacXaService = $hopTacXaService;
+        $this->uploadImageService = $uploadImageService;
     }
 
     public function getListThuaDatOfXaVien($request){
@@ -61,6 +65,21 @@ class ThuaDatService{
             }
             return $thuadat;
         } catch (\Exception $error) {
+            Session::flash('error', 'Không lấy được thông tin danh sách thửa đất');
+            return false;
+        }
+    }
+
+    public function getDetailThuaDat($request){
+        try{
+            $id_thuadat =$request->id_thuadat;
+            $thuadat = ThuaDat::where('id_thuadat', $id_thuadat)->first();
+            if($thuadat == null){
+                Session::flash('error', 'Không tồn tại thông tin thửa đất');
+                return false;
+            }
+            return $thuadat;
+        }catch(\Exception $error){
             Session::flash('error', 'Không lấy được thông tin thửa đất');
             return false;
         }
@@ -139,6 +158,33 @@ class ThuaDatService{
                 "description" => $request->description,
                 "active" => 0,
             ]);
+            DB::commit();
+            return $thuadat;
+        } catch (\Exception $error) {
+            DB::rollBack();
+            Session::flash('error', $error);
+            return false;
+        }
+    }
+    public function updateThuaDat($request){
+        try {
+
+            $thuadat = ThuaDat::where('id_thuadat', $request->id_thuadat)->first();
+
+            DB::beginTransaction();
+            $thuadat->address = $request->address;
+            $thuadat->location = $request->location;
+            $thuadat->description = $request->description;
+            try {
+                if($request->thumbnail != null){
+                    $this->uploadImageService->delete($thuadat->thumbnail);
+                    $thuadat->thumbnail = $this->uploadImageService->store($request->thumbnail);
+                    }
+            } catch (\Exception $error) {
+                Session::flash('error',"Lỗi ở đây " . $error);
+                return false;
+            }
+            $thuadat->save();
             DB::commit();
             return $thuadat;
         } catch (\Exception $error) {

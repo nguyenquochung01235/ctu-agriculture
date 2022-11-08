@@ -44,6 +44,35 @@ class ThuaDatController extends Controller
             ],400);
          }
     }
+
+    public function getDetailThuaDat(Request $request){
+        try {
+            $result = $this->thuaDatService->getDetailThuaDat($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Lấy thông tin thửa đất thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Lấy thông tin thửa đất không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
     public function getAllListThuaDat(Request $request){
         try {
             $result = $this->thuaDatService->getListThuaDatOfHTX($request);
@@ -90,6 +119,34 @@ class ThuaDatController extends Controller
             return response()->json([
                 "statusCode" => 400,
                 "message" => "Tạo thửa đất không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
+    public function updateThuaDat(Request $request){
+        try {
+            $result = $this->thuaDatService->updateThuaDat($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 201,
+                    "message" => "Cập nhật thông tin thửa đất thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],201);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Cập nhật thông tin thửa đất không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ],400);

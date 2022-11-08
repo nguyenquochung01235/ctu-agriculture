@@ -38,6 +38,7 @@ Route::middleware(['auth.jwt'])->group(function(){
 
         Route::get('/notification', [NotificationController::class, 'getNotification']);
         Route::put('/notification/make-read/{id}', [NotificationController::class, 'makeReadNotification']);
+        Route::get('/notification/is-read-all', [NotificationController::class, 'isReadAllNotify']);
 
 
         Route::prefix("user")->group(function(){
@@ -101,7 +102,9 @@ Route::middleware(['auth.jwt'])->group(function(){
 
         Route::prefix("thuadat")->group(function(){
             Route::post("/create",[ThuaDatController::class, 'createThuaDat']);
+            Route::post("/update/{id_thuadat}",[ThuaDatController::class, 'updateThuaDat']);
             Route::get("/get-list",[ThuaDatController::class, 'getListThuaDat']);
+            Route::get("/get-detail/{id_thuadat}",[ThuaDatController::class, 'getDetailThuaDat']);
             Route::get("/get-list/all",[ThuaDatController::class, 'getAllListThuaDat']);
             Route::put("/active/{id_thuadat}",[ThuaDatController::class, 'activeThuaDat']);
         }); 
@@ -123,6 +126,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         }); 
 
         Route::prefix("thuonglai")->group(function(){
+            Route::get("/dash-board",[ThuongLaiController::class, 'infoDashBoard']);
             Route::get("/get-detail",[ThuongLaiController::class, 'getDetailThuongLai']);
             Route::post('/create-hopdong', [ThuongLaiController::class, 'thuongLaiCreateHopDongMuaBan']);
         }); 

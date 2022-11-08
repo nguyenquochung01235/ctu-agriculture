@@ -4,6 +4,9 @@ namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
 use App\Models\Account;
+use App\Models\DanhMucQuyDinh;
+use App\Models\GiaoDichMuaBanLua;
+use App\Models\HopDongMuaBan;
 use App\Models\ThuongLai;
 use App\Models\User;
 use GuzzleHttp\Psr7\Request;
@@ -18,6 +21,26 @@ class ThuongLaiService{
     {
         $this->commonService = $commonService;
     }
+
+    public function getInfoDashBoard(){
+        try {
+            $id_user = $this->commonService->getIDByToken();
+            $thuonglai = ThuongLai::where('id_user', $id_user)->first();
+            $lohang_count = GiaoDichMuaBanLua::where('id_thuonglai',$thuonglai->id_thuonglai)->count();
+            $hopdong_count = HopDongMuaBan::where('id_thuonglai',$thuonglai->id_thuonglai)->count();
+            $danhmuc_count = DanhMucQuyDinh::where('id_thuonglai',$thuonglai->id_thuonglai)->count();
+            return $result = ([
+                'lohang_count' => $lohang_count,
+                'hopdong_count' => $hopdong_count,
+                'sanluong_ount' => 968484,
+                'danhmuc_count' => $danhmuc_count,
+            ]);
+            } catch (\Exception $error) {
+            Session::flash('error', 'Không thể lấy dữ liệu');
+            return false;
+            }
+    }
+
     public function getIdThuongLai(){
         $id_user = $this->commonService->getIDByToken();
         try {

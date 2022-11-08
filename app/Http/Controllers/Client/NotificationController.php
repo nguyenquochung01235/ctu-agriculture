@@ -45,4 +45,20 @@ class NotificationController extends Controller
            
          }
     }
+
+    public function isReadAllNotify(){
+        try {
+            $result = $this->notificationService->isReadAllNotify();
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Data read notify",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+         } catch (\Exception $error) {
+           
+         }
+    }
 }
