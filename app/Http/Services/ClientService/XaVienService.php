@@ -4,6 +4,7 @@ namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
 use App\Models\Account;
+use App\Models\HopTacXa;
 use App\Models\RoleXaVien;
 use App\Models\User;
 use App\Models\XaVien;
@@ -101,6 +102,33 @@ class XaVienService{
             return false;
         }
         return true;
+    }
+
+    public function getDetail($id_user){
+        if($id_user == null){
+            $id_user = $this->commonService->getIDByToken();
+        }else{
+            $id_hoptacxa = XaVien::where('id_user', $id_user)->first()->id_hoptacxa;
+            if(!$this->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
+                Session::flash('error','Bạn không có quyền xem');
+                return false;
+            }
+        }
+
+        try {
+            $xavien = XaVien::join('tbl_user', 'tbl_xavien.id_user', '=', 'tbl_user.id_user')
+            ->select('*', 'tbl_xavien.active as xavien_active', 'tbl_user.active as user_active')
+            ->where('tbl_xavien.id_user', $id_user)
+            ->first();
+            if($xavien == null){
+                Session::flash('error','Xã viên không tồn tại');
+            return false;
+            }
+            return $xavien;
+        } catch (\Exception $error) {
+            Session::flash('error','Lấy thông tin không thành công');
+            return false;
+        }
     }
 
     public function getListXaVienOfHTX($request){

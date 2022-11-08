@@ -65,6 +65,8 @@ Route::middleware(['auth.jwt'])->group(function(){
         }); 
         
         Route::prefix("xavien")->group(function(){
+            Route::get("/get-detail",[XaVienController::class, 'getDetail']);
+            Route::get("/get-detail/{id_user}",[XaVienController::class, 'getDetailByHTX']);
             Route::post('/role', [XaVienController::class, 'getRoleXaVien']);
             Route::get("/get-list-xavien",[XaVienController::class, 'getListXaVienOfHTX']);
             Route::post('/search-by-phone-number', [XaVienController::class, 'searchXaVienByPhoneNumber']);

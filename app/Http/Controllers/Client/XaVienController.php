@@ -17,11 +17,66 @@ class XaVienController extends Controller
     }
 
 
+    public function getDetail(){
+        $request = null;
+        try {
+            $result = $this->xaVienService->getDetail($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Thông tin chi tiết xã viên",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không lấy được thông tin !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
+    public function getDetailByHTX($id_user){
+        try {
+            $result = $this->xaVienService->getDetail($id_user);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Thông tin chi tiết xã viên",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không lấy được thông tin !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
+
     public function getListXaVienOfHTX(Request $request){
         try {
-
-           
-
             $result = $this->xaVienService->getListXaVienOfHTX($request);
             if($result != false){
                 return response()->json([
