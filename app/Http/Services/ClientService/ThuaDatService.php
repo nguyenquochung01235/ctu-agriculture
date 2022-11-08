@@ -171,6 +171,10 @@ class ThuaDatService{
 
             $id_user = $this->commonService->getIDByToken();
             $xavien = XaVien::where('id_user', $id_user)->first();
+            if($xavien == null){
+                Session::flash('error',"Bạn không phải là xã viên, khồng có thể chỉnh sửa thửa đất");
+                return false;
+            }
 
             $thuadat = ThuaDat::where('id_thuadat', $request->id_thuadat)->where('id_xavien', $xavien->id_xavien)->first();
             if($thuadat == null){
