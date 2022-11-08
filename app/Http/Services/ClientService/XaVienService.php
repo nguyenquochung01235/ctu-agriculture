@@ -117,6 +117,7 @@ class XaVienService{
 
         try {
             $xavien = XaVien::join('tbl_user', 'tbl_xavien.id_user', '=', 'tbl_user.id_user')
+            ->join('tbl_hoptacxa', 'tbl_hoptacxa.id_hoptacxa', '=', 'tbl_xavien.id_hoptacxa')
             ->select('*', 'tbl_xavien.active as xavien_active', 'tbl_user.active as user_active')
             ->where('tbl_xavien.id_user', $id_user)
             ->first();

@@ -147,14 +147,25 @@ class ThuaDatService{
     public function createThuaDat($request){
         $id_user = $this->commonService->getIDByToken();
         $xavien = XaVien::where('id_user', $id_user)->first('id_xavien');
-
+        $location = "";
         try {
             DB::beginTransaction();
+            try {
+                if($request->thumbnail != null){
+                    $thumbnail = $this->uploadImageService->store($request->thumbnail);
+                    }
+            } catch (\Exception $error) {
+                Session::flash('error',"Lỗi ở upload hình ảnh");
+                return false;
+            }
+            if($request->location != null){
+                $location = $request->location;
+            }
             $thuadat = ThuaDat::create([
                 "id_xavien" => $xavien->id_xavien,
                 "address" => $request->address,
-                "location"=>"",
-                "thumbnail" => $request->thumbnail,
+                "location"=> $location,
+                "thumbnail" => $thumbnail,
                 "description" => $request->description,
                 "active" => 0,
             ]);
@@ -168,7 +179,6 @@ class ThuaDatService{
     }
     public function updateThuaDat($request){
         try {
-
             $id_user = $this->commonService->getIDByToken();
             $xavien = XaVien::where('id_user', $id_user)->first();
             if($xavien == null){

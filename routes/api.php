@@ -30,6 +30,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::post("/thuadat/update/{id_thuadat}",[ThuaDatController::class, 'updateThuaDat']);
+
+
 Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 Route::middleware(['auth.jwt'])->group(function(){
