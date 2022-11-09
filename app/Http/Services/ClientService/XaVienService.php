@@ -118,7 +118,17 @@ class XaVienService{
         try {
             $xavien = XaVien::join('tbl_user', 'tbl_xavien.id_user', '=', 'tbl_user.id_user')
             ->join('tbl_hoptacxa', 'tbl_hoptacxa.id_hoptacxa', '=', 'tbl_xavien.id_hoptacxa')
-            ->select('*', 'tbl_xavien.active as xavien_active', 'tbl_user.active as user_active')
+            ->select(
+                'tbl_user.fullname',
+                'tbl_user.email',
+                'tbl_user.phone_number',
+                'tbl_user.address',
+                'tbl_user.dob',
+                'tbl_xavien.thumbnail',
+                'tbl_xavien.img_background',
+                'tbl_xavien.description',
+                'tbl_hoptacxa.name_hoptacxa',
+            )
             ->where('tbl_xavien.id_user', $id_user)
             ->first();
             if($xavien == null){
@@ -229,6 +239,16 @@ class XaVienService{
             $xavien = User::where('id_user', $id_user)->first();
             $account = Account::where('code', '1')->first();
             $xavien->account()->attach($account);
+        } catch (\Exception $error) {
+            Session::flash('error', $error);
+            return false;
+        }
+        return true;
+    }
+
+    public function updateXavien($id_user){
+        try {
+          
         } catch (\Exception $error) {
             Session::flash('error', $error);
             return false;

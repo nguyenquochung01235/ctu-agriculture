@@ -198,11 +198,13 @@ class ThuaDatService{
             $thuadat->description = $request->description;
             try {
                 if($request->thumbnail != null){
+                    if($thuadat->thumbnail != null){
                     $this->uploadImageService->delete($thuadat->thumbnail);
+                    }
                     $thuadat->thumbnail = $this->uploadImageService->store($request->thumbnail);
                     }
             } catch (\Exception $error) {
-                Session::flash('error',"Lỗi ở upload hình ảnh");
+                Session::flash('error',"Lỗi ở upload hình ảnh" . $error);
                 return false;
             }
             $thuadat->save();
