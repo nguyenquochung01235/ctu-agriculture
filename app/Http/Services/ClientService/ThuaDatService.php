@@ -147,6 +147,7 @@ class ThuaDatService{
     public function createThuaDat($request){
         $id_user = $this->commonService->getIDByToken();
         $xavien = XaVien::where('id_user', $id_user)->first('id_xavien');
+        $thumbnail = "";
         $location = "";
         try {
             DB::beginTransaction();
@@ -173,7 +174,7 @@ class ThuaDatService{
             return $thuadat;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', $error);
+            Session::flash('error', "Loiox". $error);
             return false;
         }
     }
