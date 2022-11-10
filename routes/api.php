@@ -61,7 +61,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("/search",[HopTacXaController::class, 'searchHopTacXaByPhoneNumber']);
             Route::get("/chunhiem/{id_hoptacxa}",[HopTacXaController::class, 'getChuNhiemHTX']);
             Route::post('/create', [HopTacXaController::class, 'createNewHTX']);
-            Route::put('/update', [HopTacXaController::class, 'updateHTX']);
+            Route::post('/update', [HopTacXaController::class, 'updateHTX']);
             Route::post('/add-new-member', [HopTacXaController::class, 'addNewMemberToHTX']);
             Route::delete('/delete-member/{id}', [HopTacXaController::class, 'deleteMemberToHTX']);
             Route::put('/update-active/{id_user}', [HopTacXaController::class, 'toggleActiveMemberHTX']);
@@ -73,6 +73,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::post('/role', [XaVienController::class, 'getRoleXaVien']);
             Route::get("/get-list-xavien",[XaVienController::class, 'getListXaVienOfHTX']);
             Route::post('/search-by-phone-number', [XaVienController::class, 'searchXaVienByPhoneNumber']);
+            Route::post('/update', [XaVienController::class, 'updateXaVien']);
         }); 
 
         Route::prefix("lichmuavu")->group(function(){
@@ -135,6 +136,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("/dash-board",[ThuongLaiController::class, 'infoDashBoard']);
             Route::get("/get-detail",[ThuongLaiController::class, 'getDetailThuongLai']);
             Route::post('/create-hopdong', [ThuongLaiController::class, 'thuongLaiCreateHopDongMuaBan']);
+            Route::post('/update', [ThuongLaiController::class, 'updateThuongLai']);
         }); 
 
         Route::prefix("hopdongmuaban")->group(function(){

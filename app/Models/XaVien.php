@@ -16,6 +16,7 @@ class XaVien extends Model
         'active',
         'thubnail',
         'img_background',
+        'description'
         ];
 
     protected $casts = [

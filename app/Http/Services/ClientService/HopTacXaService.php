@@ -3,6 +3,7 @@
 namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
+use App\Http\Services\UploadImageService;
 use App\Models\HoatDongMuaVu;
 use App\Models\HopDongMuaBan;
 use App\Models\HopTacXa;
@@ -17,12 +18,19 @@ class HopTacXaService{
     protected $xaVienService;
     protected $commonService;
     protected $userService;
+    protected $uploadImageService;
 
-    public function __construct(XaVienService $xaVienService, CommonService $commonService, UserService $userService)
+    public function __construct(
+        XaVienService $xaVienService,
+        CommonService $commonService,
+        UserService $userService,
+        UploadImageService $uploadImageService )
     {
         $this->xaVienService = $xaVienService;
         $this->commonService = $commonService;
         $this->userService = $userService;
+        $this->uploadImageService = $uploadImageService;
+
         
     }
 
@@ -183,7 +191,7 @@ class HopTacXaService{
             ]);
             return $result;
         }  catch (\Exception $error) {
-            Session::flash('error', 'Không lấy được thông tin chủ nhiệm hợp tác xã');
+            Session::flash('error', 'Không lấy được thông tin hợp tác xã');
             return false;
            }
       
@@ -202,6 +210,7 @@ class HopTacXaService{
         $email = $request->email;
         $phone_number = $request->phone_number;
         $address = $request->address;
+        $description = $request->description;
 
         $isNameExist = HopTacXa::where('name_hoptacxa', $name_hoptacxa)->whereNot('id_hoptacxa',$id_hoptacxa)->first();
         $isEmailExist = HopTacXa::where('email', $email)->whereNot('id_hoptacxa',$id_hoptacxa)->first();
@@ -228,6 +237,19 @@ class HopTacXaService{
             $hoptacxa->phone_number = $phone_number;
             $hoptacxa->email = $email;
             $hoptacxa->address = $address;
+            $hoptacxa->description = $description;
+            if($request->has('thumbnail')){
+                if($hoptacxa->thumbnail != null){
+                    $this->uploadImageService->delete($hoptacxa->thumbnail);
+            }
+            $hoptacxa->thumbnail = $this->uploadImageService->store($request->thumbnail);
+            }
+            if($request->has('img_background')){
+                if($hoptacxa->img_background != null){
+                    $this->uploadImageService->delete($hoptacxa->img_background);
+            }
+            $hoptacxa->img_background = $this->uploadImageService->store($request->img_background);
+            }
             $hoptacxa->save();
             DB::commit();
 

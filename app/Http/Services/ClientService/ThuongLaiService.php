@@ -3,23 +3,27 @@
 namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
+use App\Http\Services\UploadImageService;
 use App\Models\Account;
 use App\Models\DanhMucQuyDinh;
 use App\Models\GiaoDichMuaBanLua;
 use App\Models\HopDongMuaBan;
 use App\Models\ThuongLai;
 use App\Models\User;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class ThuongLaiService{
     
     protected $commonService;
+    protected $uploadImageService;
 
-    public function __construct(CommonService $commonService)
+
+    public function __construct(CommonService $commonService, UploadImageService $uploadImageService)
     {
         $this->commonService = $commonService;
+        $this->uploadImageService = $uploadImageService;
     }
 
     public function getInfoDashBoard(){
@@ -93,6 +97,40 @@ class ThuongLaiService{
             return false;
         }
 
+    }
+
+    public function updateThuongLai($request){
+        try {
+            
+            $id_user = $this->commonService->getIDByToken();
+            $thuonglai = ThuongLai::where('id_user', $id_user)->first();
+            if($thuonglai == null){
+                Session::flash('error', "Thương lái không tồn tại");
+                return false;
+            }
+            DB::beginTransaction();
+            $thuonglai->name_thuonglai = $request->name_thuonglai;
+            $thuonglai->description = $request->description;
+            if($request->has('thumbnail')){
+                if($thuonglai->thumbnail != null){
+                    $this->uploadImageService->delete($thuonglai->thumbnail);
+            }
+            $thuonglai->thumbnail = $this->uploadImageService->store($request->thumbnail);
+            }
+            if($request->has('img_background')){
+                if($thuonglai->img_background != null){
+                    $this->uploadImageService->delete($thuonglai->img_background);
+            }
+            $thuonglai->img_background = $this->uploadImageService->store($request->img_background);
+            }
+            $thuonglai->save();
+            DB::commit();
+            return $this->getDetailThuongLai();
+        } catch (\Exception $error) {
+            Session::flash('error', "Không cập nhật được thông tin");
+            return false;
+        }
+        return true;
     }
 
 }

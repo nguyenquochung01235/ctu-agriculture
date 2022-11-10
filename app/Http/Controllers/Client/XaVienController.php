@@ -183,5 +183,35 @@ class XaVienController extends Controller
             ],400);
          }
     }
+    public function updateXaVien(Request $request){
+        try {
+            $result = $this->xaVienService->updateXaVien($request);
+            if($result){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Cập nhật thông tin xã viên thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không cập nhật được thông tin xã viên !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [ $error],
+                "data" => null
+            ],400);
+         }
+    }
+
+
 
 }

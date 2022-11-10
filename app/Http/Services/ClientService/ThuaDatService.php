@@ -152,7 +152,7 @@ class ThuaDatService{
         try {
             DB::beginTransaction();
             try {
-                if($request->thumbnail != null){
+                if($request->has('thumbnail')){
                     $thumbnail = $this->uploadImageService->store($request->thumbnail);
                     }
             } catch (\Exception $error) {
@@ -198,7 +198,7 @@ class ThuaDatService{
             $thuadat->location = $request->location;
             $thuadat->description = $request->description;
             try {
-                if($request->thumbnail != null){
+                if($request->has('thumbnail')){
                     if($thuadat->thumbnail != null){
                     $this->uploadImageService->delete($thuadat->thumbnail);
                     }

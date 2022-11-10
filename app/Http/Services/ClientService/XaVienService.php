@@ -3,23 +3,24 @@
 namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
+use App\Http\Services\UploadImageService;
 use App\Models\Account;
-use App\Models\HopTacXa;
 use App\Models\RoleXaVien;
 use App\Models\User;
 use App\Models\XaVien;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 
 class XaVienService{
 
     protected $commonService;
+    protected $uploadImageService;
 
 
-    public function __construct(CommonService $commonService)
+    public function __construct(CommonService $commonService, UploadImageService $uploadImageService)
     {
         $this->commonService = $commonService;
+        $this->uploadImageService = $uploadImageService;
     }
 
     public function getIdXaVienByToken(){
@@ -246,11 +247,34 @@ class XaVienService{
         return true;
     }
 
-    public function updateXavien($id_user){
+    public function updateXavien($request){
         try {
-          
+            
+            $id_user = $this->commonService->getIDByToken();
+            $xavien = XaVien::where('id_user', $id_user)->first();
+            if($xavien == null){
+                Session::flash('error', "Xã viên không tồn tại");
+                return false;
+            }
+            DB::beginTransaction();
+            $xavien->description = $request->description;
+            if($request->has('thumbnail')){
+                if($xavien->thumbnail != null){
+                    $this->uploadImageService->delete($xavien->thumbnail);
+            }
+            $xavien->thumbnail = $this->uploadImageService->store($request->thumbnail);
+            }
+            if($request->has('img_background')){
+                if($xavien->img_background != null){
+                    $this->uploadImageService->delete($xavien->img_background);
+            }
+            $xavien->img_background = $this->uploadImageService->store($request->img_background);
+            }
+            $xavien->save();
+            DB::commit();
+            return $this->getDetail($id_user);
         } catch (\Exception $error) {
-            Session::flash('error', $error);
+            Session::flash('error', "Không cập nhật được thông tin");
             return false;
         }
         return true;

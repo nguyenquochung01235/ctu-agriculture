@@ -138,10 +138,10 @@ class UserService{
             $user->email = $request->email;
             $user->dob = $request->dob;
             $user->address = $request->address;
-            if($request->avatar != null){
+            if($request->has('avatar')){
                 if($user->avatar != null){
                     $this->uploadImageService->delete($user->avatar);
-                }
+            }
             $user->avatar = $this->uploadImageService->store($request->avatar);
             }
             $user->save();
