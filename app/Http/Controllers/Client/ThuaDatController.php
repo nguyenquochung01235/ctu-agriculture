@@ -190,6 +190,35 @@ class ThuaDatController extends Controller
             ],400);
          }
     }
+    public function deleteThuaDat($id_thuadat){
+        try {
+            $result = $this->thuaDatService->deleteThuaDat($id_thuadat);
+            if($result!=false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Xóa thửa đất thành công !",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Xóa thửa đất không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc xóa thửa đất",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
     
     
 }

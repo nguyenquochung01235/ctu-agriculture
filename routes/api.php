@@ -112,6 +112,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("/get-detail/{id_thuadat}",[ThuaDatController::class, 'getDetailThuaDat']);
             Route::get("/get-list/all",[ThuaDatController::class, 'getAllListThuaDat']);
             Route::put("/active/{id_thuadat}",[ThuaDatController::class, 'activeThuaDat']);
+            Route::delete("/delete/{id_thuadat}",[ThuaDatController::class, 'deleteThuaDat']);
         }); 
 
         Route::prefix("danhmucquydinh")->group(function(){

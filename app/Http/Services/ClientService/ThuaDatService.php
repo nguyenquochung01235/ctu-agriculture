@@ -239,6 +239,26 @@ class ThuaDatService{
             return false;
         }
     }
+
+    public function deleteThuaDat($id_thuadat){
+        try {
+            $id_xavien = $this->xaVienService->getIdXaVienByToken();
+            DB::beginTransaction();
+            $thuadat = ThuaDat::where('id_thuadat', $id_thuadat)->where('id_xavien', $id_xavien)->first();
+
+            if($thuadat == null){
+                Session::flash('error', 'Thửa đất không tồn tại');
+                return false;
+            }
+            $thuadat->delete();
+            DB::commit();
+            return true;
+        } catch (\Exception $error) {
+            DB::rollBack();
+            Session::flash('error', $error);
+            return false;
+        }
+    }
     
 
 }
