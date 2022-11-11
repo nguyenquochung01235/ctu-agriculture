@@ -105,19 +105,15 @@ class XaVienController extends Controller
          }
     }
 
-    public function getRoleXaVien(){
+    public function getRoleXaVien(Request $request){
         try {
-            $result = $this->xaVienService->getRoleXaVien();
-            if($result != null){
+            $result = $this->xaVienService->getRoleXaVien($request);
+            if($result != false){
                 return response()->json([
                     "statusCode" => 200,
                     "message" => "Thông tin phân quyền xã viên",
                     "errorList" => [],
-                    "data" => [
-                        "id_hoptacxa"=> $result->id_hoptacxa,
-                        "role" => $result->role[0]->role,
-                        "name_hoptacxa" => $result->hop_tac_xa->name_hoptacxa
-                    ]
+                    "data" => $result
                 ],200);
             }else{
                 return response()->json([

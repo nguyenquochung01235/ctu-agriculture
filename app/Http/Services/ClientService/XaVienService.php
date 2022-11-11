@@ -200,17 +200,37 @@ class XaVienService{
          }
     }
 
-    public function getRoleXaVien(){
+    public function getRoleXaVien($request){        
         try {
+            $account = $request->type;
             $id_user = $this->commonService->getIDByToken();
-           $result =  XaVien::with('role')->with('hop_tac_xa')->where('id_user',$id_user)->first();
-           if($result->id_hoptacxa != null && $result->role[0]->role !=null){
-            return $result;
-           }else{
-            return null;
-           }
-           Session::flash('error', 'User không có role hoặc chưa vào hợp tác xã');
-            return false;
+            $xavien =  XaVien::with('role')->with('hop_tac_xa')->where('id_user',$id_user)->first();
+            $role = $xavien->role[0]->role;
+            switch ($account) {
+                case 'xavien':
+                    $role = 'xavien';
+                    break;
+           
+                case 'chunhiem':
+                    if($role != 'chunhiem'){
+                    Session::flash('error', 'Tài khoản không có phân quyền chủ nhiệm');
+                        return false;
+                    }
+                    $role = 'chunhiem';
+                    break;
+                
+                default:
+                    Session::flash('error', 'Không xác nhận được thông tin phân quyền');
+                    return false;
+                    break;
+            }
+            
+            $result = ([
+                'id_hoptacxa'=> $xavien->id_hoptacxa,
+                'name_hoptacxa'=> $xavien->hop_tac_xa->name_hoptacxa,
+                'role'=> $role,
+            ]);
+            return  $result;
         } catch (\Exception $error) {
             Session::flash('error', 'Không lấy được role của user' . $error);
             return false;

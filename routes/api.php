@@ -70,7 +70,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("xavien")->group(function(){
             Route::get("/get-detail",[XaVienController::class, 'getDetail']);
             Route::get("/get-detail/{id_user}",[XaVienController::class, 'getDetailByHTX']);
-            Route::post('/role', [XaVienController::class, 'getRoleXaVien']);
+            Route::get('/role/{type}', [XaVienController::class, 'getRoleXaVien']);
             Route::get("/get-list-xavien",[XaVienController::class, 'getListXaVienOfHTX']);
             Route::post('/search-by-phone-number', [XaVienController::class, 'searchXaVienByPhoneNumber']);
             Route::post('/update', [XaVienController::class, 'updateXaVien']);
@@ -95,11 +95,13 @@ Route::middleware(['auth.jwt'])->group(function(){
         
         Route::prefix("nhatkydongruong")->group(function(){
             Route::get("/get-detail/{id_nhatkydongruong}",[NhatKyDongRuongController::class, 'getDetailNhatKyDongRuong']);
-            Route::get("/get-list", [NhatKyDongRuongController::class, 'getListNhatKyDongRuong']);
+            Route::get("/get-list/{id_lichmuavu}", [NhatKyDongRuongController::class, 'getListNhatKyDongRuong']);
             Route::post("/attach",[NhatKyDongRuongController::class, 'attachHoatDongIntoNhatKyFromHopTacXaToXaVien']);
             Route::put("/make-done/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'toggleActiveNhatKyDongRuong']);
             Route::post("/create",[NhatKyDongRuongController::class, 'addNewNhatKyHoatDong']);
             Route::delete("/delete/{id}",[NhatKyDongRuongController::class, 'deleteNhatKyHoatDong']);
+            Route::get("get-list/outside/{id_lichmuavu}", [NhatKyDongRuongController::class, 'getListNhatKyDongRuongForHTX']);
+            
         }); 
 
         Route::prefix("gionglua")->group(function(){

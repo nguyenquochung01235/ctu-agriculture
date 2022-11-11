@@ -40,7 +40,27 @@ class NhatKyDongRuongService{
         }
         
         try {
-            $detailNhatKyDongRuong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)->first();
+            $detailNhatKyDongRuong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)
+            ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
+            ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+            ->join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', 'tbl_nhatkydongruong.id_lichmuavu')
+            ->select(
+                'tbl_nhatkydongruong.id_nhatkydongruong',
+                'tbl_nhatkydongruong.id_thuadat',
+                'tbl_nhatkydongruong.name_hoatdong',
+                'tbl_nhatkydongruong.description',
+                'tbl_nhatkydongruong.date_start',
+                'tbl_nhatkydongruong.date_end',
+                'tbl_nhatkydongruong.status',
+                'tbl_nhatkydongruong.type',
+                'tbl_nhatkydongruong.hoptacxa_xacnhan',
+                'tbl_lichmuavu.name_lichmuavu',
+                'tbl_lichmuavu.date_start as lichmuavu_date_start',
+                'tbl_lichmuavu.date_end as lichmuavu_date_end',
+                'tbl_user.fullname',
+                
+                )
+            ->first();
             if($detailNhatKyDongRuong == null){
                 Session::flash('error', 'Nhật ký hoạt động không tồn tại');
                 return false; 
@@ -54,7 +74,7 @@ class NhatKyDongRuongService{
         
     }
 
-    // All HTX
+    // forXaVien
     public function getListNhatKyDongRuong($request){
         // @param
         $id_user = $this->commonService->getIDByToken();
@@ -96,7 +116,100 @@ class NhatKyDongRuongService{
         }
         try {
             $data = NhatKyDongRuong::where('id_xavien', $id_xavien)
-                ->LichMuaVu($request)
+                ->where('id_lichmuavu', $id_lichmuavu)
+                ->select(
+                    'tbl_nhatkydongruong.id_nhatkydongruong',
+                    'tbl_nhatkydongruong.id_thuadat',
+                    'tbl_nhatkydongruong.name_hoatdong',
+                    'tbl_nhatkydongruong.description',
+                    'tbl_nhatkydongruong.date_start',
+                    'tbl_nhatkydongruong.date_end',
+                    'tbl_nhatkydongruong.status',
+                    'tbl_nhatkydongruong.type',
+                    'tbl_nhatkydongruong.hoptacxa_xacnhan')
+                ->HoatDongMuaVu($request)
+                ->NameHoatDongMuaVu($request)
+                ->DateStart($request)
+                ->DateEnd($request)
+                ->Status($request)
+                ->Search($request);
+
+            $total = $data->count();
+
+            $meta = $this->commonService->pagination($total,$page,$limit);
+            $result =  $data
+                ->skip(($page-1)*$limit)
+                ->take($limit)
+                ->orderBy($order, $sort)
+                ->get();
+
+            if($result != []){
+             return [$result, $meta];
+            }
+            Session::flash('error', 'Không có danh sách nhật ký hoạt động');
+             return false;
+         } catch (\Exception $error) {
+             Session::flash('error', 'Không lấy được danh sách' . $error);
+             return false;
+         }
+    }
+
+    //All HTX
+    public function getListNhatKyDongRuongForHTX($request){
+        // @param
+        $id_user = $this->commonService->getIDByToken();
+        $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+
+        if(! $this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
+            Session::flash('error', "Bạn không có quyền quản trị để xem danh sách nhật ký hoạt động mùa vụ");
+            return false;
+        };
+
+        $id_lichmuavu = $request->id_lichmuavu;
+        $page = $request->page;
+        $limit =  $request->limit;
+        $search = $request->search;
+        $order = $request->order;
+        $sort = $request->sort;
+        
+
+
+       
+        if($page == null || $page == 0 || $page < 0){
+            $page = 1;
+        }
+        if($limit == null || $limit == 0 || $limit < 0){
+            $limit = 15;
+        }
+        if($search == null){
+            $search = "";
+        }
+        if($order == null || $order == ""){
+            $order = "date_start";
+        }
+        if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
+            $sort = "asc";
+        }
+        
+        if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
+            Session::flash('error', 'Lịch mùa vụ không tồn tại');
+            return false;
+        }
+        try {
+            $data = NhatKyDongRuong::where('id_lichmuavu', $id_lichmuavu)
+                ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
+                ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+                ->select(
+                    'tbl_nhatkydongruong.id_nhatkydongruong',
+                    'tbl_nhatkydongruong.id_thuadat',
+                    'tbl_nhatkydongruong.name_hoatdong',
+                    'tbl_nhatkydongruong.description',
+                    'tbl_nhatkydongruong.date_start',
+                    'tbl_nhatkydongruong.date_end',
+                    'tbl_nhatkydongruong.status',
+                    'tbl_nhatkydongruong.type',
+                    'tbl_nhatkydongruong.hoptacxa_xacnhan',
+                    'tbl_user.fullname')
                 ->HoatDongMuaVu($request)
                 ->NameHoatDongMuaVu($request)
                 ->DateStart($request)

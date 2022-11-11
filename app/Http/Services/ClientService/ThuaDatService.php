@@ -73,7 +73,11 @@ class ThuaDatService{
     public function getDetailThuaDat($request){
         try{
             $id_thuadat =$request->id_thuadat;
-            $thuadat = ThuaDat::where('id_thuadat', $id_thuadat)->first();
+            $thuadat = ThuaDat::where('id_thuadat', $id_thuadat)
+            ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_thuadat.id_xavien')
+            ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+            ->select("tbl_thuadat.*", "tbl_user.fullname")
+            ->first();
             if($thuadat == null){
                 Session::flash('error', 'Không tồn tại thông tin thửa đất');
                 return false;

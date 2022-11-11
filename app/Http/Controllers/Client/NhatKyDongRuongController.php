@@ -76,6 +76,36 @@ class NhatKyDongRuongController extends Controller
          }
     }
 
+    public function getListNhatKyDongRuongForHTX(Request $request){
+        try {
+            $result = $this->nhatKyDongRuongService->getListNhatKyDongRuongForHTX($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Danh sách hoạt động mùa vụ",
+                    "errorList" => [],
+                    "data" => $result[0],
+                    "meta" => $result[1]
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Lấy danh sách hoạt động mùa vụ không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
+
     public function toggleActiveNhatKyDongRuong($id_nhatkydongruong){
         try {
             $result = $this->nhatKyDongRuongService->toggleActiveNhatKyDongRuong($id_nhatkydongruong);
