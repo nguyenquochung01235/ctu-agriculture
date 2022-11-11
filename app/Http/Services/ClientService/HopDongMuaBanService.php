@@ -463,15 +463,38 @@ class HopDongMuaBanService{
   public function deleteHopDong($id_hopdongmuaban){
 
     try {
-      $id_thuonglai = $this->thuongLaiService->getIdThuongLai();
 
-      if($id_thuonglai == false){
-        Session::flash('error', 'Bạn không có quyền xóa hợp đồng này');
+      $id_chuthe = null;
+      $who = "";
+
+      $id_thuonglai = $this->thuongLaiService->getIdThuongLai();
+      $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+
+      if($id_thuonglai == null && $id_hoptacxa == null){
+        Session::flash('error', 'Không xác định được chủ thể');
         return false;
+      }
+
+      if($id_thuonglai != false){
+        $id_chuthe = $id_thuonglai;
+        $who = "id_thuonglai";
+      }
+  
+      if($id_hoptacxa != false){
+        $id_chuthe = $id_hoptacxa;
+        $who = "id_hoptacxa";
+  
+        $checkXaVienIsChuNhiemHTX = $this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa);
+        if($checkXaVienIsChuNhiemHTX == false){
+          Session::flash('error', 'Bạn không phải là chủ nhiệm hợp tác xã, không thể xóa hợp đồng');
+          return false;
+        }
+  
       }
   
       $hopDongMuaBan = HopDongMuaBan::where('id_hopdongmuaban', $id_hopdongmuaban)
-                      ->where('id_thuonglai', $id_thuonglai)->first();
+      ->Who($who, $id_chuthe)
+      ->first();
   
       if($hopDongMuaBan == null){
         Session::flash('error', 'Hợp đồng mua bán không tồn tại');
@@ -487,15 +510,28 @@ class HopDongMuaBanService{
       DB::commit();
 
       if($hopDongMuaBan != null){
-        $thuonglai = ThuongLai::where('id_thuonglai', $id_thuonglai)->first();
-        $message = "Hợp đồng số ".$id_hopdongmuaban." đã bị xóa bởi thương thương lái: " . $thuonglai->name_thuonglai;
-        $user = $this->hopTacXaService->getChuNhiemHTX($hopDongMuaBan->id_hoptacxa)->id_user;
+        switch ($who) {
+          case 'id_thuonglai':
+            $thuonglai = ThuongLai::where('id_thuonglai', $id_thuonglai)->first();
+            $message = "Hợp đồng số ". $id_hopdongmuaban . " vừa được xóa bởi thương lái: ". $thuonglai->name_thuonglai;
+            $user = $this->hopTacXaService->getChuNhiemHTX($hopDongMuaBan->id_hoptacxa)->id_user;
+            break;
+          
+          case 'id_hoptacxa':
+            $hoptacxa = HopTacXa::where('id_hoptacxa', $id_hoptacxa)->first();
+            $message = "Hợp đồng số ". $id_hopdongmuaban . " vừa được xóa bởi hợp tác xã: ". $hoptacxa->name_hoptacxa;
+            $user = ThuongLai::where('id_thuonglai', $hopDongMuaBan->id_thuonglai)->first()->id_user;
+            break;
+          
+          default:
+          return false;
+            break;
+        }
         $status_notify = 0;
         $link = "/hopdongmuaban";
         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
         $this->notificationService->sendNotificationService($notify->id);
       }
-
 
       return true;
     } catch (\Exception $error) {
