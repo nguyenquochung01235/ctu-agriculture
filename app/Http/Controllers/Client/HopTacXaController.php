@@ -17,6 +17,35 @@ class HopTacXaController extends Controller
         $this->hopTacXaService = $hopTacXaService;
     }
 
+    
+    public function activeHopTacXa(Request $request){
+        try {
+            $result = $this->hopTacXaService->activeHopTacXa($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Thay đổi trạng thái hoạt động hợp tác xã thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Thay đổi trạng thái hoạt động hợp tác xã không thành công",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
     public function searchHopTacXaByPhoneNumber(Request $request){
         try {
             $result = $this->hopTacXaService->searchHopTacXaByPhoneNumber($request);

@@ -154,7 +154,7 @@ Route::middleware(['auth.jwt'])->group(function(){
 });
 
 
-Route::post('/upload/image', [UploadImageController::class, 'uploadImage']);
+Route::put('/admin/active-htx/{id_hoptacxa}', [HopTacXaController::class, 'activeHopTacXa']);
 
 
 Route::get('/get/menu-client', [MenuClientController::class, 'getMenuClient']);

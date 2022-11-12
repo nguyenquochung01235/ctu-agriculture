@@ -85,6 +85,24 @@ class HopTacXaService{
         }
         return true;
     }
+    public function activeHopTacXa($id_hoptacxa){
+        try {
+            $hoptacxa = HopTacXa::where('id_hoptacxa', $id_hoptacxa)->first();
+            if($hoptacxa == null) {
+                Session::flash('error','Hợp tác xã không tồn tại');
+                return false;
+            }
+            DB::beginTransaction();
+            $hoptacxa->active = 1;
+            $hoptacxa->save();
+            DB::commit();
+            return true;
+        } catch (\Exception $error) {
+            Session::flash('error','Hợp tác xã này không tồn tại');
+            return false;
+        }
+    }
+
 
     public function searchHopTacXaByPhoneNumber($request){
         $phone_number = $request->phone_number;
