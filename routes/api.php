@@ -87,7 +87,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         
         Route::prefix("hoatdongmuavu")->group(function(){
             Route::get("/get-detail/{id_hoatdongmuavu}",[HoatDongMuaVuController::class, 'getDetailHoatDongMuaVu']);
-            Route::get("/get-list", [HoatDongMuaVuController::class, 'getListHoatDongMuaVu']);
+            Route::get("/get-list/{id_lichmuavu}", [HoatDongMuaVuController::class, 'getListHoatDongMuaVu']);
             Route::post("/create",[HoatDongMuaVuController::class, 'createHoatDongMuaVu']);
             Route::put("/update/{id_hoatdongmuavu}",[HoatDongMuaVuController::class, 'updateHoatDongMuaVu']);
             Route::delete("/delete/{id}",[HoatDongMuaVuController::class, 'deleteHoatDongMuaVu']);
