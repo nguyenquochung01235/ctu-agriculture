@@ -111,7 +111,7 @@ class XaVienService{
         }else{
             $id_hoptacxa = XaVien::where('id_user', $id_user)->first()->id_hoptacxa;
             if(!$this->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
-                Session::flash('error','Bạn không có quyền xem');
+                Session::flash('error','Bạn không có quyền xem thông tin chi tiết xã viên');
                 return false;
             }
         }
@@ -286,6 +286,7 @@ class XaVienService{
                 if($xavien->thumbnail != null){
                     $this->uploadImageService->delete($xavien->thumbnail);
             }
+            return dd($xavien->thumbnail);
             $xavien->thumbnail = $this->uploadImageService->store($request->thumbnail);
             }
             if($request->has('img_background')){
@@ -296,9 +297,9 @@ class XaVienService{
             }
             $xavien->save();
             DB::commit();
-            return $this->getDetail($id_user);
+            return $this->getDetail(null);
         } catch (\Exception $error) {
-            Session::flash('error', "Không cập nhật được thông tin");
+            Session::flash('error', "Không cập nhật được thông tin $error");
             return false;
         }
         return true;
