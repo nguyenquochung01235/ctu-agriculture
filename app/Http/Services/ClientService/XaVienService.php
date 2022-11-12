@@ -282,14 +282,14 @@ class XaVienService{
             }
             DB::beginTransaction();
             $xavien->description = $request->description;
-            if($request->has('thumbnail')){
+            if($request->hasFile('thumbnail')){
                 if($xavien->thumbnail != null){
                     $this->uploadImageService->delete($xavien->thumbnail);
             }
             return dd($xavien->thumbnail);
             $xavien->thumbnail = $this->uploadImageService->store($request->thumbnail);
             }
-            if($request->has('img_background')){
+            if($request->hasFile('img_background')){
                 if($xavien->img_background != null){
                     $this->uploadImageService->delete($xavien->img_background);
             }

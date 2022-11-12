@@ -238,13 +238,13 @@ class HopTacXaService{
             $hoptacxa->email = $email;
             $hoptacxa->address = $address;
             $hoptacxa->description = $description;
-            if($request->has('thumbnail')){
+            if($request->hasFile('thumbnail')){
                 if($hoptacxa->thumbnail != null){
                     $this->uploadImageService->delete($hoptacxa->thumbnail);
             }
             $hoptacxa->thumbnail = $this->uploadImageService->store($request->thumbnail);
             }
-            if($request->has('img_background')){
+            if($request->hasFile('img_background')){
                 if($hoptacxa->img_background != null){
                     $this->uploadImageService->delete($hoptacxa->img_background);
             }

@@ -138,7 +138,7 @@ class UserService{
             $user->email = $request->email;
             $user->dob = $request->dob;
             $user->address = $request->address;
-            if($request->has('avatar')){
+            if($request->hasFile('avatar')){
                 if($user->avatar != null){
                     $this->uploadImageService->delete($user->avatar);
             }

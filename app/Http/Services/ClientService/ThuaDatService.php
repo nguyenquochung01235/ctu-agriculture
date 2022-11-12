@@ -202,7 +202,7 @@ class ThuaDatService{
             $thuadat->location = $request->location;
             $thuadat->description = $request->description;
             try {
-                if($request->has('thumbnail')){
+                if($request->hasFile('thumbnail')){
                     if($thuadat->thumbnail != null){
                     $this->uploadImageService->delete($thuadat->thumbnail);
                     }
