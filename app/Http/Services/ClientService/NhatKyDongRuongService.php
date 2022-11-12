@@ -337,8 +337,9 @@ class NhatKyDongRuongService{
 
     
     public function attachHoatDongIntoNhatKy($request){
-        $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
-        $id_lichmuavu = $request->id_lichmuavu;
+        try {
+            $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+            $id_lichmuavu = $request->id_lichmuavu;
 
         if(!$this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
             Session::flash('error', 'Bạn không có quyền quản trị để thực hiện hành động này');
@@ -365,7 +366,6 @@ class NhatKyDongRuongService{
         DB::beginTransaction();
         // TẠO NHẬT KÝ MỚI CHO XÃ VIÊN
         $listIdXaVien = XaVien::where('id_hoptacxa', $id_hoptacxa)->where('active', 1)->get('id_xavien');
-        // return dd($listIdXaVien->count());
 
         foreach ($listIdXaVien as $key_1 => $xaVien) {
             $listIdThuaDat = ThuaDat::where('id_xavien', $xaVien->id_xavien)->where('active', 1)->get('id_thuadat');
@@ -423,9 +423,24 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Không cập nhật được trạng thái và thay đổi hành động');
             return false;
         }
+
+        if($this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
+            $message = "Chủ nhiệm hợp tác xã của bạn vừa cập nhật hoạt động chung mùa vụ số $id_lichmuavu. Vui lòng kiểm tra nhật ký hoạt động" ;
+            $status_notify = 0;
+            $link = "/nhatkyhoatdong";
+            $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
+            foreach ($list_user as $key => $user) {
+                $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
+                $this->notificationService->sendNotificationService($notify->id);
+            }
+            
+        }
         
         DB::commit();
         return true;
+        } catch (\Exception $error) {
+            
+        }
     }
 
     public function addNewNhatKyDongRuong($request){
