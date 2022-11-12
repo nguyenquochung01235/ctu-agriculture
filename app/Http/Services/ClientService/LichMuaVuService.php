@@ -41,7 +41,8 @@ class LichMuaVuService{
 
     public function getListLichMuaVuForHopDongMuaBan($id_hoptacxa){
         try {
-            $lichmuavu = LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->whereIn('status', ['upcoming', 'start'])->get();
+            $lichmuavu = LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')
+            ->where('id_hoptacxa', $id_hoptacxa)->whereIn('status', ['upcoming', 'start'])->get();
             return $lichmuavu;
         } catch (\Exception $error) {
             Session::flash('error', 'Không có danh sách lịch mùa vụ');

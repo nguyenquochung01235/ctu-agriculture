@@ -111,16 +111,43 @@ class NhatKyDongRuongController extends Controller
             $result = $this->nhatKyDongRuongService->toggleActiveNhatKyDongRuong($id_nhatkydongruong);
             if($result != false){
                 return response()->json([
-                    "statusCode" => 201,
+                    "statusCode" => 200,
                     "message" => "Cập nhật trạng thái hoạt động thành công",
                     "errorList" => [],
                     "data" => $result
-                ],201);
+                ],200);
             }
     
             return response()->json([
                 "statusCode" => 400,
                 "message" => "Cập nhật trạng thái hoạt động không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+        }
+    }
+    public function acceptNhatKyDongRuong($id_nhatkydongruong){
+        try {
+            $result = $this->nhatKyDongRuongService->acceptNhatKyDongRuong($id_nhatkydongruong);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Cập nhật trạng thái hoạt động nhật ký thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Cập nhật trạng thái hoạt động nhật ký không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ],400);

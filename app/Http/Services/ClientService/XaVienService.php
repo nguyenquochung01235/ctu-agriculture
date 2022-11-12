@@ -206,23 +206,27 @@ class XaVienService{
             $id_user = $this->commonService->getIDByToken();
             $xavien =  XaVien::with('role')->with('hop_tac_xa')->where('id_user',$id_user)->first();
             $role = $xavien->role[0]->role;
-            switch ($account) {
-                case 'xavien':
-                    $role = 'xavien';
-                    break;
-           
-                case 'chunhiem':
-                    if($role != 'chunhiem'){
-                    Session::flash('error', 'Tài khoản không có phân quyền chủ nhiệm');
+            if($account != null){
+                switch ($account) {
+                    case 'xavien':
+                        $role = 'xavien';
+                        break;
+               
+                    case 'chunhiem':
+                        if($role != 'chunhiem'){
+                        Session::flash('error', 'Tài khoản không có phân quyền chủ nhiệm');
+                            return false;
+                        }
+                        $role = 'chunhiem';
+                        break;
+                    
+                    default:
+                        Session::flash('error', 'Không xác nhận được thông tin phân quyền');
                         return false;
-                    }
-                    $role = 'chunhiem';
-                    break;
-                
-                default:
-                    Session::flash('error', 'Không xác nhận được thông tin phân quyền');
-                    return false;
-                    break;
+                        break;
+                }
+            }else{
+                $role = $xavien->role[0]->role;
             }
             
             $result = ([

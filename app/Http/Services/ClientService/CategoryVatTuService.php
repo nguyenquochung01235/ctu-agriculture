@@ -25,6 +25,7 @@ class CategoryVatTuService{
             $detailCategoryVatTu = CategoryVatTu::join('tbl_danhmucquydinh', 'tbl_danhmucquydinh.id_danhmucquydinh', 'tbl_category_vattu.id_danhmucquydinh')
             ->where('id_category_vattu',$id_category_vattu)
             ->where('tbl_danhmucquydinh.id_thuonglai', $id_thuonglai)
+            ->select('tbl_category_vattu.*', 'tbl_danhmucquydinh.name_danhmucquydinh')
             ->first();
 
             if($detailCategoryVatTu == null){

@@ -130,6 +130,7 @@ class HopDongMuaBanService{
 
 
   public function getDetailHopDong($id_hopdongmuaban){
+   try {
     $id = null;
     $who = "";
 
@@ -158,7 +159,10 @@ class HopDongMuaBanService{
                   ->select('*','tbl_hopdongmuaban.created_at AS created_at','tbl_hopdongmuaban.updated_at AS updated_at')
                   ->Who($who, $id)
                   ->first();
-
+    if($hopDongMuaBan == null){
+      Session::flash('error', 'Hợp đồng không tồn tại');
+      return false;
+    };
 
     $thuonglai = ThuongLai::where('id_thuonglai',$hopDongMuaBan->id_thuonglai)
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_thuonglai.id_user')
@@ -202,6 +206,10 @@ class HopDongMuaBanService{
       'address_hoptacxa'=>$hoptacxa->address,
       'daidien_hoptacxa'=>$chunhiem->fullname,
     ]);
+   } catch (\Exception $error) {
+    Session::flash('error', 'Không lấy được thông tin hợp đồng ' . $error);
+    return false;
+   }
 
   }
 
@@ -489,7 +497,6 @@ class HopDongMuaBanService{
           Session::flash('error', 'Bạn không phải là chủ nhiệm hợp tác xã, không thể xóa hợp đồng');
           return false;
         }
-  
       }
   
       $hopDongMuaBan = HopDongMuaBan::where('id_hopdongmuaban', $id_hopdongmuaban)

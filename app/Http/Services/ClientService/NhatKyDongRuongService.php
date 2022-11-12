@@ -17,14 +17,23 @@ class NhatKyDongRuongService{
     protected $hopTacXaService;
     protected $lichMuaVuService;
     protected $thuaDatService;
+    protected $notificationService;
+    
 
-    public function __construct(CommonService $commonService, XaVienService $xaVienService, HopTacXaService $hopTacXaService ,LichMuaVuService $lichMuaVuService, ThuaDatService $thuaDatService)
+    public function __construct(
+        CommonService $commonService,
+        XaVienService $xaVienService,
+        HopTacXaService $hopTacXaService ,
+        LichMuaVuService $lichMuaVuService,
+        ThuaDatService $thuaDatService,
+        NotificationService $notificationService)
     {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
         $this->hopTacXaService = $hopTacXaService;
         $this->lichMuaVuService = $lichMuaVuService;
         $this->thuaDatService = $thuaDatService;
+        $this->notificationService = $notificationService;
 
     }
 
@@ -100,10 +109,10 @@ class NhatKyDongRuongService{
             $search = "";
         }
         if($order == null || $order == ""){
-            $order = "date_start";
+            $order = "id_nhatkydongruong";
         }
         if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
-            $sort = "asc";
+            $sort = "desc";
         }
         
         if(!$this->xaVienService->isXaVienBelongToHTX($id_user,$id_hoptacxa)){
@@ -185,10 +194,10 @@ class NhatKyDongRuongService{
             $search = "";
         }
         if($order == null || $order == ""){
-            $order = "date_start";
+            $order = "id_nhatkydongruong";
         }
         if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
-            $sort = "asc";
+            $sort = "desc";
         }
         
         if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
@@ -214,6 +223,7 @@ class NhatKyDongRuongService{
                 ->NameHoatDongMuaVu($request)
                 ->DateStart($request)
                 ->DateEnd($request)
+                ->Type($request)
                 ->Status($request)
                 ->Search($request);
 
@@ -268,6 +278,55 @@ class NhatKyDongRuongService{
         DB::beginTransaction();
         $nhatKyDongRuong->status = $status;
         $nhatKyDongRuong->save();
+        DB::commit();
+        return $nhatKyDongRuong;
+       } catch (\Exception $error) {
+        Session::flash('error', 'Cập nhật trạng thái không thành công');
+        return false;
+       } 
+    }
+
+    public function acceptNhatKyDongRuong($id_nhatkydongruong){
+        $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+
+        if(! $this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
+            Session::flash('error', "Bạn không có quyền quản trị để duyệt nhật ký hoạt động mùa vụ");
+            return false;
+        };
+
+        $nhatKyDongRuong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)
+        ->first();
+
+        if($nhatKyDongRuong == null){
+            Session::flash('error', 'Hoạt động không tồn tại');
+            return false;
+        }
+        if($nhatKyDongRuong->type != 'outside'){
+            Session::flash('error', 'Đây là hoạt động chung bạn không cần duyệt');
+            return false;
+        }
+
+       try {
+        $hoptacxa_xacnhan = 0;
+        if($nhatKyDongRuong->hoptacxa_xacnhan != 1){
+            $hoptacxa_xacnhan = 1;
+        }
+        DB::beginTransaction();
+        $nhatKyDongRuong->hoptacxa_xacnhan = $hoptacxa_xacnhan;
+        $nhatKyDongRuong->save();
+
+        if($nhatKyDongRuong != null){
+            $message = "Chủ nhiệm hợp tác xã của bạn đã hủy duyệt hoạt động số $nhatKyDongRuong->id_nhatkydongruong: $nhatKyDongRuong->name_hoatdong";
+            if($nhatKyDongRuong->hoptacxa_xacnhan == 1){
+                $message = "Chủ nhiệm hợp tác xã của bạn đã duyệt hoạt động số $nhatKyDongRuong->id_nhatkydongruong: $nhatKyDongRuong->name_hoatdong";
+            }
+            $status_notify = 0;
+            $link = "/nhatkyhoatdong";
+            $user = XaVien::where('id_xavien', $nhatKyDongRuong->id_xavien)->first()->id_user;
+            $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
+            $this->notificationService->sendNotificationService($notify->id);
+        }
+
         DB::commit();
         return $nhatKyDongRuong;
        } catch (\Exception $error) {

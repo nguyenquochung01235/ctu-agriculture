@@ -80,6 +80,14 @@ class NhatKyDongRuong extends Model
         return $query;
     }
 
+    public function scopeType($query, $request)
+    {
+        if ($request->has('type')) {
+            $query->where('type',$request->type);
+        }
+        return $query;
+    }
+
     public function scopeSearch($query, $request)
     {
         if ($request->has('search')) {
