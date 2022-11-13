@@ -388,16 +388,16 @@ class HopTacXaService{
                 }
 
                 // De-active thua dat cua xa vien khi vao htx
-                $list_thuadat_xavien = ThuaDat::join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_thuadat.id_xavien')
-                ->join('tbl_user', 'tbl_xavien.id_user', '=', 'tbl_user.id_user')
-                ->select('tbl_thuadat.*')
-                ->where('tbl_user.id_user', $id_user)
-                ->get();
+                // $list_thuadat_xavien = ThuaDat::join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_thuadat.id_xavien')
+                // ->join('tbl_user', 'tbl_xavien.id_user', '=', 'tbl_user.id_user')
+                // ->select('tbl_thuadat.*')
+                // ->where('tbl_user.id_user', $id_user)
+                // ->get();
                 
-                foreach ($list_thuadat_xavien as $key => $thuadat) {
-                    $thuadat->active = 0;
-                    $thuadat->save();
-                }
+                // foreach ($list_thuadat_xavien as $key => $thuadat) {
+                //     $thuadat->active = 0;
+                //     $thuadat->save();
+                // }
                 
                 DB::commit();
                 return true;
