@@ -172,7 +172,7 @@ class ThuaDatService{
                 "location"=> $location,
                 "thumbnail" => $thumbnail,
                 "description" => $request->description,
-                "active" => 0,
+                "active" => 1,
             ]);
             DB::commit();
             return $thuadat;
