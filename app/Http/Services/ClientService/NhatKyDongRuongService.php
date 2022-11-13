@@ -127,8 +127,8 @@ class NhatKyDongRuongService{
         }
         try {
             $data = NhatKyDongRuong::join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
-                ->where('id_xavien', $id_xavien)
-                ->where('id_lichmuavu', $id_lichmuavu)
+                ->where('tbl_nhatkydongruong.id_xavien', $id_xavien)
+                ->where('tbl_nhatkydongruong.id_lichmuavu', $id_lichmuavu)
                 ->select(
                     'tbl_nhatkydongruong.id_nhatkydongruong',
                     'tbl_nhatkydongruong.id_thuadat',
@@ -210,7 +210,7 @@ class NhatKyDongRuongService{
             return false;
         }
         try {
-            $data = NhatKyDongRuong::where('id_lichmuavu', $id_lichmuavu)
+            $data = NhatKyDongRuong::where('tbl_nhatkydongruong.id_lichmuavu', $id_lichmuavu)
                 ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
                 ->join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
