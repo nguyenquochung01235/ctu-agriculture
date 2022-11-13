@@ -6,11 +6,13 @@ use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\Client\CategoryVatTuController;
 use App\Http\Controllers\Client\DanhMucQuyDinhController;
+use App\Http\Controllers\Client\GiaoDichMuaBanLuaGiongController;
 use App\Http\Controllers\Client\GiongLuaController;
 use App\Http\Controllers\Client\HoatDongMuaVuController;
 use App\Http\Controllers\Client\HopDongMuaBanController;
 use App\Http\Controllers\Client\HopTacXaController;
 use App\Http\Controllers\Client\LichMuaVuController;
+use App\Http\Controllers\Client\NhaCungCapVatTuController;
 use App\Http\Controllers\Client\NhatKyDongRuongController;
 use App\Http\Controllers\Client\NotificationController;
 use App\Http\Controllers\Client\ThuaDatController;
@@ -148,6 +150,23 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::put("/confirm/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'confirmHopDong']);
             Route::put("/update/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'updateHopDong']);
             Route::delete("/delete/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'deleteHopDong']);
+        }); 
+
+        Route::prefix("nhacungcapvattu")->group(function(){
+            Route::get("/dash-board",[NhaCungCapVatTuController::class, 'infoDashBoard']);
+            Route::get("/get-detail",[NhaCungCapVatTuController::class, 'getDetailNhaCungCapVatTu']);
+            Route::post('/update', [NhaCungCapVatTuController::class, 'updateNhaCungCapVatTu']);
+        }); 
+
+        Route::prefix("giaodichmuabanluagiong")->group(function(){
+            Route::get("/get-detail/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'getDetailGiaoDichMuaBanLuaGiong']);
+            Route::get("/get-list",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiong']);
+            Route::get("/get-list/all",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiongForHTX']);
+
+            Route::post("/create",[GiaoDichMuaBanLuaGiongController::class, 'createGiaoDichMuaBanLuaGiong']);
+            // Route::put("/confirm/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'confirmHopDong']);
+            // Route::put("/update/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'updateHopDong']);
+            // Route::delete("/delete/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'deleteHopDong']);
         }); 
 
 

@@ -50,6 +50,7 @@ class NhatKyDongRuongService{
         
         try {
             $detailNhatKyDongRuong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)
+            ->join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
             ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
             ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
             ->join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', 'tbl_nhatkydongruong.id_lichmuavu')
@@ -67,6 +68,7 @@ class NhatKyDongRuongService{
                 'tbl_lichmuavu.date_start as lichmuavu_date_start',
                 'tbl_lichmuavu.date_end as lichmuavu_date_end',
                 'tbl_user.fullname',
+                'tbl_thuadat.address'
                 
                 )
             ->first();
@@ -124,7 +126,8 @@ class NhatKyDongRuongService{
             return false;
         }
         try {
-            $data = NhatKyDongRuong::where('id_xavien', $id_xavien)
+            $data = NhatKyDongRuong::join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
+                ->where('id_xavien', $id_xavien)
                 ->where('id_lichmuavu', $id_lichmuavu)
                 ->select(
                     'tbl_nhatkydongruong.id_nhatkydongruong',
@@ -135,7 +138,9 @@ class NhatKyDongRuongService{
                     'tbl_nhatkydongruong.date_end',
                     'tbl_nhatkydongruong.status',
                     'tbl_nhatkydongruong.type',
-                    'tbl_nhatkydongruong.hoptacxa_xacnhan')
+                    'tbl_nhatkydongruong.hoptacxa_xacnhan',
+                    'tbl_thuadat.address',
+                    )
                 ->HoatDongMuaVu($request)
                 ->NameHoatDongMuaVu($request)
                 ->DateStart($request)
@@ -208,6 +213,7 @@ class NhatKyDongRuongService{
             $data = NhatKyDongRuong::where('id_lichmuavu', $id_lichmuavu)
                 ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+                ->join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
                 ->select(
                     'tbl_nhatkydongruong.id_nhatkydongruong',
                     'tbl_nhatkydongruong.id_thuadat',
@@ -218,7 +224,9 @@ class NhatKyDongRuongService{
                     'tbl_nhatkydongruong.status',
                     'tbl_nhatkydongruong.type',
                     'tbl_nhatkydongruong.hoptacxa_xacnhan',
-                    'tbl_user.fullname')
+                    'tbl_user.fullname',
+                    'tbl_thuadat.address'
+                    )
                 ->HoatDongMuaVu($request)
                 ->NameHoatDongMuaVu($request)
                 ->DateStart($request)

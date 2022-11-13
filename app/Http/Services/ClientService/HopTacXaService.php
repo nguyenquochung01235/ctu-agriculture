@@ -365,7 +365,12 @@ class HopTacXaService{
                 return false;
             }
 
-            if((!$this->xaVienService->isXaVienHaveHTX($id_user)) && $this->isHTXActive($id_hoptacxa)){
+            if(!$this->isHTXActive($id_hoptacxa)){
+                Session::flash('error', 'Hợp tác xã chưa được kích hoạt');
+                return false;
+            }
+
+            if((!$this->xaVienService->isXaVienHaveHTX($id_user))){
                 DB::beginTransaction();
                 // Update id_hoptacxa => Xa Vien
                 if(!$this->xaVienService->addXaVienToHopTacXa($id_user,$id_hoptacxa)){

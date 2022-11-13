@@ -20,7 +20,7 @@ class HopTacXaController extends Controller
     
     public function activeHopTacXa(Request $request){
         try {
-            $result = $this->hopTacXaService->activeHopTacXa($request);
+            $result = $this->hopTacXaService->activeHopTacXa($request->id_hoptacxa);
             if($result != false){
                 return response()->json([
                     "statusCode" => 200,

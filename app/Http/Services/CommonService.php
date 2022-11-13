@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Models\User;
 use App\Models\XaVien;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
@@ -16,7 +17,22 @@ class CommonService{
             Session::flash('error', 'Không xác định được token user');
             return false;
         }
-       
+    }
+
+    public function getAccountTypeByToken(){
+        try {
+            $id_user = $this->getIDByToken();
+            $user = User::join('user_account', 'user_account.user_id_user', 'tbl_user.id_user')
+                        ->join('tbl_account', 'tbl_account.id_account', 'user_account.account_id_account')
+                        ->select('tbl_account.path')
+                        ->where('tbl_user.id_user', $id_user)
+                        ->first();
+            return $user->path;
+            
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không xác định được token user');
+            return false;
+        }
     }
 
     public function checkDate($start, $end){
