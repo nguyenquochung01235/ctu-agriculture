@@ -146,6 +146,7 @@ class NhatKyDongRuongService{
                 ->DateStart($request)
                 ->DateEnd($request)
                 ->Status($request)
+                ->Type($request)
                 ->Search($request);
 
             $total = $data->count();
@@ -484,12 +485,56 @@ class NhatKyDongRuongService{
             return $nhatKyDongRuong;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', $error);
+            Session::flash('error', 'Không thể tạo nhật ký hoạt động');
             return false;
         }
+    }
 
+    public function updateNhatKyDongRuong($request){
+        try {
+            $id_nhatkydongruong = $request->id_nhatkydongruong;
+            $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+            $id_user = $this->commonService->getIDByToken();
+            $id_xavien = $this->xaVienService->getIdXaVienByToken();
+            $date_start = $request->date_start;
+            $date_end = $request->date_end;
+          
+           
+            $checkDateStartDateEnd = $this->commonService->checkDate($date_start, $date_end);
 
+            $nhatKyDongRuong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)
+                ->where('id_xavien', $id_xavien)->first();
 
+            if($nhatKyDongRuong == null){
+                Session::flash('error', 'Không tồn tại nhật ký hoạt động');
+                return false;
+            }
+
+            if($nhatKyDongRuong->hoptacxa_xacnhan == 1){
+                Session::flash('error', 'Hoạt động đã được phê duyệt không thể cập nhật');
+                return false;
+            }
+
+            DB::beginTransaction();
+            if(($checkDateStartDateEnd)){
+
+                $nhatKyDongRuong->id_xavien = $id_xavien;
+                $nhatKyDongRuong->id_thuadat = $request->id_thuadat;
+                $nhatKyDongRuong->name_hoatdong = $request->name_hoatdong;
+                $nhatKyDongRuong->description = $request->description;
+                $nhatKyDongRuong->date_start = $request->date_start;
+                $nhatKyDongRuong->date_end = $request->date_end;
+
+            }
+            $nhatKyDongRuong->save;
+            DB::commit();
+
+            return $this->getDetailNhatKyDongRuong($request);
+        } catch (\Exception $error) {
+            DB::rollBack();
+            Session::flash('error', 'Không thể cập nhật ký hoạt động');
+            return false;
+        }
     }
 
     public function deleteNhatKyHoatDong($id_nhatkydongruong){
@@ -514,6 +559,11 @@ class NhatKyDongRuongService{
        
         if($nhatKyDongRuong->id_hoatdongmuavu != null){
             Session::flash('error', 'Bạn không thể xóa hoạt động chung của hợp tác xã');
+            return false;
+        }
+
+        if($nhatKyDongRuong->hoptacxa_xacnhan == 1){
+            Session::flash('error', 'Hoạt động đã được phê duyệt không thể xóa');
             return false;
         }
 

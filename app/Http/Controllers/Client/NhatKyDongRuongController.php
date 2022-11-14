@@ -216,6 +216,35 @@ class NhatKyDongRuongController extends Controller
             ],400);
         }
     }
+
+    public function updateNhatKyHoatDong(Request $request){
+        try {
+            $result = $this->nhatKyDongRuongService->updateNhatKyDongRuong($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 201,
+                    "message" => "Cập nhật hoạt động thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],201);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Cập nhật hoạt động không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+        }
+    }
+
     public function deleteNhatKyHoatDong($id_nhatkydongruong){
         try {
             $result = $this->nhatKyDongRuongService->deleteNhatKyHoatDong($id_nhatkydongruong);

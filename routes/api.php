@@ -101,6 +101,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::post("/attach",[NhatKyDongRuongController::class, 'attachHoatDongIntoNhatKyFromHopTacXaToXaVien']);
             Route::put("/make-done/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'toggleActiveNhatKyDongRuong']);
             Route::post("/create",[NhatKyDongRuongController::class, 'addNewNhatKyHoatDong']);
+            Route::put("/update/{id_nhatkydongruong}",[NhatKyDongRuongController::class, 'updateNhatKyHoatDong']);
             Route::delete("/delete/{id}",[NhatKyDongRuongController::class, 'deleteNhatKyHoatDong']);
             Route::get("get-list/all/{id_lichmuavu}", [NhatKyDongRuongController::class, 'getListNhatKyDongRuongForHTX']);
             Route::put("/htx-accept/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'acceptNhatKyDongRuong']);
