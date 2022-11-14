@@ -44,6 +44,35 @@ class NhaCungCapVatTuController extends Controller
         ],400);
      }
 }
+
+   public function searchNhaCungCapByPhoneNumber(Request $request){
+    try {
+        $result = $this->nhaCungCapVatTuService->searchNhaCungCapByPhoneNumber($request);
+        if($result){
+            return response()->json([
+                "statusCode" => 200,
+                "message" => "Lấy thông tin thành công",
+                "errorList" => [],
+                "data" => $result
+            ],200);
+        }
+
+        return response()->json([
+            "statusCode" => 400,
+            "message" => "Không có thông tin !",
+            "errorList" => [Session::get('error')],
+            "data" => null
+        ],400);
+     } catch (\Exception $error) {
+       
+        return response()->json([
+            "statusCode" => 400,
+            "message" => "Có lỗi trong lúc lấy thông tin",
+            "errorList" => [$error],
+            "data" => null
+        ],400);
+     }
+}
    
 
    public function getDetailNhaCungCapVatTu(Request $request){

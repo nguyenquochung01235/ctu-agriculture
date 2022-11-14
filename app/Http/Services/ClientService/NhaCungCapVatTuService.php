@@ -43,6 +43,30 @@ class NhaCungCapVatTuService{
         //     }
     }
 
+    public function searchNhaCungCapByPhoneNumber($request){
+        try {
+            $phone_number = $request->phone_number;
+            $nhacungcapvattu = NhaCungCapVatTu::join('tbl_user','tbl_user.id_user', 'tbl_nhacungcapvattu.id_user')
+                ->where('tbl_user.phone_number',  $phone_number)
+                ->select(
+                    "tbl_nhacungcapvattu.*",
+                    "tbl_user.id_user",
+                    "tbl_user.fullname",
+                    "tbl_user.phone_number",
+                )
+                ->first();
+            if($nhacungcapvattu == null){
+                Session::flash('error', 'Không tìm thấy nhà cung cấp cung vật tư nào với số điện thoại trên');
+                return false;
+            }
+            return  $nhacungcapvattu;
+
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không lấy được thông tin nhà cung cấp vật tư');
+            return false;
+        }
+    }
+
     public function getIdNhaCungCapVatTu(){
         $id_user = $this->commonService->getIDByToken();
         try {

@@ -81,6 +81,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("lichmuavu")->group(function(){
             Route::post("/create",[LichMuaVuController::class, 'createLichMuaVu']);
             Route::get("/get-list-for-hdmb/{id_hoptacxa}",[LichMuaVuController::class, 'getListLichMuaVuForHopDongMuaBan']);
+            Route::get("/get-list-for-gdmblg/{id_hoptacxa}",[LichMuaVuController::class, 'getListLichMuaVuForHopDongMuaBan']);
             Route::get("/get-detail/{id_lichmuavu}",[LichMuaVuController::class, 'getDetailLichMuaVu']);
             Route::get("/get-list",[LichMuaVuController::class, 'getListLichMuaVu']);
             Route::put("/update/{id_lichmuavu}",[LichMuaVuController::class, 'updateLichMuaVu']);
@@ -157,13 +158,13 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("/dash-board",[NhaCungCapVatTuController::class, 'infoDashBoard']);
             Route::get("/get-detail",[NhaCungCapVatTuController::class, 'getDetailNhaCungCapVatTu']);
             Route::post('/update', [NhaCungCapVatTuController::class, 'updateNhaCungCapVatTu']);
+            Route::post('/search-by-phone-number', [NhaCungCapVatTuController::class, 'searchNhaCungCapByPhoneNumber']);
         }); 
 
         Route::prefix("giaodichmuabanluagiong")->group(function(){
             Route::get("/get-detail/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'getDetailGiaoDichMuaBanLuaGiong']);
             Route::get("/get-list",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiong']);
             Route::get("/get-list/all",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiongForHTX']);
-
             Route::post("/create",[GiaoDichMuaBanLuaGiongController::class, 'createGiaoDichMuaBanLuaGiong']);
             // Route::put("/confirm/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'confirmHopDong']);
             // Route::put("/update/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'updateHopDong']);
