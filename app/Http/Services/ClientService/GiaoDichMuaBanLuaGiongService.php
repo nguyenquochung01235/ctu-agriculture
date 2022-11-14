@@ -296,8 +296,10 @@ class GiaoDichMuaBanLuaGiongService{
             $status = 0;
             $description_giaodich = $request->description_giaodich;
             $hoptacxa_xacnhan = 0;
-
-            if($request->has('img_lohang')){
+            $img_lohang = null;
+            // return dd($request->hasFile('img_lohang'));
+            if($request->hasFile('img_lohang'))
+            {
                 $img_lohang= $this->uploadImageService->store($request->img_lohang);
             }
            

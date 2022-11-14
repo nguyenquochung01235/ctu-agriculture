@@ -14,7 +14,7 @@ class UploadImageService{
     {
         try {
             // return dd(gettype($image));
-            if((gettype($image) != 'string') && (gettype($image) != 'NULL')){
+            if((gettype($image) != 'string') && (gettype($image) != 'NULL') && $image == null){
                 $type = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
                 $file_name = date('YmdHis');
                 $file_path = 'image/' . $file_name.'.'.$type;
