@@ -180,7 +180,7 @@ class NhatKyDongRuongService{
             return false;
         };
 
-        $id_lichmuavu = $request->id_lichmuavu;
+        $id_lichmuavu = $request->lichmuavu;
         $page = $request->page;
         $limit =  $request->limit;
         $search = $request->search;
@@ -206,13 +206,15 @@ class NhatKyDongRuongService{
             $sort = "desc";
         }
         
-        if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
-            Session::flash('error', 'Lịch mùa vụ không tồn tại');
-            return false;
+        if($request->has('id_lichmuavu')){
+            if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
+                Session::flash('error', 'Lịch mùa vụ không tồn tại');
+                return false;
+            }
         }
         try {
-            $data = NhatKyDongRuong::where('tbl_nhatkydongruong.id_lichmuavu', $id_lichmuavu)
-                ->join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
+            $data = NhatKyDongRuong
+                ::join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
                 ->join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
                 ->select(
@@ -228,8 +230,8 @@ class NhatKyDongRuongService{
                     'tbl_user.fullname',
                     'tbl_thuadat.address'
                     )
+                ->LichMuaVu($request)
                 ->HoatDongMuaVu($request)
-                ->NameHoatDongMuaVu($request)
                 ->DateStart($request)
                 ->DateEnd($request)
                 ->Type($request)

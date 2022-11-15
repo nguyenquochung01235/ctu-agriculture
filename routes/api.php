@@ -55,6 +55,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("auto-complete")->group(function(){
             Route::get("gionglua/get-list",[GiongLuaController::class, 'getListGiongLua']);
             Route::get("danhmucquydinh/get-list", [DanhMucQuyDinhController::class, 'getListDanhMucQuyDinh']);
+            
         }); 
 
         Route::prefix("htx")->group(function(){
@@ -104,9 +105,8 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::post("/create",[NhatKyDongRuongController::class, 'addNewNhatKyHoatDong']);
             Route::put("/update/{id_nhatkydongruong}",[NhatKyDongRuongController::class, 'updateNhatKyHoatDong']);
             Route::delete("/delete/{id}",[NhatKyDongRuongController::class, 'deleteNhatKyHoatDong']);
-            Route::get("get-list/all/{id_lichmuavu}", [NhatKyDongRuongController::class, 'getListNhatKyDongRuongForHTX']);
+            Route::get("get-list-all", [NhatKyDongRuongController::class, 'getListNhatKyDongRuongForHTX']);
             Route::put("/htx-accept/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'acceptNhatKyDongRuong']);
-            
         }); 
 
         Route::prefix("gionglua")->group(function(){
