@@ -39,6 +39,27 @@ class LichMuaVuService{
           }
     }
 
+    public function getListLichMuaVuAutoComplete($request){
+        try {
+            if($request->has('id_hoptacxa')){
+                $id_hoptacxa = $request->id_hoptacxa;
+            }
+            else{
+                $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+            }
+            
+            $lichmuavu = LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')
+            ->where('id_hoptacxa', $id_hoptacxa)
+            ->Search($request)
+            ->limit(15)
+            ->get();
+            return $lichmuavu;
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không có danh sách lịch mùa vụ');
+            return false;
+        }
+    }
+    
     public function getListLichMuaVuForHopDongMuaBan($id_hoptacxa){
         try {
             $lichmuavu = LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')

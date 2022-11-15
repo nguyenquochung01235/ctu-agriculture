@@ -18,6 +18,34 @@ class LichMuaVuController extends Controller
     }
 
 
+    public function getListLichMuaVuAutoComplete(Request $request){
+        try {
+            $result = $this->lichMuaVuService->getListLichMuaVuAutoComplete($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Danh sách mùa vụ",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không lấy được danh sách mùa vụ",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
     public function getListLichMuaVuForHopDongMuaBan($id_hoptacxa){
         try {
             $result = $this->lichMuaVuService->getListLichMuaVuForHopDongMuaBan($id_hoptacxa);

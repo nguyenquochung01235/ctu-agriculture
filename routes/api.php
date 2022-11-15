@@ -55,6 +55,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("auto-complete")->group(function(){
             Route::get("gionglua/get-list",[GiongLuaController::class, 'getListGiongLua']);
             Route::get("danhmucquydinh/get-list", [DanhMucQuyDinhController::class, 'getListDanhMucQuyDinh']);
+            Route::get("lichmuavu/get-list", [LichMuaVuController::class, 'getListLichMuaVuAutoComplete']);
             
         }); 
 
