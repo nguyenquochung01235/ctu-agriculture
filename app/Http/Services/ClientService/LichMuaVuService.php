@@ -46,7 +46,6 @@ class LichMuaVuService{
             
             $lichmuavu = LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')
             ->where('id_hoptacxa', $id_hoptacxa)
-            ->whereIn('status', ['start', 'upcoming'])
             ->Search($request)
             ->limit(15)
             ->orderBy('id_lichmuavu', 'desc')
