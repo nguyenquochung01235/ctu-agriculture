@@ -349,4 +349,93 @@ class GiaoDichMuaBanLuaGiongService{
         }
     }
 
+    // public function updateGiaoDichMuaBanLuaGiong($request){
+    //     try {
+    //         $id_user = $this->commonService->getIDByToken();
+    //         $account_type = $this->commonService->getAccountTypeByToken();
+    //         $who = "";
+    //         $id = "";
+
+    //         switch ($account_type) {
+    //             case 'farmer':
+    //                 $id_xavien = $this->xaVienService->getIdXaVienByToken();
+    //                 $id_hoptacxa = XaVien::where('id_xavien', $id_xavien)->first()->id_hoptacxa;
+    //                 $id_nhacungcapvattu = $request->id_nhacungcapvattu;
+    //                 $nhacungcap_xacnhan = 0;
+    //                 $xavien_xacnhan = 1;
+    //                 $who = "id_xavien";
+    //                 $id = $id_xavien;
+    //                 break;
+                
+    //             case 'shop':
+    //                 $id_xavien= $request->id_xavien;
+    //                 $id_hoptacxa = XaVien::where('id_xavien', $id_xavien)->first()->id_hoptacxa;
+    //                 $id_nhacungcapvattu = $this->nhaCungCapVatTuService->getIdNhaCungCapVatTu();
+    //                 $nhacungcap_xacnhan = 1;
+    //                 $xavien_xacnhan = 0;
+    //                 $who = "id_nhacungcapvattu";
+    //                 $id = $id_nhacungcapvattu;
+    //                 break;
+                
+    //             default:
+    //                 Session::flash('error', 'Không xác định được chủ thể');
+    //                 return false;
+    //                 break;
+    //         }
+         
+
+    //         $id_giaodichmuabanluagiong = $request->id_giaodichmuabanluagiong;
+
+    //         $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::where('id_giaodichmuabanluagiong', $id_giaodichmuabanluagiong)
+    //         ->Who($who,$id)
+    //         ->first();
+    //         return $giaodichmuabanluagiong;
+
+
+    //         $id_lichmuavu = $request->id_lichmuavu;
+    //         $id_gionglua = $request->id_gionglua;
+    //         $soluong = $request->soluong;
+    //         $status = 0;
+    //         $description_giaodich = $request->description_giaodich;
+    //         $hoptacxa_xacnhan = 0;
+    //         $img_lohang = null;
+    //         // return dd($request->hasFile('img_lohang'));
+    //         if($request->hasFile('img_lohang'))
+    //         {
+    //             $img_lohang= $this->uploadImageService->store($request->img_lohang);
+    //         }
+
+           
+            
+    //        if($giaodichmuabanluagiong != null){
+    //         switch ($account_type) {
+    //             case 'farmer':
+    //                 $xavien = XaVien::where('tbl_xavien.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')->first();
+    //                 $message = "Giao dịch mua bán lúa giống số ". $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được cập nhật bởi xã viên " . $xavien->fullname.". Vui lòng kiểm tra thông tin";
+    //                 $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $id_nhacungcapvattu)->first()->id_user;
+    //                 break;
+                
+    //             case 'shop':
+    //                 $nhacungcapvattu = NhaCungCapVatTu::where('tbl_nhacungcapvattu.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_nhacungcapvattu.id_user')->first();
+    //                 $message = "Giao dịch mua bán lúa giống số ". $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được cập nhật bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname.". Vui lòng kiểm tra thông tin";
+    //                 $user = XaVien::where('id_xavien', $id_xavien)->first()->id_user;
+    //                 break;
+                
+    //             default:
+    //                 break;
+    //         }
+    //         $status_notify = 0;
+    //         $link = "/giaodichmuabanluagiong";
+    //         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
+    //         $this->notificationService->sendNotificationService($notify->id);
+    //        }
+    //         DB::commit();
+    //         return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+    //     } catch (\Exception $error) {
+    //         DB::rollBack();
+    //         Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống'. $error);
+    //         return false;
+    //     }
+    // }
+
 }

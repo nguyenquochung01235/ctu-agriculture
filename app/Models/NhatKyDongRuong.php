@@ -37,10 +37,10 @@ class NhatKyDongRuong extends Model
         }
         return $query;
     }
-    public function scopeLichMuaVu($query, $request)
+    public function scopeLichMuaVu($query, $id_lichmuavu)
     {
-        if ($request->has('id_lichmuavu')) {
-            $query->where('id_lichmuavu', $request->id_lichmuavu);
+        if ($id_lichmuavu != null) {
+            $query->where('id_lichmuavu', $id_lichmuavu);
         }
         return $query;
     }
@@ -61,14 +61,14 @@ class NhatKyDongRuong extends Model
     public function scopeDateStart($query, $request)
     {
         if ($request->has('date_start')) {
-            $query->whereDate('date_start',$request->date_start);
+            $query->whereDate('date_start','>=',$request->date_start);
         }
         return $query;
     }
     public function scopeDateEnd($query, $request)
     {
         if ($request->has('date_end')) {
-            $query->whereDate('date_end',$request->date_end);
+            $query->whereDate('date_end','<=',$request->date_end);
         }
         return $query;
     }
@@ -84,6 +84,13 @@ class NhatKyDongRuong extends Model
     {
         if ($request->has('type')) {
             $query->where('type',$request->type);
+        }
+        return $query;
+    }
+    public function scopeApprove($query, $request)
+    {
+        if ($request->has('hoptacxa_xacnhan')) {
+            $query->where('hoptacxa_xacnhan',$request->hoptacxa_xacnhan);
         }
         return $query;
     }

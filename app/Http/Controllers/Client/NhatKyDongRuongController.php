@@ -133,9 +133,9 @@ class NhatKyDongRuongController extends Controller
             ],400);
         }
     }
-    public function acceptNhatKyDongRuong($id_nhatkydongruong){
+    public function approveNhatKyDongRuong(Request $request){
         try {
-            $result = $this->nhatKyDongRuongService->acceptNhatKyDongRuong($id_nhatkydongruong);
+            $result = $this->nhatKyDongRuongService->approveNhatKyDongRuong($request);
             if($result != false){
                 return response()->json([
                     "statusCode" => 200,

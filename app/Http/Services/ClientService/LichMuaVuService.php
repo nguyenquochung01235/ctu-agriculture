@@ -3,6 +3,7 @@
 namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
+use App\Models\HoatDongMuaVu;
 use App\Models\LichMuaVu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -41,17 +42,14 @@ class LichMuaVuService{
 
     public function getListLichMuaVuAutoComplete($request){
         try {
-            if($request->has('id_hoptacxa')){
-                $id_hoptacxa = $request->id_hoptacxa;
-            }
-            else{
-                $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
-            }
+            $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
             
             $lichmuavu = LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')
             ->where('id_hoptacxa', $id_hoptacxa)
+            ->whereIn('status', ['start', 'upcoming'])
             ->Search($request)
             ->limit(15)
+            ->orderBy('id_lichmuavu', 'desc')
             ->get();
             return $lichmuavu;
         } catch (\Exception $error) {
@@ -85,14 +83,13 @@ class LichMuaVuService{
         
 
         try {
-            $detailLichMuaVu = 
-            LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')
+            $detailLichMuaVu = LichMuaVu::join('tbl_gionglua','tbl_lichmuavu.id_gionglua','=','tbl_gionglua.id_gionglua')
             ->where('id_lichmuavu', $id_lichmuavu)->first();
             if($detailLichMuaVu == null){
                 Session::flash('error', 'Lịch mùa vụ không tồn tại');
                 return false; 
             }
-            return $detailLichMuaVu;
+            return ($detailLichMuaVu);
         } catch (\Exception $error) {
             Session::flash('error', 'Không lấy được lịch mùa vụ');
             return false;
@@ -163,24 +160,46 @@ class LichMuaVuService{
         $date_start = $request->date_start;
         $date_end = $request->date_end;
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
-        // return dd($id_hoptacxa);
         $status = "upcoming"; // Trạng thái sắp bắt đầu / upcoming - start - finish
 
-        $checkDateStartDateEnd = $this->commonService->checkDate($date_start, $date_end);
         if(!$this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
             Session::flash('error', 'Bạn không có quyền quản trị để tạo lịch mùa vụ');
             return false;
         }
-        try {
-            DB::beginTransaction();
-            if(($checkDateStartDateEnd)){
 
-                if($date_start < now()->format('Y-m-d')){
-                    $status = "start"; //Đã bắt đầu
-                }
-                if($date_end < now()->format('Y-m-d')){
-                    $status = "finish"; //Kết thúc
-                }
+        if(!$this->commonService->checkDate($date_start, $date_end)){
+            return false;
+        }
+
+        if($date_start <= now()->format('Y-m-d')){
+            $status = "start"; //Đã bắt đầu
+        }
+
+        if($date_end < now()->format('Y-m-d')){
+            Session::flash('error', 'Ngày kết thúc không thể nhỏ hơn này hiện tại');
+            return false;
+        }
+
+        $lichmuavu_start = LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->where('status', 'start')->first();
+        $lichmuavu_upcoming = LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->where('status', 'upcoming')->first();
+
+        if($lichmuavu_start != null ||$lichmuavu_upcoming != null){
+            if( $lichmuavu_start != null ){
+                Session::flash('error', 'Bạn đã có 1 mùa vụ đang diễn ra, không thể tạo thêm mùa vụ mới');
+                return false;
+            }
+    
+            if( $lichmuavu_upcoming != null ){
+                Session::flash('error', 'Bạn đã có 1 mùa vụ sắp diễn ra, không thể tạo thêm mùa vụ mới');
+                return false;
+            }
+        }
+
+
+
+        try {
+
+            DB::beginTransaction();
 
                 $lichmuavu = LichMuaVu::create([
                     'id_hoptacxa' => $id_hoptacxa,
@@ -201,14 +220,10 @@ class LichMuaVuService{
                         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
                         $this->notificationService->sendNotificationService($notify->id);
                     }
-                    
                 }
 
                 DB::commit();
                 return $lichmuavu;
-            }
-            DB::rollBack();
-            return false;
         } catch (\Exception $error) {
             DB::rollBack();
             Session::flash('error', 'Không tạo được lịch mùa vụ' . $error);
@@ -234,19 +249,46 @@ class LichMuaVuService{
             Session::flash('error', 'Lịch mùa vụ không tồn tại');
             return false;
         }
+        
+        if($date_start <= now()->format('Y-m-d')){
+            $status = "start"; //Đã bắt đầu
+        } 
+
+        if($date_end < now()->format('Y-m-d')){
+            Session::flash('error', 'Ngày kết thúc không thể nhỏ hơn này hiện tại');
+            return false;
+        }
+
+        $lichmuavu = LichMuaVu::find($id_lichmuavu);
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Bạn không chỉnh sửa mùa vụ đã kết thúc');
+            return false;
+        }
+
+        $hoatdong_in_lichmuavu_max_date_start = HoatDongMuaVu::where('id_lichmuavu', $id_lichmuavu)->min('date_start');
+        $hoatdong_in_lichmuavu_max_date_end = HoatDongMuaVu::where('id_lichmuavu', $id_lichmuavu)->max('date_end');
+        if($hoatdong_in_lichmuavu_max_date_start != null){
+            if($hoatdong_in_lichmuavu_max_date_start > $date_start){
+                Session::flash('error', 'Ngày bắt đầu lịch mùa vụ lớn hơn ngày bắt đầu hoạt động mùa vụ, vui lòng cập nhật hoạt động mùa vụ trước khi thay đổi');
+                return false;
+            }
+        }
+
+        // return dd($hoatdong_in_lichmuavu_max_date_end);
+
+        if($hoatdong_in_lichmuavu_max_date_end != null){
+            if($hoatdong_in_lichmuavu_max_date_end > $date_end){
+                Session::flash('error', 'Ngày kết thúc lịch mùa vụ nhỏ hơn ngày kết thúc hoạt động mùa vụ, vui lòng cập nhật hoạt động mùa vụ trước khi thay đổi');
+                return false;
+            }
+        }
+       
+
 
         try {
             DB::beginTransaction();
             if(($checkDateStartDateEnd)){
 
-                if($date_start < now()->format('Y-m-d')){
-                    $status = "start"; //Đã bắt đầu
-                }
-                if($date_end < now()->format('Y-m-d')){
-                    $status = "finish"; //Kết thúc
-                }
-
-                $lichmuavu = LichMuaVu::find($id_lichmuavu);
                 
                     $lichmuavu->id_gionglua = $request->input('id_gionglua');
                     $lichmuavu->name_lichmuavu = $request->input('name_lichmuavu');

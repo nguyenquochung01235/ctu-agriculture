@@ -84,7 +84,7 @@ class HoatDongMuaVuService{
         }
         
         try {
-            $data =  HoatDongMuaVu::where('id_lichmuavu', $id_lichmuavu)
+            $data = HoatDongMuaVu::where('id_lichmuavu', $id_lichmuavu)
             ->HoatDongMuaVu($request)
             ->NameHoatDongMuaVu($request)
             ->DateStart($request)
@@ -133,10 +133,22 @@ class HoatDongMuaVuService{
             Session::flash('error', 'Ngày bắt đầu lớn hơn ngày kết thúc');
             return false;
         }
+         
+        if($date_start < now()->format('Y-m-d')){
+            $status = "start"; //Đã bắt đầu
+        }
+        if($date_end < now()->format('Y-m-d')){
+            $status = "finish"; //Kết thúc
+        }
 
-        $lichmuavu = LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first(['date_start','date_end']);
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first();
         $lichmuavu_date_start = $lichmuavu->date_start;
         $lichmuavu_date_end = $lichmuavu->date_end;
+
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể thêm hoạt động');
+            return false;
+        }
 
         if($date_start <  $lichmuavu_date_start){
             Session::flash('error', 'Ngày bắt đầu hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
@@ -148,12 +160,6 @@ class HoatDongMuaVuService{
         }
 
         try {
-            if($date_start < now()->format('Y-m-d')){
-                $status = "start"; //Đã bắt đầu
-            }
-            if($date_end < now()->format('Y-m-d')){
-                $status = "finish"; //Kết thúc
-            }
             DB::beginTransaction();
             $hoatDongMuaVu = HoatDongMuaVu::create([
                 'id_lichmuavu' => $request->input('id_lichmuavu'),
@@ -193,6 +199,25 @@ class HoatDongMuaVuService{
 
         if(!$this->commonService->checkDate($date_start, $date_end)){
             Session::flash('error', 'Ngày bắt đầu lớn hơn ngày kết thúc');
+            return false;
+        }
+
+        $lichmuavu = LichMuaVu::where('id_lichmuavu',  $id_lichmuavu)
+            ->where('id_hoptacxa',  $id_hoptacxa)->first();
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể cập nhật hoạt động');
+            return false;
+        }
+
+        $lichmuavu_date_start = $lichmuavu->date_start;
+        $lichmuavu_date_end = $lichmuavu->date_end;
+
+        if($date_start <  $lichmuavu_date_start){
+            Session::flash('error', 'Ngày bắt đầu hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
+            return false;
+        }
+        if($date_end >  $lichmuavu_date_end){
+            Session::flash('error', 'Ngày kết thúc của hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
             return false;
         }
 
@@ -244,6 +269,13 @@ class HoatDongMuaVuService{
             DB::beginTransaction();
 
             $hoatDongMuaVu =  HoatDongMuaVu::find($id_hoatdongmuavu);
+            $lichmuavu = LichMuaVu::where('id_lichmuavu',  $hoatDongMuaVu->id_lichmuavu)
+                ->where('id_hoptacxa',  $id_hoptacxa)->first();
+            if($lichmuavu->status == 'finish'){
+                Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể xóa hoạt động');
+                return false;
+            }
+
             if($hoatDongMuaVu != null){
                 $hoatDongMuaVu->delete();
                 NhatKyDongRuong::where('id_hoatdongmuavu', $id_hoatdongmuavu)->delete();

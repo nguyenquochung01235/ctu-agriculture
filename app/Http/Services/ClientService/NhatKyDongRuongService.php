@@ -4,6 +4,7 @@ namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
 use App\Models\HoatDongMuaVu;
+use App\Models\LichMuaVu;
 use App\Models\NhatKyDongRuong;
 use App\Models\ThuaDat;
 use App\Models\XaVien;
@@ -121,6 +122,7 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Bạn không có quyền quản trị để xem danh sách nhật ký hoạt động mùa vụ');
             return false;
         }
+    
         if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
             Session::flash('error', 'Lịch mùa vụ không tồn tại');
             return false;
@@ -180,7 +182,7 @@ class NhatKyDongRuongService{
             return false;
         };
 
-        $id_lichmuavu = $request->lichmuavu;
+        $id_lichmuavu = $request->id_lichmuavu;
         $page = $request->page;
         $limit =  $request->limit;
         $search = $request->search;
@@ -211,7 +213,12 @@ class NhatKyDongRuongService{
                 Session::flash('error', 'Lịch mùa vụ không tồn tại');
                 return false;
             }
+        }else{
+          $lichmuavu = LichMuaVu::orderBy('id_lichmuavu', 'desc')->first();
+          $id_lichmuavu = $lichmuavu->id_lichmuavu;
         }
+
+        
         try {
             $data = NhatKyDongRuong
                 ::join('tbl_xavien', 'tbl_xavien.id_xavien', 'tbl_nhatkydongruong.id_xavien')
@@ -230,12 +237,13 @@ class NhatKyDongRuongService{
                     'tbl_user.fullname',
                     'tbl_thuadat.address'
                     )
-                ->LichMuaVu($request)
+                ->LichMuaVu($id_lichmuavu)
                 ->HoatDongMuaVu($request)
                 ->DateStart($request)
                 ->DateEnd($request)
                 ->Type($request)
                 ->Status($request)
+                ->Approve($request)
                 ->Search($request);
 
             $total = $data->count();
@@ -297,7 +305,9 @@ class NhatKyDongRuongService{
        } 
     }
 
-    public function acceptNhatKyDongRuong($id_nhatkydongruong){
+    public function approveNhatKyDongRuong($request){
+        $id_nhatkydongruong = $request->id_nhatkydongruong;
+        $hoptacxa_xacnhan = $request->hoptacxa_xacnhan; 
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
 
         if(! $this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
@@ -316,12 +326,18 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Đây là hoạt động chung bạn không cần duyệt');
             return false;
         }
+        if(in_array($hoptacxa_xacnhan, [0,1,2]) == false){
+            Session::flash('error', 'Không xác định được trạng thái');
+            return false;
+        }
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $nhatKyDongRuong->id_lichmuavu)->first();
+        if( $lichmuavu->status == 'finish'){
+            Session::flash('error', 'Không thể xác nhận hoạt động của mùa vụ đã kết thúc');
+            return false;
+        }
+        
 
        try {
-        $hoptacxa_xacnhan = 0;
-        if($nhatKyDongRuong->hoptacxa_xacnhan != 1){
-            $hoptacxa_xacnhan = 1;
-        }
         DB::beginTransaction();
         $nhatKyDongRuong->hoptacxa_xacnhan = $hoptacxa_xacnhan;
         $nhatKyDongRuong->save();
@@ -356,10 +372,20 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Bạn không có quyền quản trị để thực hiện hành động này');
             return false;
         }
-        if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
+
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first();
+
+        if($lichmuavu == null){
             Session::flash('error', 'Lịch mùa vụ không tồn tại');
             return false;
         }
+
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Không thể áp lịch mùa vụ đã kết thúc');
+            return false;
+        }
+
+
         if(HoatDongMuaVu::where('id_lichmuavu',$id_lichmuavu)->count() == 0
         ){
             Session::flash('error', 'Lịch mùa vụ chưa có hoạt động nào!');
@@ -461,12 +487,32 @@ class NhatKyDongRuongService{
         $id_xavien = $this->xaVienService->getIdXaVienByToken();
         $date_start = $request->date_start;
         $date_end = $request->date_end;
-        if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
+
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first();
+
+        if($lichmuavu == null){
             Session::flash('error', 'Lịch mùa vụ không tồn tại');
             return false;
         }
+
        
         $checkDateStartDateEnd = $this->commonService->checkDate($date_start, $date_end);
+        $lichmuavu_date_start = $lichmuavu->date_start;
+        $lichmuavu_date_end = $lichmuavu->date_end;
+
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể thêm hoạt động');
+            return false;
+        }
+
+        if($date_start <  $lichmuavu_date_start){
+            Session::flash('error', 'Ngày bắt đầu hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
+            return false;
+        }
+        if($date_end >  $lichmuavu_date_end){
+            Session::flash('error', 'Ngày kết thúc của hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
+            return false;
+        }
 
         try {
             DB::beginTransaction();
@@ -517,6 +563,30 @@ class NhatKyDongRuongService{
                 return false;
             }
 
+           
+            $lichmuavu = LichMuaVu::where('id_lichmuavu', $nhatKyDongRuong->id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first();
+
+            if($lichmuavu == null){
+                Session::flash('error', 'Lịch mùa vụ không tồn tại');
+                return false;
+            }
+            if($lichmuavu->status == 'finish'){
+                Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể cập nhật hoạt động');
+                return false;
+            }
+    
+            $lichmuavu_date_start = $lichmuavu->date_start;
+            $lichmuavu_date_end = $lichmuavu->date_end;
+    
+            if($date_start <  $lichmuavu_date_start){
+                Session::flash('error', 'Ngày bắt đầu hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
+                return false;
+            }
+            if($date_end >  $lichmuavu_date_end){
+                Session::flash('error', 'Ngày kết thúc của hoạt động nằm ngoài thời gian hoạt động của mùa vụ');
+                return false;
+            }
+
             DB::beginTransaction();
             if(($checkDateStartDateEnd)){
 
@@ -554,8 +624,16 @@ class NhatKyDongRuongService{
         }
         $id_lichmuavu = $nhatKyDongRuong->id_lichmuavu;
 
-        if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
+        $lichmuavu = LichMuaVu::where('id_lichmuavu',  $nhatKyDongRuong->id_lichmuavu)
+                ->where('id_hoptacxa',  $id_hoptacxa)->first();
+
+        if($lichmuavu == null){
             Session::flash('error', 'Lịch mùa vụ không tồn tại');
+            return false;
+        }
+        
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể xóa hoạt động');
             return false;
         }
        

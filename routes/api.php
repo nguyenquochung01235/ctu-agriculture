@@ -83,7 +83,6 @@ Route::middleware(['auth.jwt'])->group(function(){
         Route::prefix("lichmuavu")->group(function(){
             Route::post("/create",[LichMuaVuController::class, 'createLichMuaVu']);
             Route::get("/get-list-for-hdmb/{id_hoptacxa}",[LichMuaVuController::class, 'getListLichMuaVuForHopDongMuaBan']);
-            Route::get("/get-list-for-gdmblg/{id_hoptacxa}",[LichMuaVuController::class, 'getListLichMuaVuForHopDongMuaBan']);
             Route::get("/get-detail/{id_lichmuavu}",[LichMuaVuController::class, 'getDetailLichMuaVu']);
             Route::get("/get-list",[LichMuaVuController::class, 'getListLichMuaVu']);
             Route::put("/update/{id_lichmuavu}",[LichMuaVuController::class, 'updateLichMuaVu']);
@@ -107,7 +106,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::put("/update/{id_nhatkydongruong}",[NhatKyDongRuongController::class, 'updateNhatKyHoatDong']);
             Route::delete("/delete/{id}",[NhatKyDongRuongController::class, 'deleteNhatKyHoatDong']);
             Route::get("get-list-all", [NhatKyDongRuongController::class, 'getListNhatKyDongRuongForHTX']);
-            Route::put("/htx-accept/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'acceptNhatKyDongRuong']);
+            Route::put("/htx-accept/{id_nhatkydongruong}", [NhatKyDongRuongController::class, 'approveNhatKyDongRuong']);
         }); 
 
         Route::prefix("gionglua")->group(function(){
@@ -167,8 +166,9 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("/get-list",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiong']);
             Route::get("/get-list/all",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiongForHTX']);
             Route::post("/create",[GiaoDichMuaBanLuaGiongController::class, 'createGiaoDichMuaBanLuaGiong']);
+            Route::post("/update/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'updateGiaoDichMuaBanLuaGiong']);
+
             // Route::put("/confirm/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'confirmHopDong']);
-            // Route::put("/update/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'updateHopDong']);
             // Route::delete("/delete/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'deleteHopDong']);
         }); 
 
