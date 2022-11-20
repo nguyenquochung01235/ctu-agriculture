@@ -67,7 +67,7 @@ class HopTacXaService{
             }
             return $id_hoptacxa;
        } catch (\Exception $error) {
-           Session::flash('error', 'Không xác định được hợp tác xã bằng token user' . $error);
+           Session::flash('error', 'Không xác định được hợp tác xã bằng token user');
            return false;
        }
    }
@@ -108,20 +108,47 @@ class HopTacXaService{
         $phone_number = $request->phone_number;
         try {
             $hoptacxa = HopTacXa::where('phone_number',$phone_number)->first();
-
-             if($hoptacxa == null){
-                Session::flash('error','Không tìm thấy kết quả');
+            
+            if($hoptacxa == null){
+                Session::flash('error','Không tìm thấy hợp tác xã');
                 return false;
             }
+
+            $lichmuavu = LichMuaVu::join('tbl_gionglua', 'tbl_gionglua.id_gionglua', 'tbl_lichmuavu.id_gionglua')
+            ->where('id_hoptacxa', $hoptacxa->id_hoptacxa)
+            ->whereIn('tbl_lichmuavu.status', ['start', 'upcoming'])
+            ->first();
+
+            if($lichmuavu == null){
+                Session::flash('error','Hợp tác xã này không có lịch mùa vụ nào sẵn sàng cho hợp đồng mua bán');
+                return false;
+            }
+
+            $chunhiem = $this->getChuNhiemHTX($hoptacxa->id_hoptacxa);
+
 
             if($hoptacxa->active != 1){
                 Session::flash('error','Hợp tác xã chưa được kích hoạt hoặc đang bị khóa');
                 return false;
             }
-            
-           
 
-            return $hoptacxa;
+            return ([
+                'id_hoptacxa'=>$hoptacxa->id_hoptacxa,
+                'name_hoptacxa'=>$hoptacxa->name_hoptacxa,
+                'phone_number_hoptacxa'=>$hoptacxa->phone_number,
+                'email_hoptacxa'=>$hoptacxa->email,
+                'address_hoptacxa'=>$hoptacxa->address,
+                'fullname'=>$chunhiem->fullname,
+                'phone_number_chunhiem'=>$chunhiem->phone_number,
+                'address'=>$chunhiem->address,
+                'id_lichmuavu'=>$lichmuavu->id_lichmuavu,
+                'name_lichmuavu'=>$lichmuavu->name_lichmuavu,
+                'date_start'=>$lichmuavu->date_start,
+                'date_end'=>$lichmuavu->date_end,
+                'status_lichmuavu'=>$lichmuavu->status,
+                'id_gionglua'=>$lichmuavu->id_gionglua,
+                'name_gionglua'=>$lichmuavu->name_gionglua,
+            ]);
 
         } catch (\Exception $error) {
             Session::flash('error','Không thể lấy kết quả, có lỗi trong lúc truy xuất');
@@ -152,7 +179,7 @@ class HopTacXaService{
         ]);
         return $result;
        } catch (\Exception $error) {
-        Session::flash('error', 'Không thể lấy dữ liệu' .$error);
+        Session::flash('error', 'Không thể lấy dữ liệu');
         return false;
        }
     }
@@ -345,7 +372,7 @@ class HopTacXaService{
              return false;
          } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', $error);
+            Session::flash('error', 'Không thể tạo hợp tác xã');
             return false;
         }
     }
@@ -407,7 +434,7 @@ class HopTacXaService{
              return false;
          } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', $error);
+            Session::flash('error', 'Không thể thêm xã viên vào hợp tác xã');
             return false;
         }
     }
@@ -442,7 +469,7 @@ class HopTacXaService{
             return false;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Có lỗi trong lúc xóa, ' .$error);
+            Session::flash('error', 'Có lỗi trong lúc xóa');
             return false;
         }
     }

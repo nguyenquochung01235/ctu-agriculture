@@ -85,7 +85,7 @@ class DanhMucQuyDinhService{
             Session::flash('error', 'Danh sách quy định rỗng !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách quy định' . $error);
+              Session::flash('error', 'Không lấy được danh sách quy định');
               return false;
           }
     }

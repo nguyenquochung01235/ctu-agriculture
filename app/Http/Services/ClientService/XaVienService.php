@@ -5,6 +5,7 @@ namespace App\Http\Services\ClientService;
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
 use App\Models\Account;
+use App\Models\LichMuaVu;
 use App\Models\RoleXaVien;
 use App\Models\User;
 use App\Models\XaVien;
@@ -195,7 +196,7 @@ class XaVienService{
             Session::flash('error', 'Chưa có xã viên trong hợp tác xã của bạn');
              return false;
          } catch (\Exception $error) {
-             Session::flash('error', 'Không lấy được danh sách' . $error);
+             Session::flash('error', 'Không lấy được danh sách');
              return false;
          }
     }
@@ -236,19 +237,84 @@ class XaVienService{
             ]);
             return  $result;
         } catch (\Exception $error) {
-            Session::flash('error', 'Không lấy được role của user' . $error);
+            Session::flash('error', 'Không lấy được role của user');
             return false;
         }
     }
 
-    public function searchXaVienByPhoneNumber($phone_number){
+    public function searchXaVienByPhoneNumber($request){
+        
         try {
-            $result =  User::with('xavien')->where('phone_number',$phone_number)->first();
-            if($result != []){
+            $phone_number = $request->phone_number;
+            $type = $request->type;
+          
+            $xavien = XaVien::join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+                    ->leftJoin('tbl_hoptacxa', 'tbl_hoptacxa.id_hoptacxa', 'tbl_xavien.id_hoptacxa')
+                    ->where('tbl_user.phone_number', $phone_number);
+
+            if($xavien->first() == null){
+                Session::flash('error', 'Không tìm thấy xã viên !');
+                return false;
+            }
+            
+            if($type != null){
+                switch ($type) {
+                    case 'giaodichmuabanluagiong':
+                        if($xavien->first()->id_hoptacxa == null){
+                            Session::flash('error', 'Xã viên không thuộc hợp tác xã, không thể tạo giao dịch !');
+                            return false;
+                        }
+                        $result = $xavien->join('tbl_lichmuavu', 'tbl_lichmuavu.id_hoptacxa', 'tbl_xavien.id_hoptacxa')
+                                ->whereIn('tbl_lichmuavu.status', ['start', 'upcoming'])
+                                ->select(
+                                    'tbl_xavien.id_xavien',
+                                    'tbl_user.id_user',
+                                    'tbl_xavien.id_hoptacxa',
+                                    'tbl_user.fullname',
+                                    'tbl_user.phone_number as xavien_phone_number',
+                                    'tbl_user.address',
+                                    'id_lichmuavu',
+                                    'name_lichmuavu',
+                                    'name_hoptacxa',
+                                    'tbl_hoptacxa.phone_number as hoptacxa_phone_number',
+                                )
+                                ->first();
+                        
+                        if($result->id_lichmuavu == null){
+                            Session::flash('error', 'Xã viên này không có lịch mùa vụ sẵn sàng để tạo giao dịch !');
+                            return false;
+                        }
+                        
+    
+                        break;
+                    
+                    default:
+                        Session::flash('error', 'Tìm kiếm không thành công, định dạng không khớp dữ liệu');
+                        return false;
+                        break;
+                }
+            }else{
+                $result = $xavien
+                    ->select(
+                        'tbl_user.id_user',
+                        'tbl_xavien.id_xavien',
+                        'tbl_user.fullname',
+                        'tbl_user.phone_number',
+                        'tbl_user.address',
+                        'tbl_user.dob',
+                        'tbl_xavien.thumbnail',
+                        'tbl_xavien.id_hoptacxa',
+                        'tbl_hoptacxa.name_hoptacxa',
+                        'tbl_hoptacxa.phone_number as hoptacxa_phone_number',
+                    )
+                    ->first();
+            }
+
+
+            if($result != null){
              return $result;
             }
-            Session::flash('error', 'Không tìm thấy xã viên !');
-             return false;
+            
          } catch (\Exception $error) {
              Session::flash('error', 'Tìm kiếm không thành công' . $error);
              return false;

@@ -84,14 +84,18 @@ class ThuongLaiService{
         try {
             $thuonglai = ThuongLai::join('tbl_user', 'tbl_thuonglai.id_user', '=', 'tbl_user.id_user')
                 ->where('id_thuonglai',$id_thuonglai)
+                ->select(
+                    'tbl_thuonglai.*',
+                    'tbl_user.id_user',
+                    'tbl_user.fullname',
+                    'tbl_user.email',
+                    'tbl_user.phone_number',
+                    'tbl_user.address',
+                )
                 ->first();
-            return  $thuonglai->makeHidden([
-                'password',
-                'wallet',
-                'created_at',
-                'updated_at',
-                'remember_token',
-            ]);
+            return  $thuonglai;
+
+
         } catch (\Exception $error) {
             Session::flash('error', 'Không thể lấy được thông tin');
             return false;

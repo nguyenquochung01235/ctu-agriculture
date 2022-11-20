@@ -35,7 +35,7 @@ class LichMuaVuService{
             Session::flash('error', 'Không tìm thấy mùa vụ !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách lịch mùa vụ' . $error);
+              Session::flash('error', 'Không lấy được danh sách lịch mùa vụ');
               return false;
           }
     }
@@ -150,7 +150,7 @@ class LichMuaVuService{
             Session::flash('error', 'Danh sách lịch mùa vụ rỗng !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách lịch mùa vụ' . $error);
+              Session::flash('error', 'Không lấy được danh sách lịch mùa vụ');
               return false;
           }
     }
@@ -225,7 +225,7 @@ class LichMuaVuService{
                 return $lichmuavu;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không tạo được lịch mùa vụ' . $error);
+            Session::flash('error', 'Không tạo được lịch mùa vụ');
             return false;
         }
     }
@@ -315,7 +315,7 @@ class LichMuaVuService{
             return false;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không cập nhật được lịch mùa vụ' . $error);
+            Session::flash('error', 'Không cập nhật được lịch mùa vụ');
             return false;
         }
 

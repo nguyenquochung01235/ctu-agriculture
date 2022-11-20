@@ -149,7 +149,7 @@ class UserService{
             return  $user;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không cập nhật được tài khoản !!!' . $error);
+            Session::flash('error', 'Không cập nhật được tài khoản !');
             return false;
         }
     }
@@ -170,7 +170,7 @@ class UserService{
         ]);
         return true;
        } catch (\Exception $error) {
-        Session::flash('error', 'Không cập nhật được mật khẩu' . $error);
+        Session::flash('error', 'Không cập nhật được mật khẩu');
         return false;
        }
     }

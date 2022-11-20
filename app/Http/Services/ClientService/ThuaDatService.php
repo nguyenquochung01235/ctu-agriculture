@@ -142,7 +142,7 @@ class ThuaDatService{
             Session::flash('error', 'Danh sách thửa đất rỗng !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách thửa đất' . $error);
+              Session::flash('error', 'Không lấy được danh sách thửa đất');
               return false;
           }
     }
@@ -178,7 +178,7 @@ class ThuaDatService{
             return $thuadat;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', "Loiox". $error);
+            Session::flash('error', "Không thể tạo thửa đất");
             return false;
         }
     }
@@ -209,7 +209,7 @@ class ThuaDatService{
                     $thuadat->thumbnail = $this->uploadImageService->store($request->thumbnail);
                     }
             } catch (\Exception $error) {
-                Session::flash('error',"Lỗi ở upload hình ảnh" . $error);
+                Session::flash('error',"Lỗi ở upload hình ảnh" );
                 return false;
             }
             $thuadat->save();

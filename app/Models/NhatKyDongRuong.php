@@ -24,6 +24,7 @@ class NhatKyDongRuong extends Model
         'type',
         'status',
         'hoptacxa_xacnhan',
+        'reason'
     ];
 
     protected $casts = [

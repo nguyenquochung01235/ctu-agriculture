@@ -106,9 +106,9 @@ class NhatKyDongRuongController extends Controller
          }
     }
 
-    public function toggleActiveNhatKyDongRuong($id_nhatkydongruong){
+    public function toggleActiveNhatKyDongRuong(Request $request){
         try {
-            $result = $this->nhatKyDongRuongService->toggleActiveNhatKyDongRuong($id_nhatkydongruong);
+            $result = $this->nhatKyDongRuongService->toggleActiveNhatKyDongRuong($request);
             if($result != false){
                 return response()->json([
                     "statusCode" => 200,

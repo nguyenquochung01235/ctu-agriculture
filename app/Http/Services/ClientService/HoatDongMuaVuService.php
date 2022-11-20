@@ -108,7 +108,7 @@ class HoatDongMuaVuService{
             Session::flash('error', 'Danh sách hoạt động mùa vụ rỗng !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách hoạt động mùa vụ' . $error);
+              Session::flash('error', 'Không lấy được danh sách hoạt động mùa vụ');
               return false;
           }
     }
@@ -174,7 +174,7 @@ class HoatDongMuaVuService{
             return $hoatDongMuaVu;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thể tạo hoạt động' . $error);
+            Session::flash('error', 'Không thể tạo hoạt động');
             return false;
         }
     }
@@ -252,7 +252,7 @@ class HoatDongMuaVuService{
             return $hoatDongMuaVu;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thể cập nhật hoạt động' . $error);
+            Session::flash('error', 'Không thể cập nhật hoạt động');
             return false;
         }
     }
@@ -289,7 +289,7 @@ class HoatDongMuaVuService{
             return true;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thể xóa hoạt động' . $error);
+            Session::flash('error', 'Không thể xóa hoạt động');
             return false;
         }
     }

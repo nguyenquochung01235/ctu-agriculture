@@ -120,7 +120,7 @@ class HopDongMuaBanService{
       
     } catch (\Exception $error) {
       DB::rollBack();
-      Session::flash('error', 'Xác nhận hợp đồng không thành công' . $error);
+      Session::flash('error', 'Xác nhận hợp đồng không thành công');
       return false;
     }
     
@@ -207,7 +207,7 @@ class HopDongMuaBanService{
       'daidien_hoptacxa'=>$chunhiem->fullname,
     ]);
    } catch (\Exception $error) {
-    Session::flash('error', 'Không lấy được thông tin hợp đồng ' . $error);
+    Session::flash('error', 'Không lấy được thông tin hợp đồng ');
     return false;
    }
 
@@ -307,13 +307,22 @@ class HopDongMuaBanService{
     }
 
 
-    $isHopDongExist = HopDongMuaBan::where('id_thuonglai', $id_thuonglai)
+    $isHopDongExistWithCurrentThuongLai = HopDongMuaBan::where('id_thuonglai', $id_thuonglai)
                       ->where('id_hoptacxa', $id_hoptacxa)
                       ->where('id_lichmuavu', $id_lichmuavu)
                       ->count();
                 
-    if($isHopDongExist != 0){
+    if($isHopDongExistWithCurrentThuongLai != 0){
       Session::flash('error', 'Hợp đồng đã tồn tại, vui lòng thay đổi hoặc kiểm tra thông tin');
+      return false;
+    }
+
+    $isHopDongExistWithOrtherThuongLai = HopDongMuaBan::where('id_hoptacxa', $id_hoptacxa)
+                      ->where('id_lichmuavu', $id_lichmuavu)
+                      ->count();
+                
+    if($isHopDongExistWithOrtherThuongLai != 0){
+      Session::flash('error', 'Hợp tác xã với lịch mùa vụ này đã có hợp đồng với thương lái khác, vui lòng thay đổi hoặc kiểm tra thông tin');
       return false;
     }
 
@@ -347,7 +356,7 @@ class HopDongMuaBanService{
       return $hopDongMuaBan;
     } catch (\Exception $error) {
       DB::rollBack();
-      Session::flash('error', 'Không thể tạo hợp đồng.' . $error);
+      Session::flash('error', 'Không thể tạo hợp đồng.');
       return false;
     }
 
@@ -463,7 +472,7 @@ class HopDongMuaBanService{
 
     } catch (\Exception $error) {
       DB::rollBack();
-      Session::flash('error', 'Không thể cập nhật hợp đồng.' . $error);
+      Session::flash('error', 'Không thể cập nhật hợp đồng.');
       return false;
     }
   }
@@ -520,13 +529,13 @@ class HopDongMuaBanService{
         switch ($who) {
           case 'id_thuonglai':
             $thuonglai = ThuongLai::where('id_thuonglai', $id_thuonglai)->first();
-            $message = "Hợp đồng số ". $id_hopdongmuaban . " vừa được xóa bởi thương lái: ". $thuonglai->name_thuonglai;
+            $message = "Hợp đồng số ". $id_hopdongmuaban . " đã bị hủy và xóa bởi thương lái: ". $thuonglai->name_thuonglai;
             $user = $this->hopTacXaService->getChuNhiemHTX($hopDongMuaBan->id_hoptacxa)->id_user;
             break;
           
           case 'id_hoptacxa':
             $hoptacxa = HopTacXa::where('id_hoptacxa', $id_hoptacxa)->first();
-            $message = "Hợp đồng số ". $id_hopdongmuaban . " vừa được xóa bởi hợp tác xã: ". $hoptacxa->name_hoptacxa;
+            $message = "Hợp đồng số ". $id_hopdongmuaban . " đã bị từ chối xóa bởi hợp tác xã: ". $hoptacxa->name_hoptacxa;
             $user = ThuongLai::where('id_thuonglai', $hopDongMuaBan->id_thuonglai)->first()->id_user;
             break;
           

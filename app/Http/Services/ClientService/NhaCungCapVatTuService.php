@@ -115,7 +115,7 @@ class NhaCungCapVatTuService{
             $account = Account::where('code', '3')->first();
             $nhacungcapvattu->account()->attach($account);
         } catch (\Exception $error) {
-            Session::flash('error', $error);
+            Session::flash('error', 'Không thể tạo tài khoản nhà cung cấp vật tư');
             return false;
         }
         return true;

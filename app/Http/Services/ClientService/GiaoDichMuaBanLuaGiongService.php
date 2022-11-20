@@ -253,7 +253,7 @@ class GiaoDichMuaBanLuaGiongService{
             Session::flash('error', 'Danh sách giao dịch mua bán lúa giống !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách hợp đồng' . $error);
+              Session::flash('error', 'Không lấy được danh sách hợp đồng');
               return false;
           }
         
@@ -344,7 +344,7 @@ class GiaoDichMuaBanLuaGiongService{
             return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống'. $error);
+            Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống');
             return false;
         }
     }
@@ -433,7 +433,7 @@ class GiaoDichMuaBanLuaGiongService{
     //         return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
     //     } catch (\Exception $error) {
     //         DB::rollBack();
-    //         Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống'. $error);
+    //         Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống');
     //         return false;
     //     }
     // }

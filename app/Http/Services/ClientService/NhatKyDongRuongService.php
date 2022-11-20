@@ -65,6 +65,7 @@ class NhatKyDongRuongService{
                 'tbl_nhatkydongruong.status',
                 'tbl_nhatkydongruong.type',
                 'tbl_nhatkydongruong.hoptacxa_xacnhan',
+                'tbl_nhatkydongruong.reason',
                 'tbl_lichmuavu.name_lichmuavu',
                 'tbl_lichmuavu.date_start as lichmuavu_date_start',
                 'tbl_lichmuavu.date_end as lichmuavu_date_end',
@@ -166,7 +167,7 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Không có danh sách nhật ký hoạt động');
              return false;
          } catch (\Exception $error) {
-             Session::flash('error', 'Không lấy được danh sách' . $error);
+             Session::flash('error', 'Không lấy được danh sách');
              return false;
          }
     }
@@ -261,12 +262,14 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Không có danh sách nhật ký hoạt động');
              return false;
          } catch (\Exception $error) {
-             Session::flash('error', 'Không lấy được danh sách' . $error);
+             Session::flash('error', 'Không lấy được danh sách');
              return false;
          }
     }
 
-    public function toggleActiveNhatKyDongRuong($id_nhatkydongruong){
+    public function toggleActiveNhatKyDongRuong($request)
+    {
+        $id_nhatkydongruong = $request->id_nhatkydongruong;
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
         $id_xavien = $this->xaVienService->getIdXaVienByToken();
 
@@ -278,10 +281,21 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Hoạt động không tồn tại');
             return false;
         }
+        if($nhatKyDongRuong->hoptacxa_xacnhan == 2){
+            Session::flash('error', 'Hoạt động đã bị từ chối không thể cập nhật');
+            return false;
+        }
         $id_lichmuavu = $nhatKyDongRuong->id_lichmuavu;
 
         if(!$this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
             Session::flash('error', 'Lịch mùa vụ không tồn tại');
+            return false;
+        }
+
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $nhatKyDongRuong->id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first();
+
+        if($lichmuavu->status == 'finish'){
+            Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể cập nhật hoạt động');
             return false;
         }
        
@@ -297,6 +311,7 @@ class NhatKyDongRuongService{
         DB::beginTransaction();
         $nhatKyDongRuong->status = $status;
         $nhatKyDongRuong->save();
+
         DB::commit();
         return $nhatKyDongRuong;
        } catch (\Exception $error) {
@@ -340,6 +355,13 @@ class NhatKyDongRuongService{
        try {
         DB::beginTransaction();
         $nhatKyDongRuong->hoptacxa_xacnhan = $hoptacxa_xacnhan;
+        if($hoptacxa_xacnhan == 2){
+            if($request->reason == null){
+                Session::flash('error', 'Vui lòng nhập lý do từ chối');
+                return false;
+            }
+            $nhatKyDongRuong->reason = $request->reason;
+        }
         $nhatKyDongRuong->save();
 
         if($nhatKyDongRuong != null){
@@ -560,6 +582,10 @@ class NhatKyDongRuongService{
 
             if($nhatKyDongRuong->hoptacxa_xacnhan == 1){
                 Session::flash('error', 'Hoạt động đã được phê duyệt không thể cập nhật');
+                return false;
+            }
+            if($nhatKyDongRuong->hoptacxa_xacnhan == 2){
+                Session::flash('error', 'Hoạt động đã bị từ chối không thể cập nhật');
                 return false;
             }
 

@@ -19,7 +19,7 @@ class GiongLuaService{
       Session::flash('error', 'Danh sách giống lúa rỗng !');
       return false;
     } catch (\Exception $error) {
-        Session::flash('error', 'Không lấy được danh sách giống lúa' . $error);
+        Session::flash('error', 'Không lấy được danh sách giống lúa');
         return false;
     }
   }

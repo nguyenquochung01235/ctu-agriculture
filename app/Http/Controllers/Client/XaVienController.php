@@ -143,23 +143,13 @@ class XaVienController extends Controller
 
     public function searchXaVienByPhoneNumber(Request $request){
         try {
-            $result = $this->xaVienService->searchXaVienByPhoneNumber($request->phone_number);
+            $result = $this->xaVienService->searchXaVienByPhoneNumber($request);
             if($result){
                 return response()->json([
                     "statusCode" => 200,
                     "message" => "Thông tin xã viên",
                     "errorList" => [],
-                    "data" => [
-                        "id_user"=> $result->id_user,
-                        "id_xavien"=> $result->xavien->id_xavien,
-                        "fullname" => $result->fullname,
-                        "phone_number" => $result->phone_number,
-                        "dob" => $result->dob,
-                        "address" => $result->address,
-                        "thumbnail" => $result->xavien->thumbnail,
-                        "active" => $result->active,
-                        "id_hoptacxa" => $result->xavien->id_hoptacxa
-                    ]
+                    "data" => $result
                 ],200);
             }
     

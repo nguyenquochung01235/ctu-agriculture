@@ -88,7 +88,7 @@ class CategoryVatTuService{
             Session::flash('error', 'Danh sách vật tư định rỗng !');
             return false;
           } catch (\Exception $error) {
-              Session::flash('error', 'Không lấy được danh sách vật tư quy định' . $error);
+              Session::flash('error', 'Không lấy được danh sách vật tư quy định');
               return false;
           }
     }
