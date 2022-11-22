@@ -341,7 +341,11 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Đây là hoạt động chung bạn không cần duyệt');
             return false;
         }
-        if(in_array($hoptacxa_xacnhan, [0,1,2]) == false){
+        if(in_array($nhatKyDongRuong->hoptacxa_xacnhan, [1,2]) == true){
+            Session::flash('error', 'Hoạt động đã được thẩm định không thể thay đổi trạng thái');
+            return false;
+        }
+        if(in_array($hoptacxa_xacnhan, [1,2]) == false){
             Session::flash('error', 'Không xác định được trạng thái');
             return false;
         }

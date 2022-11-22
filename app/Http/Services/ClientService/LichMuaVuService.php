@@ -39,6 +39,22 @@ class LichMuaVuService{
               return false;
           }
     }
+    public function isLichMuaVuEnd($id_lichmuavu){
+        try {
+            $result =  LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->first();
+            if($result == null){
+            Session::flash('error', 'Mùa vụ không tồn tại');
+              return false;
+            }
+            if($result->status == 'finish'){
+              return true;
+            }
+            return false;
+          } catch (\Exception $error) {
+              Session::flash('error', 'Không lấy được danh sách lịch mùa vụ');
+              return false;
+          }
+    }
 
     public function getListLichMuaVuAutoComplete($request){
         try {

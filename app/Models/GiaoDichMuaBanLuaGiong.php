@@ -23,6 +23,7 @@ class GiaoDichMuaBanLuaGiong extends Model
         'nhacungcap_xacnhan',
         'xavien_xacnhan',
         'description_giaodich',
+        'reason'
     ];
 
     protected $casts = [

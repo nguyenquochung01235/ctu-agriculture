@@ -139,33 +139,121 @@ class GiaoDichMuaBanLuaGiongController extends Controller
             ], 400);
         }
     }
-    // public function updateGiaoDichMuaBanLuaGiong(Request $request)
-    // {
-    //     try {
-    //         $result = $this->giaoDichMuaBanLuaGiongService->updateGiaoDichMuaBanLuaGiong($request);
-    //         if ($result) {
-    //             return response()->json([
-    //                 "statusCode" => 200,
-    //                 "message" => "Tạo giao dịch mua bán lúa giống thành công",
-    //                 "errorList" => [],
-    //                 "data" => $result
-    //             ], 200);
-    //         }
+    public function updateGiaoDichMuaBanLuaGiong(Request $request)
+    {
+        try {
+            $result = $this->giaoDichMuaBanLuaGiongService->updateGiaoDichMuaBanLuaGiong($request);
+            if ($result) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Cập nhật giao dịch mua bán lúa giống thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ], 200);
+            }
 
-    //         return response()->json([
-    //             "statusCode" => 400,
-    //             "message" => "Tạo giao dịch mua bán lúa giống không thành công !",
-    //             "errorList" => [Session::get('error')],
-    //             "data" => null
-    //         ], 400);
-    //     } catch (\Exception $error) {
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Cập nhật giao dịch mua bán lúa giống không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
 
-    //         return response()->json([
-    //             "statusCode" => 400,
-    //             "message" => "Có lỗi trong lúc tạo giao dịch",
-    //             "errorList" => [$error],
-    //             "data" => null
-    //         ], 400);
-    //     }
-    // }
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc cập nhật giao dịch",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
+
+    public function deleteGiaoDichMuaBanLuaGiong(Request $request)
+    {
+        try {
+            $result = $this->giaoDichMuaBanLuaGiongService->deleteGiaoDichMuaBanLuaGiong($request);
+            if ($result) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Xóa giao dịch mua bán lúa giống thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ], 200);
+            }
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Xóa giao dịch mua bán lúa giống không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc xóa giao dịch",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
+    public function confirmGiaoDichMuaBanLuaGiong(Request $request)
+    {
+        try {
+            $result = $this->giaoDichMuaBanLuaGiongService->confirmGiaoDichMuaBanLuaGiong($request);
+            if ($result) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Cập nhật trạng thái giao dịch mua bán lúa giống thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ], 200);
+            }
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Cập nhật trạng thái giao dịch mua bán lúa giống không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc cập nhật trạng thái giao dịch",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
+    public function approveGiaoDichMuaBanLuaGiong(Request $request)
+    {
+        try {
+            $result = $this->giaoDichMuaBanLuaGiongService->approveGiaoDichMuaBanLuaGiong($request);
+            if ($result) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Duyệt trạng thái giao dịch mua bán lúa giống thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ], 200);
+            }
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Duyệt trạng thái giao dịch mua bán lúa giống không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc duyệt trạng thái giao dịch",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
 }

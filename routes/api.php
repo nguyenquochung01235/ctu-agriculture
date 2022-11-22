@@ -167,9 +167,9 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("/get-list/all",[GiaoDichMuaBanLuaGiongController::class, 'getListGiaoDichMuaBanLuaGiongForHTX']);
             Route::post("/create",[GiaoDichMuaBanLuaGiongController::class, 'createGiaoDichMuaBanLuaGiong']);
             Route::post("/update/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'updateGiaoDichMuaBanLuaGiong']);
-
-            // Route::put("/confirm/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'confirmHopDong']);
-            // Route::delete("/delete/{id_hopdongmuaban}",[HopDongMuaBanController::class, 'deleteHopDong']);
+            Route::delete("/delete/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'deleteGiaoDichMuaBanLuaGiong']);
+            Route::put("/confirm/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'confirmGiaoDichMuaBanLuaGiong']);
+            Route::put("/approve/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'approveGiaoDichMuaBanLuaGiong']);
         }); 
 
 
