@@ -339,6 +339,13 @@ class GiaoDichMuaBanLuaGiongService
                 $link = "/giaodichmuabanluagiong";
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $user, $link);
                 $this->notificationService->sendNotificationService($notify->id);
+
+                $id_user_chunhiem = $this->hopTacXaService->getChuNhiemHTX($id_hoptacxa)->id_user;
+                $message = "Xã viên của bạn vừa có một giao dịch mua bán lúa giống mới";
+                $notify = $this->notificationService->createNotificationService($message, $status_notify, $id_user_chunhiem, $link);
+                $this->notificationService->sendNotificationService($notify->id);
+
+
             }
             DB::commit();
             return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
@@ -703,8 +710,12 @@ class GiaoDichMuaBanLuaGiongService
                 }
                 $status_notify = 0;
                 $link = "/giaodichmuabanluagiong";
-                $user = XaVien::where('id_xavien', $giaodichmuabanluagiong->id_xavien)->first()->id_user;
-                $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
+                $id_user_xavien = XaVien::where('id_xavien', $giaodichmuabanluagiong->id_xavien)->first()->id_user;
+                $notify = $this->notificationService->createNotificationService($message, $status_notify,$id_user_xavien,$link);
+                $this->notificationService->sendNotificationService($notify->id);
+
+                $id_user_nhacungcap = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanluagiong->id_nhacungcapvattu)->first()->id_user;
+                $notify = $this->notificationService->createNotificationService($message, $status_notify,$id_user_nhacungcap,$link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
 
