@@ -409,6 +409,12 @@ class GiaoDichMuaBanLuaGiongService
                 return false;
             }
 
+            $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanluagiong->id_lichmuavu)->first();
+            if( $lichmuavu->status == 'finish'){
+                Session::flash('error', 'Không thể cập nhật hoạt động của mùa vụ đã kết thúc');
+                return false;
+            }
+
             $giaodichmuabanluagiong->soluong = $request->soluong;
             $giaodichmuabanluagiong->description_giaodich = $request->description_giaodich;
             $img_lohang = null;
@@ -569,6 +575,12 @@ class GiaoDichMuaBanLuaGiongService
 
         if ($giaodichmuabanluagiong->status == 1) {
             Session::flash('error', 'Giao dịch đã được xác nhận không thể thay đổi trạng thái !');
+            return false;
+        }
+
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanluagiong->id_lichmuavu)->first();
+        if( $lichmuavu->status == 'finish'){
+            Session::flash('error', 'Không thể xác nhận hoạt động của mùa vụ đã kết thúc');
             return false;
         }
 

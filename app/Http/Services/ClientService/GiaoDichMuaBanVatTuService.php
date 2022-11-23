@@ -409,6 +409,12 @@ class GiaoDichMuaBanVatTuService
                 return false;
             }
 
+            $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanvattu->id_lichmuavu)->first();
+            if( $lichmuavu->status == 'finish'){
+                Session::flash('error', 'Không thể cập nhật hoạt động của mùa vụ đã kết thúc');
+                return false;
+            }
+
             $giaodichmuabanvattu->soluong = $request->soluong;
             $giaodichmuabanvattu->price = $request->price;
             $giaodichmuabanvattu->description_giaodich = $request->description_giaodich;
@@ -573,6 +579,12 @@ class GiaoDichMuaBanVatTuService
             return false;
         }
 
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanvattu->id_lichmuavu)->first();
+        if( $lichmuavu->status == 'finish'){
+            Session::flash('error', 'Không thể xác nhận hoạt động của mùa vụ đã kết thúc');
+            return false;
+        }
+
         try {
             DB::beginTransaction();
             switch ($account_type) {
@@ -676,6 +688,7 @@ class GiaoDichMuaBanVatTuService
             Session::flash('error', 'Không xác định được trạng thái');
             return false;
         }
+
         $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanvattu->id_lichmuavu)->first();
         if( $lichmuavu->status == 'finish'){
             Session::flash('error', 'Không thể xác nhận hoạt động của mùa vụ đã kết thúc');
