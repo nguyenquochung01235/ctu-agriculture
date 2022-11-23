@@ -4,15 +4,14 @@ namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
-use App\Models\GiaoDichMuaBanLuaGiong;
+use App\Models\GiaoDichMuaBanVatTu;
 use App\Models\LichMuaVu;
 use App\Models\NhaCungCapVatTu;
 use App\Models\XaVien;
-use AWS\CRT\HTTP\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
-class GiaoDichMuaBanLuaGiongService
+class GiaoDichMuaBanVatTuService
 {
 
     protected $xaVienService;
@@ -38,21 +37,24 @@ class GiaoDichMuaBanLuaGiongService
         $this->uploadImageService = $uploadImageService;
     }
 
-    public function getDetailGiaoDichMuaBanLuaGiong($id_giaodichmuabanluagiong)
+
+    public function getDetailGiaoDichMuaBanVatTu($id_giaodichmuabanvattu)
     {
         try {
-            $giaodich = GiaoDichMuaBanLuaGiong::where('tbl_giaodich_luagiong.id_giaodich_luagiong', $id_giaodichmuabanluagiong)
-                ->join('tbl_gionglua', 'tbl_gionglua.id_gionglua', 'tbl_giaodich_luagiong.id_gionglua')
-                ->join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', 'tbl_giaodich_luagiong.id_lichmuavu')
-                ->join('tbl_hoptacxa', 'tbl_hoptacxa.id_hoptacxa', 'tbl_giaodich_luagiong.id_hoptacxa')
+            $giaodich = GiaoDichMuaBanVatTu::where('tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu', $id_giaodichmuabanvattu)
+                ->join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', 'tbl_giaodichmuaban_vattu.id_lichmuavu')
+                ->join('tbl_hoptacxa', 'tbl_hoptacxa.id_hoptacxa', 'tbl_giaodichmuaban_vattu.id_hoptacxa')
+                ->join('tbl_category_vattu', 'tbl_category_vattu.id_category_vattu', 'tbl_giaodichmuaban_vattu.id_category_vattu')
                 ->select(
-                    "tbl_giaodich_luagiong.*",
+                    "tbl_giaodichmuaban_vattu.*",
                     "tbl_lichmuavu.name_lichmuavu",
-                    "tbl_gionglua.name_gionglua",
                     "tbl_hoptacxa.name_hoptacxa",
                     "tbl_hoptacxa.phone_number",
+                    "tbl_giaodichmuaban_vattu.id_category_vattu",
+                    "tbl_category_vattu.name_category_vattu"
                 )
                 ->first();
+
             if ($giaodich == null) {
                 Session::flash('error', 'Giao dịch mua bán không tồn tại');
                 return false;
@@ -77,13 +79,14 @@ class GiaoDichMuaBanLuaGiongService
             }
 
             return $result = ([
-                "id_giaodich_luagiong" => $giaodich->id_giaodich_luagiong,
+                "id_giaodichmuaban_vattu" => $giaodich->id_giaodichmuaban_vattu,
                 "id_lichmuavu" => $giaodich->id_lichmuavu,
                 "name_lichmuavu" => $giaodich->name_lichmuavu,
-                "id_gionglua" => $giaodich->id_gionglua,
-                "name_gionglua" => $giaodich->name_gionglua,
+                "id_category_vattu" => $giaodich->id_category_vattu,
+                "name_category_vattu" => $giaodich->id_category_vattu,
                 "img_lohang" => $giaodich->img_lohang,
                 "soluong" => $giaodich->soluong,
+                "price" => $giaodich->price,
                 "status" => $giaodich->status,
                 "hoptacxa_xacnhan" => $giaodich->hoptacxa_xacnhan,
                 "nhacungcap_xacnhan" => $giaodich->nhacungcap_xacnhan,
@@ -102,12 +105,13 @@ class GiaoDichMuaBanLuaGiongService
             ]);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống');
+            Session::flash('error', 'Không lấy được thông tin giao dịch mua bán vật tư');
             return false;
         }
     }
 
-    public function getListGiaoDichMuaBanLuaGiong($request)
+
+    public function getListGiaoDichMuaBanVatTu($request)
     {
         $id = null;
         $who = "";
@@ -140,31 +144,31 @@ class GiaoDichMuaBanLuaGiongService
             $search = "";
         }
         if ($order == null || $order == "") {
-            $order = "id_giaodich_luagiong";
+            $order = "id_giaodichmuaban_vattu";
         }
         if ($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")) {
             $sort = "desc";
         }
 
         try {
-            $data = GiaoDichMuaBanLuaGiong::join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', '=', 'tbl_giaodich_luagiong.id_lichmuavu')
-                ->join('tbl_gionglua', 'tbl_gionglua.id_gionglua', '=', 'tbl_giaodich_luagiong.id_gionglua')
-                ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodich_luagiong.id_xavien')
+            $data = GiaoDichMuaBanVatTu::join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', '=', 'tbl_giaodichmuaban_vattu.id_lichmuavu')
+                ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodichmuaban_vattu.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
-                ->join('tbl_nhacungcapvattu', 'tbl_nhacungcapvattu.id_nhacungcapvattu', '=', 'tbl_giaodich_luagiong.id_nhacungcapvattu')
+                ->join('tbl_nhacungcapvattu', 'tbl_nhacungcapvattu.id_nhacungcapvattu', '=', 'tbl_giaodichmuaban_vattu.id_nhacungcapvattu')
+                ->join('tbl_category_vattu', 'tbl_category_vattu.id_category_vattu', 'tbl_giaodichmuaban_vattu.id_category_vattu')
                 ->Who($who, $id)
                 ->select(
-                    "tbl_giaodich_luagiong.id_giaodich_luagiong",
+                    "tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu",
                     "tbl_lichmuavu.name_lichmuavu",
-                    "tbl_gionglua.name_gionglua",
+                    "tbl_category_vattu.name_category_vattu",
                     "tbl_user.fullname as name_xavien",
                     "tbl_nhacungcapvattu.name_daily",
-                    "tbl_giaodich_luagiong.img_lohang",
-                    "tbl_giaodich_luagiong.soluong",
-                    "tbl_giaodich_luagiong.status",
-                    "tbl_giaodich_luagiong.hoptacxa_xacnhan",
-                    "tbl_giaodich_luagiong.nhacungcap_xacnhan",
-                    "tbl_giaodich_luagiong.xavien_xacnhan"
+                    "tbl_giaodichmuaban_vattu.img_lohang",
+                    "tbl_giaodichmuaban_vattu.soluong",
+                    "tbl_giaodichmuaban_vattu.status",
+                    "tbl_giaodichmuaban_vattu.hoptacxa_xacnhan",
+                    "tbl_giaodichmuaban_vattu.nhacungcap_xacnhan",
+                    "tbl_giaodichmuaban_vattu.xavien_xacnhan"
                 );
 
             $total = $data->count();
@@ -176,20 +180,19 @@ class GiaoDichMuaBanLuaGiongService
                 ->get();
 
 
-
             if ($result != []) {
                 return [$result, $meta];
             }
-            Session::flash('error', 'Danh sách giao dịch mua bán lúa giống !');
+            Session::flash('error', 'Danh sách giao dịch mua bán vật tư !');
             return false;
         } catch (\Exception $error) {
-            Session::flash('error', 'Không lấy được danh sách hợp đồng' . $error);
+            Session::flash('error', 'Không lấy được danh sách giao dịch mua bán vật tư'. $error);
             return false;
         }
     }
 
-    public function getListGiaoDichMuaBanLuaGiongForHTX($request)
-    {
+    public function getListGiaoDichMuaBanVatTuForHTX($request)
+    { 
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
         if (!$this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)) {
             Session::flash('error', 'Bạn không có quyền quản trị để xem danh mục này');
@@ -212,31 +215,31 @@ class GiaoDichMuaBanLuaGiongService
             $search = "";
         }
         if ($order == null || $order == "") {
-            $order = "id_giaodich_luagiong";
+            $order = "id_giaodichmuaban_vattu";
         }
         if ($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")) {
             $sort = "desc";
         }
 
         try {
-            $data = GiaoDichMuaBanLuaGiong::join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', '=', 'tbl_giaodich_luagiong.id_lichmuavu')
-                ->join('tbl_gionglua', 'tbl_gionglua.id_gionglua', '=', 'tbl_giaodich_luagiong.id_gionglua')
-                ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodich_luagiong.id_xavien')
+            $data = GiaoDichMuaBanVatTu::join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', '=', 'tbl_giaodichmuaban_vattu.id_lichmuavu')
+                ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodichmuaban_vattu.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
-                ->join('tbl_nhacungcapvattu', 'tbl_nhacungcapvattu.id_nhacungcapvattu', '=', 'tbl_giaodich_luagiong.id_nhacungcapvattu')
-                ->where('tbl_giaodich_luagiong.id_hoptacxa', $id_hoptacxa)
+                ->join('tbl_nhacungcapvattu', 'tbl_nhacungcapvattu.id_nhacungcapvattu', '=', 'tbl_giaodichmuaban_vattu.id_nhacungcapvattu')
+                ->join('tbl_category_vattu', 'tbl_category_vattu.id_category_vattu', 'tbl_giaodichmuaban_vattu.id_category_vattu')
+                ->where('tbl_giaodichmuaban_vattu.id_hoptacxa', $id_hoptacxa)
                 ->select(
-                    "tbl_giaodich_luagiong.id_giaodich_luagiong",
+                    "tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu",
                     "tbl_lichmuavu.name_lichmuavu",
-                    "tbl_gionglua.name_gionglua",
+                    "tbl_category_vattu.name_category_vattu",
                     "tbl_user.fullname as name_xavien",
                     "tbl_nhacungcapvattu.name_daily",
-                    "tbl_giaodich_luagiong.img_lohang",
-                    "tbl_giaodich_luagiong.soluong",
-                    "tbl_giaodich_luagiong.status",
-                    "tbl_giaodich_luagiong.hoptacxa_xacnhan",
-                    "tbl_giaodich_luagiong.nhacungcap_xacnhan",
-                    "tbl_giaodich_luagiong.xavien_xacnhan"
+                    "tbl_giaodichmuaban_vattu.img_lohang",
+                    "tbl_giaodichmuaban_vattu.soluong",
+                    "tbl_giaodichmuaban_vattu.status",
+                    "tbl_giaodichmuaban_vattu.hoptacxa_xacnhan",
+                    "tbl_giaodichmuaban_vattu.nhacungcap_xacnhan",
+                    "tbl_giaodichmuaban_vattu.xavien_xacnhan"
                 );
 
             $total = $data->count();
@@ -248,22 +251,18 @@ class GiaoDichMuaBanLuaGiongService
                 ->get();
 
 
-
             if ($result != []) {
                 return [$result, $meta];
             }
-            Session::flash('error', 'Danh sách giao dịch mua bán lúa giống !');
+            Session::flash('error', 'Danh sách giao dịch mua bán vật tư !');
             return false;
         } catch (\Exception $error) {
-            Session::flash('error', 'Không lấy được danh sách hợp đồng');
+            Session::flash('error', 'Không lấy được danh sách giao dịch mua bán vật tư');
             return false;
         }
     }
 
-
-
-    public function createGiaoDichMuaBanLuaGiong($request)
-    {
+    public function createGiaoDichMuaBanVatTu($request){
         try {
             $id_user = $this->commonService->getIDByToken();
             $account_type = $this->commonService->getAccountTypeByToken();
@@ -293,8 +292,9 @@ class GiaoDichMuaBanLuaGiongService
 
 
             $id_lichmuavu = $request->id_lichmuavu;
-            $id_gionglua = $request->id_gionglua;
+            $id_category_vattu = $request->id_category_vattu;
             $soluong = $request->soluong;
+            $price = $request->price;
             $status = 0;
             $description_giaodich = $request->description_giaodich;
             $hoptacxa_xacnhan = 0;
@@ -304,12 +304,12 @@ class GiaoDichMuaBanLuaGiongService
             }
 
             DB::beginTransaction();
-            $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::create([
+            $giaodichmuabanvattu = GiaoDichMuaBanVatTu::create([
                 'id_xavien' => $id_xavien,
                 'id_hoptacxa' => $id_hoptacxa,
                 'id_nhacungcapvattu' => $id_nhacungcapvattu,
                 'id_lichmuavu' => $id_lichmuavu,
-                'id_gionglua' => $id_gionglua,
+                'id_category_vattu' => $id_category_vattu,
                 'img_lohang' => $img_lohang,
                 'soluong' => $soluong,
                 'status' => $status,
@@ -318,17 +318,17 @@ class GiaoDichMuaBanLuaGiongService
                 'nhacungcap_xacnhan' => $nhacungcap_xacnhan,
                 'xavien_xacnhan' => $xavien_xacnhan,
             ]);
-            if ($giaodichmuabanluagiong != null) {
+            if ($giaodichmuabanvattu != null) {
                 switch ($account_type) {
                     case 'farmer':
                         $xavien = XaVien::where('tbl_xavien.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được tạo bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được tạo bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
                         $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $id_nhacungcapvattu)->first()->id_user;
                         break;
 
                     case 'shop':
                         $nhacungcapvattu = NhaCungCapVatTu::where('tbl_nhacungcapvattu.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_nhacungcapvattu.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được tạo bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được tạo bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
                         $user = XaVien::where('id_xavien', $id_xavien)->first()->id_user;
                         break;
 
@@ -336,27 +336,27 @@ class GiaoDichMuaBanLuaGiongService
                         break;
                 }
                 $status_notify = 0;
-                $link = "/giaodichmuabanluagiong";
+                $link = "/giaodichmuabanvattu";
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $user, $link);
                 $this->notificationService->sendNotificationService($notify->id);
 
                 $id_user_chunhiem = $this->hopTacXaService->getChuNhiemHTX($id_hoptacxa)->id_user;
-                $message = "Xã viên của bạn vừa có một giao dịch mua bán lúa giống mới";
+                $message = "Xã viên của bạn vừa có một giao dịch mua bán vật tư mới";
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $id_user_chunhiem, $link);
                 $this->notificationService->sendNotificationService($notify->id);
 
 
             }
             DB::commit();
-            return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+            return $this->getDetailGiaoDichMuaBanVatTu( $giaodichmuabanvattu->id_giaodichmuaban_vattu);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống');
+            Session::flash('error', 'Không tạo được giao dịch mua bán vật tư' . $error);
             return false;
         }
     }
 
-    public function updateGiaoDichMuaBanLuaGiong($request)
+    public function updateGiaoDichMuaBanVatTu($request)
     {
         try {
             $id_user = $this->commonService->getIDByToken();
@@ -390,68 +390,71 @@ class GiaoDichMuaBanLuaGiongService
             }
 
 
-            $id_giaodichmuabanluagiong = $request->id_giaodichmuabanluagiong;
+            $id_giaodichmuabanvattu = $request->id_giaodichmuabanvattu;
 
-            $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::where('id_giaodich_luagiong', $id_giaodichmuabanluagiong)
+            $giaodichmuabanvattu = GiaoDichMuaBanVatTu::where('id_giaodichmuaban_vattu', $id_giaodichmuabanvattu)
                 ->Who($who, $id)
                 ->first();
-            if ($giaodichmuabanluagiong == null) {
+            if ($giaodichmuabanvattu == null) {
                 Session::flash('error', 'Giao dịch không tồn tại');
                 return false;
             }
 
-            if ($giaodichmuabanluagiong->hoptacxa_xacnhan == 2) {
+            if ($giaodichmuabanvattu->hoptacxa_xacnhan == 2) {
                 Session::flash('error', 'Giao dịch đã bị hủy bởi chủ nhiệm hợp tác xã không thể chỉnh sửa !');
                 return false;
             }
-            if ($giaodichmuabanluagiong->status == 1) {
+            if ($giaodichmuabanvattu->status == 1) {
                 Session::flash('error', 'Giao dịch đã được xác nhận không thể chỉnh sửa !');
                 return false;
             }
 
-            $giaodichmuabanluagiong->soluong = $request->soluong;
-            $giaodichmuabanluagiong->description_giaodich = $request->description_giaodich;
+            $giaodichmuabanvattu->soluong = $request->soluong;
+            $giaodichmuabanvattu->price = $request->price;
+            $giaodichmuabanvattu->description_giaodich = $request->description_giaodich;
             $img_lohang = null;
             if ($request->hasFile('img_lohang')) {
-                if ($giaodichmuabanluagiong->img_lohang != null) {
-                    $this->uploadImageService->delete($giaodichmuabanluagiong->img_lohang);
+                if ($giaodichmuabanvattu->img_lohang != null) {
+                    $this->uploadImageService->delete($giaodichmuabanvattu->img_lohang);
                 }
-                $giaodichmuabanluagiong->img_lohang = $this->uploadImageService->store($request->img_lohang);
+                $giaodichmuabanvattu->img_lohang = $this->uploadImageService->store($request->img_lohang);
             }
-            $giaodichmuabanluagiong->xavien_xacnhan = $xavien_xacnhan;
-            $giaodichmuabanluagiong->nhacungcap_xacnhan = $nhacungcap_xacnhan;
-            $giaodichmuabanluagiong->save();
-            if ($giaodichmuabanluagiong != null) {
+            $giaodichmuabanvattu->xavien_xacnhan = $xavien_xacnhan;
+            $giaodichmuabanvattu->nhacungcap_xacnhan = $nhacungcap_xacnhan;
+            $giaodichmuabanvattu->save();
+            if ($giaodichmuabanvattu != null) {
                 switch ($account_type) {
                     case 'farmer':
                         $xavien = XaVien::where('tbl_xavien.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được cập nhật bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
-                        $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanluagiong->id_nhacungcapvattu)->first()->id_user;
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được cập nhật bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
+                        $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanvattu->id_nhacungcapvattu)->first()->id_user;
                         break;
 
                     case 'shop':
                         $nhacungcapvattu = NhaCungCapVatTu::where('tbl_nhacungcapvattu.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_nhacungcapvattu.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được cập nhật bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
-                        $user = XaVien::where('id_xavien', $giaodichmuabanluagiong->id_xavien)->first()->id_user;
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được cập nhật bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
+                        $user = XaVien::where('id_xavien', $giaodichmuabanvattu->id_xavien)->first()->id_user;
                         break;
 
                     default:
                         break;
                 }
                 $status_notify = 0;
-                $link = "/giaodichmuabanluagiong";
+                $link = "/giaodichmuabanvattu";
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $user, $link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
             DB::commit();
-            return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+            return $this->getDetailgiaodichmuabanvattu($giaodichmuabanvattu->id_giaodichmuaban_vattu);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không cập nhật được giao dịch mua bán lúa giống' . $error);
+            Session::flash('error', 'Không cập nhật được giao dịch mua bán vật tư');
             return false;
         }
     }
-    public function deleteGiaoDichMuaBanLuaGiong($request)
+
+
+    public function deleteGiaoDichMuaBanVatTu($request)
     {
         try {
             $id_user = $this->commonService->getIDByToken();
@@ -462,7 +465,6 @@ class GiaoDichMuaBanLuaGiongService
             switch ($account_type) {
                 case 'farmer':
                     $id_xavien = $this->xaVienService->getIdXaVienByToken();
-                    $id_hoptacxa = XaVien::where('id_xavien', $id_xavien)->first()->id_hoptacxa;
                     $who = "id_xavien";
                     $id = $id_xavien;
                     break;
@@ -480,42 +482,42 @@ class GiaoDichMuaBanLuaGiongService
             }
 
 
-            $id_giaodichmuabanluagiong = $request->id_giaodichmuabanluagiong;
+            $id_giaodichmuabanvattu = $request->id_giaodichmuabanvattu;
 
-            $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::where('id_giaodich_luagiong', $id_giaodichmuabanluagiong)
+            $giaodichmuabanvattu = GiaoDichMuaBanVatTu::where('id_giaodichmuaban_vattu', $id_giaodichmuabanvattu)
                 ->Who($who, $id)
                 ->first();
 
-            if ($giaodichmuabanluagiong == null) {
+            if ($giaodichmuabanvattu == null) {
                 Session::flash('error', 'Giao dịch không tồn tại');
                 return false;
             }
 
-            if ($giaodichmuabanluagiong->status == 1) {
+            if ($giaodichmuabanvattu->status == 1) {
                 Session::flash('error', 'Giao dịch đã được xác nhận không thể xóa !');
                 return false;
             }
 
-            $giaodichmuabanluagiong->delete();
-            if ($giaodichmuabanluagiong != null) {
+            $giaodichmuabanvattu->delete();
+            if ($giaodichmuabanvattu != null) {
                 switch ($account_type) {
                     case 'farmer':
                         $xavien = XaVien::where('tbl_xavien.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được xóa bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
-                        $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanluagiong->id_nhacungcapvattu)->first()->id_user;
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được xóa bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
+                        $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanvattu->id_nhacungcapvattu)->first()->id_user;
                         break;
 
                     case 'shop':
                         $nhacungcapvattu = NhaCungCapVatTu::where('tbl_nhacungcapvattu.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_nhacungcapvattu.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được xóa bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
-                        $user = XaVien::where('id_xavien', $giaodichmuabanluagiong->id_xavien)->first()->id_user;
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được xóa bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
+                        $user = XaVien::where('id_xavien', $giaodichmuabanvattu->id_xavien)->first()->id_user;
                         break;
 
                     default:
                         break;
                 }
                 $status_notify = 0;
-                $link = "/giaodichmuabanluagiong";
+                $link = "/giaodichmuabanvattu";
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $user, $link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
@@ -523,14 +525,14 @@ class GiaoDichMuaBanLuaGiongService
             return true;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không xóa được giao dịch mua bán lúa giống');
+            Session::flash('error', 'Không xóa được giao dịch mua bán vật tư');
             return false;
         }
     }
 
-    public function confirmGiaoDichMuaBanLuaGiong($request)
+    public function confirmGiaoDichMuaBanVatTu($request)
     {
-        $id_giaodichmuabanluagiong = $request->id_giaodichmuabanluagiong;
+        $id_giaodichmuabanvattu = $request->id_giaodichmuabanvattu;
         $id_user = $this->commonService->getIDByToken();
 
         $account_type = $this->commonService->getAccountTypeByToken();
@@ -540,7 +542,6 @@ class GiaoDichMuaBanLuaGiongService
         switch ($account_type) {
             case 'farmer':
                 $id_xavien = $this->xaVienService->getIdXaVienByToken();
-                $id_hoptacxa = XaVien::where('id_xavien', $id_xavien)->first()->id_hoptacxa;
                 $who = "id_xavien";
                 $id = $id_xavien;
 
@@ -558,16 +559,16 @@ class GiaoDichMuaBanLuaGiongService
                 break;
         }
 
-        $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::where('id_giaodich_luagiong', $id_giaodichmuabanluagiong)
+        $giaodichmuabanvattu = GiaoDichMuaBanVatTu::where('id_giaodichmuaban_vattu', $id_giaodichmuabanvattu)
             ->Who($who, $id)
             ->first();
 
-        if ($giaodichmuabanluagiong == null) {
+        if ($giaodichmuabanvattu == null) {
             Session::flash('error', 'Giao dịch không tồn tại');
             return false;
         }
 
-        if ($giaodichmuabanluagiong->status == 1) {
+        if ($giaodichmuabanvattu->status == 1) {
             Session::flash('error', 'Giao dịch đã được xác nhận không thể thay đổi trạng thái !');
             return false;
         }
@@ -576,22 +577,24 @@ class GiaoDichMuaBanLuaGiongService
             DB::beginTransaction();
             switch ($account_type) {
                 case 'farmer':
-                    if ($giaodichmuabanluagiong->xavien_xacnhan == 1) {
-                        $giaodichmuabanluagiong->xavien_xacnhan = 0;
+
+                    if ($giaodichmuabanvattu->xavien_xacnhan == 1) {
+                        $giaodichmuabanvattu->xavien_xacnhan = 0;
                     } else {
-                        $giaodichmuabanluagiong->xavien_xacnhan = 1;
+                        $giaodichmuabanvattu->xavien_xacnhan = 1;
                     }
-                    $giaodichmuabanluagiong->save();
+                    $giaodichmuabanvattu->save();
+                    
                     break;
 
 
                 case 'shop':
-                    if ($giaodichmuabanluagiong->nhacungcap_xacnhan == 1) {
-                        $giaodichmuabanluagiong->nhacungcap_xacnhan = 0;
+                    if ($giaodichmuabanvattu->nhacungcap_xacnhan == 1) {
+                        $giaodichmuabanvattu->nhacungcap_xacnhan = 0;
                     } else {
-                        $giaodichmuabanluagiong->nhacungcap_xacnhan = 1;
+                        $giaodichmuabanvattu->nhacungcap_xacnhan = 1;
                     }
-                    $giaodichmuabanluagiong->save();
+                    $giaodichmuabanvattu->save();
                     break;
 
                 default:
@@ -601,31 +604,31 @@ class GiaoDichMuaBanLuaGiongService
             }
 
 
-            if ($giaodichmuabanluagiong != null) {
+            if ($giaodichmuabanvattu != null) {
                 switch ($account_type) {
                     case 'farmer':
                         $xavien = XaVien::where('tbl_xavien.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được xác nhận bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
-                        $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanluagiong->id_nhacungcapvattu)->first()->id_user;
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được xác nhận bởi xã viên " . $xavien->fullname . ". Vui lòng kiểm tra thông tin";
+                        $user = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanvattu->id_nhacungcapvattu)->first()->id_user;
                         break;
 
                     case 'shop':
                         $nhacungcapvattu = NhaCungCapVatTu::where('tbl_nhacungcapvattu.id_user', $id_user)->join('tbl_user', 'tbl_user.id_user', 'tbl_nhacungcapvattu.id_user')->first();
-                        $message = "Giao dịch mua bán lúa giống số " . $giaodichmuabanluagiong->id_giaodich_luagiong . " vừa được xác nhận bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
-                        $user = XaVien::where('id_xavien', $giaodichmuabanluagiong->id_xavien)->first()->id_user;
+                        $message = "Giao dịch mua bán vật tư số " . $giaodichmuabanvattu->id_giaodichmuaban_vattu . " vừa được xác nhận bởi nhà cung cấp vật tư " . $nhacungcapvattu->fullname . ". Vui lòng kiểm tra thông tin";
+                        $user = XaVien::where('id_xavien', $giaodichmuabanvattu->id_xavien)->first()->id_user;
                         break;
 
                     default:
                         break;
                 }
                 $status_notify = 0;
-                $link = "/giaodichmuabanluagiong";
+                $link = "/giaodichmuabanvattu";
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $user, $link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
 
             DB::commit();
-            return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+            return $this->getDetailgiaodichmuabanvattu($giaodichmuabanvattu->id_giaodichmuaban_vattu);
         } catch (\Exception $error) {
             DB::rollBack();
             Session::flash('error', 'Không thay đổi được trạng thái');
@@ -633,9 +636,9 @@ class GiaoDichMuaBanLuaGiongService
         }
     }
 
-    public function approveGiaoDichMuaBanLuaGiong($request)
+    public function approveGiaoDichMuaBanVatTu($request)
     {
-        $id_giaodichmuabanluagiong = $request->id_giaodichmuabanluagiong;
+        $id_giaodichmuabanvattu = $request->id_giaodichmuabanvattu;
         $hoptacxa_xacnhan = $request->hoptacxa_xacnhan;
         $id_user = $this->commonService->getIDByToken();
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
@@ -646,25 +649,25 @@ class GiaoDichMuaBanLuaGiongService
         }
 
 
-        $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::where('id_giaodich_luagiong', $id_giaodichmuabanluagiong)
+        $giaodichmuabanvattu = GiaoDichMuaBanVatTu::where('id_giaodichmuaban_vattu', $id_giaodichmuabanvattu)
             ->where('id_hoptacxa', $id_hoptacxa)
             ->first();
 
-        if ($giaodichmuabanluagiong == null) {
+        if ($giaodichmuabanvattu == null) {
             Session::flash('error', 'Giao dịch không tồn tại');
             return false;
         }
 
-        if ($giaodichmuabanluagiong->status == 1) {
+        if ($giaodichmuabanvattu->status == 1) {
             Session::flash('error', 'Giao dịch đã được xác nhận không thể thay đổi trạng thái !');
             return false;
         }
 
-        if($giaodichmuabanluagiong->xavien_xacnhan == 0){
+        if($giaodichmuabanvattu->xavien_xacnhan == 0){
             Session::flash('error', 'Giao dịch chưa được xác nhận bởi xã viên không thể thay đổi trạng thái !');
             return false;
         }
-        if($giaodichmuabanluagiong->nhacungcap_xacnhan == 0){
+        if($giaodichmuabanvattu->nhacungcap_xacnhan == 0){
             Session::flash('error', 'Giao dịch chưa được nhà cung cấp vật tư bởi không thể thay đổi trạng thái !');
             return false;
         }
@@ -673,7 +676,7 @@ class GiaoDichMuaBanLuaGiongService
             Session::flash('error', 'Không xác định được trạng thái');
             return false;
         }
-        $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanluagiong->id_lichmuavu)->first();
+        $lichmuavu = LichMuaVu::where('id_lichmuavu', $giaodichmuabanvattu->id_lichmuavu)->first();
         if( $lichmuavu->status == 'finish'){
             Session::flash('error', 'Không thể xác nhận hoạt động của mùa vụ đã kết thúc');
             return false;
@@ -681,41 +684,42 @@ class GiaoDichMuaBanLuaGiongService
         
         try {
             DB::beginTransaction();
-            $giaodichmuabanluagiong->hoptacxa_xacnhan = $hoptacxa_xacnhan;
+            $giaodichmuabanvattu->hoptacxa_xacnhan = $hoptacxa_xacnhan;
             if($hoptacxa_xacnhan == 1){
-                $giaodichmuabanluagiong->status = 1;
+                $giaodichmuabanvattu->status = 1;
             }
             if($hoptacxa_xacnhan == 2){
                 if($request->reason == null){
                     Session::flash('error', 'Vui lòng nhập lý do từ chối');
                     return false;
                 }
-                $giaodichmuabanluagiong->reason = $request->reason;
+                $giaodichmuabanvattu->reason = $request->reason;
             }
-            $giaodichmuabanluagiong->save();
+            $giaodichmuabanvattu->save();
 
-            if($giaodichmuabanluagiong != null){
-                $message = "Giao dịch mua bán lúa giống số $giaodichmuabanluagiong->id_giaodich_luagiong đã bị hủy bởi chủ nhiệm hợp tác xã";
-                if($giaodichmuabanluagiong->hoptacxa_xacnhan == 1){
-                    $message = "Giao dịch mua bán lúa giống số $giaodichmuabanluagiong->id_giaodich_luagiong đã được duyệt bởi chủ nhiệm hợp tác xã";
+            if($giaodichmuabanvattu != null){
+                $message = "Giao dịch mua bán vật tư số $giaodichmuabanvattu->id_giaodichmuaban_vattu đã bị hủy bởi chủ nhiệm hợp tác xã";
+                if($giaodichmuabanvattu->hoptacxa_xacnhan == 1){
+                    $message = "Giao dịch mua bán vật tư số $giaodichmuabanvattu->id_giaodichmuaban_vattu đã được duyệt bởi chủ nhiệm hợp tác xã";
                 }
                 $status_notify = 0;
-                $link = "/giaodichmuabanluagiong";
-                $id_user_xavien = XaVien::where('id_xavien', $giaodichmuabanluagiong->id_xavien)->first()->id_user;
+                $link = "/giaodichmuabanvattu";
+                $id_user_xavien = XaVien::where('id_xavien', $giaodichmuabanvattu->id_xavien)->first()->id_user;
                 $notify = $this->notificationService->createNotificationService($message, $status_notify,$id_user_xavien,$link);
                 $this->notificationService->sendNotificationService($notify->id);
 
-                $id_user_nhacungcap = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanluagiong->id_nhacungcapvattu)->first()->id_user;
+                $id_user_nhacungcap = NhaCungCapVatTu::where('id_nhacungcapvattu', $giaodichmuabanvattu->id_nhacungcapvattu)->first()->id_user;
                 $notify = $this->notificationService->createNotificationService($message, $status_notify,$id_user_nhacungcap,$link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
 
             DB::commit();
-            return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+            return $this->getDetailgiaodichmuabanvattu($giaodichmuabanvattu->id_giaodichmuaban_vattu);
         } catch (\Exception $error) {
             DB::rollBack();
             Session::flash('error', 'Không thay đổi được trạng thái');
             return false;
         }
     }
+   
 }

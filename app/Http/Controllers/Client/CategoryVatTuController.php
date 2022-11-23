@@ -17,6 +17,34 @@ class CategoryVatTuController extends Controller
         $this->categoryVatTuService = $categoryVatTuService;
     }
 
+    public function autoCompleteCategoryVatTu(Request $request){
+        try {
+            $result = $this->categoryVatTuService->autoCompleteCategoryVatTu($request);
+            if($result != false){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Tim kiếm vật tư thành công",
+                    "errorList" => [],
+                    "data" => $result
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Tim kiếm vật tư không thành công !",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
     public function getDetailCategoryVatTu($id_category_vattu){
         try {
             $result = $this->categoryVatTuService->getDetailCategoryVatTu($id_category_vattu);

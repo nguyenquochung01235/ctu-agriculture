@@ -7,6 +7,7 @@ use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\Client\CategoryVatTuController;
 use App\Http\Controllers\Client\DanhMucQuyDinhController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaGiongController;
+use App\Http\Controllers\Client\GiaoDichMuaBanVatTuController;
 use App\Http\Controllers\Client\GiongLuaController;
 use App\Http\Controllers\Client\HoatDongMuaVuController;
 use App\Http\Controllers\Client\HopDongMuaBanController;
@@ -56,6 +57,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("gionglua/get-list",[GiongLuaController::class, 'getListGiongLua']);
             Route::get("danhmucquydinh/get-list", [DanhMucQuyDinhController::class, 'getListDanhMucQuyDinh']);
             Route::get("lichmuavu/get-list", [LichMuaVuController::class, 'getListLichMuaVuAutoComplete']);
+            Route::get("category-vattu/get-list", [CategoryVatTuController::class, 'autoCompleteCategoryVatTu']);
             
         }); 
 
@@ -170,6 +172,17 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::delete("/delete/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'deleteGiaoDichMuaBanLuaGiong']);
             Route::put("/confirm/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'confirmGiaoDichMuaBanLuaGiong']);
             Route::put("/approve/{id_giaodichmuabanluagiong}",[GiaoDichMuaBanLuaGiongController::class, 'approveGiaoDichMuaBanLuaGiong']);
+        }); 
+        
+        Route::prefix("giaodichmuabanvattu")->group(function(){
+            Route::get("/get-detail/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'getDetailGiaoDichMuaBanVatTu']);
+            Route::get("/get-list",[GiaoDichMuaBanVatTuController::class, 'getListGiaoDichMuaBanVatTu']);
+            Route::get("/get-list/all",[GiaoDichMuaBanVatTuController::class, 'getListGiaoDichMuaBanVatTuForHTX']);
+            Route::post("/create",[GiaoDichMuaBanVatTuController::class, 'createGiaoDichMuaBanVatTu']);
+            Route::post("/update/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'updateGiaoDichMuaBanVatTu']);
+            Route::delete("/delete/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'deleteGiaoDichMuaBanVatTu']);
+            Route::put("/confirm/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'confirmGiaoDichMuaBanVatTu']);
+            Route::put("/approve/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'approveGiaoDichMuaBanVatTu']);
         }); 
 
 

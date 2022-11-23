@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Services\ClientService\GiaoDichMuaBanLuaGiongService;
+use App\Http\Services\ClientService\GiaoDichMuaBanVatTuService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
-class GiaoDichMuaBanLuaGiongController extends Controller
+class GiaoDichMuaBanVatTuController extends Controller
 {
-    protected $giaoDichMuaBanLuaGiongService;
+    protected $giaoDichMuaBanVatTuService;
 
-    public function __construct(GiaoDichMuaBanLuaGiongService $giaoDichMuaBanLuaGiongService)
+    public function __construct(GiaoDichMuaBanVatTuService $giaoDichMuaBanVatTuService)
     {
-        $this->giaoDichMuaBanLuaGiongService = $giaoDichMuaBanLuaGiongService;
+        $this->giaoDichMuaBanVatTuService = $giaoDichMuaBanVatTuService;
     }
 
-    public function getDetailGiaoDichMuaBanLuaGiong($id_giaodichmuabanluagiong)
+    public function getDetailGiaoDichMuaBanVatTu($id_giaodichmuabanvattu)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->getDetailGiaoDichMuaBanLuaGiong($id_giaodichmuabanluagiong);
+            $result = $this->giaoDichMuaBanVatTuService->getDetailGiaoDichMuaBanVatTu($id_giaodichmuabanvattu);
 
             if ($result != false) {
                 return response()->json([
@@ -47,15 +47,15 @@ class GiaoDichMuaBanLuaGiongController extends Controller
         }
     }
 
-    public function getListGiaoDichMuaBanLuaGiong(Request $request)
+    public function getListGiaoDichMuaBanVatTu(Request $request)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->getListGiaoDichMuaBanLuaGiong($request);
+            $result = $this->giaoDichMuaBanVatTuService->getListGiaoDichMuaBanVatTu($request);
 
             if ($result != false) {
                 return response()->json([
                     "statusCode" => 200,
-                    "message" => "Danh sách giao dịch lúa giống",
+                    "message" => "Danh sách giao dịch vật tư",
                     "errorList" => [],
                     "data" => $result[0],
                     "meta" => $result[1]
@@ -64,39 +64,7 @@ class GiaoDichMuaBanLuaGiongController extends Controller
 
             return response()->json([
                 "statusCode" => 400,
-                "message" => "Không lấy được danh sách giao dịch lúa giống",
-                "errorList" => [Session::get('error')],
-                "data" => null
-            ], 400);
-        } catch (\Exception $error) {
-
-            return response()->json([
-                "statusCode" => 400,
-                "message" => "Có lỗi trong lúc thực hiện",
-                "errorList" => [$error],
-                "data" => null
-            ], 400);
-        }
-    }
-    
-    public function getListGiaoDichMuaBanLuaGiongForHTX(Request $request)
-    {
-        try {
-            $result = $this->giaoDichMuaBanLuaGiongService->getListGiaoDichMuaBanLuaGiongForHTX($request);
-
-            if ($result != false) {
-                return response()->json([
-                    "statusCode" => 200,
-                    "message" => "Danh sách giao dịch lúa giống",
-                    "errorList" => [],
-                    "data" => $result[0],
-                    "meta" => $result[1]
-                ], 200);
-            }
-
-            return response()->json([
-                "statusCode" => 400,
-                "message" => "Không lấy được danh sách giao dịch lúa giống",
+                "message" => "Không lấy được danh sách giao dịch vật tư",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ], 400);
@@ -111,14 +79,48 @@ class GiaoDichMuaBanLuaGiongController extends Controller
         }
     }
 
-    public function createGiaoDichMuaBanLuaGiong(Request $request)
+
+    public function getListGiaoDichMuaBanVatTuForHTX(Request $request)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->createGiaoDichMuaBanLuaGiong($request);
+            $result = $this->giaoDichMuaBanVatTuService->getListGiaoDichMuaBanVatTuForHTX($request);
+
+            if ($result != false) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Danh sách giao dịch vật tư",
+                    "errorList" => [],
+                    "data" => $result[0],
+                    "meta" => $result[1]
+                ], 200);
+            }
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không lấy được danh sách giao dịch vật tư",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
+
+
+    public function createGiaoDichMuaBanVatTu(Request $request)
+    {
+        try {
+            $result = $this->giaoDichMuaBanVatTuService->createGiaoDichMuaBanVatTu($request);
             if ($result) {
                 return response()->json([
                     "statusCode" => 200,
-                    "message" => "Tạo giao dịch mua bán lúa giống thành công",
+                    "message" => "Tạo giao dịch mua bán vật tư thành công",
                     "errorList" => [],
                     "data" => $result
                 ], 200);
@@ -126,7 +128,7 @@ class GiaoDichMuaBanLuaGiongController extends Controller
 
             return response()->json([
                 "statusCode" => 400,
-                "message" => "Tạo giao dịch mua bán lúa giống không thành công !",
+                "message" => "Tạo giao dịch mua bán vật tư không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ], 400);
@@ -141,14 +143,14 @@ class GiaoDichMuaBanLuaGiongController extends Controller
         }
     }
 
-    public function updateGiaoDichMuaBanLuaGiong(Request $request)
+    public function updateGiaoDichMuaBanVatTu(Request $request)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->updateGiaoDichMuaBanLuaGiong($request);
+            $result = $this->giaoDichMuaBanVatTuService->updateGiaoDichMuaBanVatTu($request);
             if ($result) {
                 return response()->json([
                     "statusCode" => 200,
-                    "message" => "Cập nhật giao dịch mua bán lúa giống thành công",
+                    "message" => "Cập nhật giao dịch mua bán vật tư thành công",
                     "errorList" => [],
                     "data" => $result
                 ], 200);
@@ -156,7 +158,7 @@ class GiaoDichMuaBanLuaGiongController extends Controller
 
             return response()->json([
                 "statusCode" => 400,
-                "message" => "Cập nhật giao dịch mua bán lúa giống không thành công !",
+                "message" => "Cập nhật giao dịch mua bán vật tư không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ], 400);
@@ -171,14 +173,14 @@ class GiaoDichMuaBanLuaGiongController extends Controller
         }
     }
 
-    public function deleteGiaoDichMuaBanLuaGiong(Request $request)
+    public function deleteGiaoDichMuaBanVatTu(Request $request)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->deleteGiaoDichMuaBanLuaGiong($request);
+            $result = $this->giaoDichMuaBanVatTuService->deleteGiaoDichMuaBanVatTu($request);
             if ($result) {
                 return response()->json([
                     "statusCode" => 200,
-                    "message" => "Xóa giao dịch mua bán lúa giống thành công",
+                    "message" => "Xóa giao dịch mua bán vật tư thành công",
                     "errorList" => [],
                     "data" => $result
                 ], 200);
@@ -186,7 +188,7 @@ class GiaoDichMuaBanLuaGiongController extends Controller
 
             return response()->json([
                 "statusCode" => 400,
-                "message" => "Xóa giao dịch mua bán lúa giống không thành công !",
+                "message" => "Xóa giao dịch mua bán vật tư không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ], 400);
@@ -201,14 +203,14 @@ class GiaoDichMuaBanLuaGiongController extends Controller
         }
     }
 
-    public function confirmGiaoDichMuaBanLuaGiong(Request $request)
+    public function confirmGiaoDichMuaBanVatTu(Request $request)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->confirmGiaoDichMuaBanLuaGiong($request);
+            $result = $this->giaoDichMuaBanVatTuService->confirmGiaoDichMuaBanVatTu($request);
             if ($result) {
                 return response()->json([
                     "statusCode" => 200,
-                    "message" => "Cập nhật trạng thái giao dịch mua bán lúa giống thành công",
+                    "message" => "Cập nhật trạng thái giao dịch mua bán vật tư thành công",
                     "errorList" => [],
                     "data" => $result
                 ], 200);
@@ -216,7 +218,7 @@ class GiaoDichMuaBanLuaGiongController extends Controller
 
             return response()->json([
                 "statusCode" => 400,
-                "message" => "Cập nhật trạng thái giao dịch mua bán lúa giống không thành công !",
+                "message" => "Cập nhật trạng thái giao dịch mua bán vật tư không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ], 400);
@@ -230,15 +232,16 @@ class GiaoDichMuaBanLuaGiongController extends Controller
             ], 400);
         }
     }
-    
-    public function approveGiaoDichMuaBanLuaGiong(Request $request)
+
+
+    public function approveGiaoDichMuaBanVatTu(Request $request)
     {
         try {
-            $result = $this->giaoDichMuaBanLuaGiongService->approveGiaoDichMuaBanLuaGiong($request);
+            $result = $this->giaoDichMuaBanVatTuService->approveGiaoDichMuaBanVatTu($request);
             if ($result) {
                 return response()->json([
                     "statusCode" => 200,
-                    "message" => "Duyệt trạng thái giao dịch mua bán lúa giống thành công",
+                    "message" => "Duyệt trạng thái giao dịch mua bán vật tư thành công",
                     "errorList" => [],
                     "data" => $result
                 ], 200);
@@ -246,7 +249,7 @@ class GiaoDichMuaBanLuaGiongController extends Controller
 
             return response()->json([
                 "statusCode" => 400,
-                "message" => "Duyệt trạng thái giao dịch mua bán lúa giống không thành công !",
+                "message" => "Duyệt trạng thái giao dịch mua bán vật tư không thành công !",
                 "errorList" => [Session::get('error')],
                 "data" => null
             ], 400);

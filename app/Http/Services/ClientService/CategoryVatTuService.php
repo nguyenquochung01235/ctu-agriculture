@@ -19,6 +19,23 @@ class CategoryVatTuService{
         $this->thuongLaiService = $thuongLaiService;
     }
 
+    public function autoCompleteCategoryVatTu($request){
+        $id_danhmucquydinh = $request->id_danhmucquydinh;
+
+        try {
+            $listCategoryVatTu = CategoryVatTu::where('id_danhmucquydinh', $id_danhmucquydinh)
+            ->Search($request)
+            ->take(15)
+            ->get();
+            return $listCategoryVatTu;
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không tìm thấy kết quả');
+            return false; 
+        }
+
+    }
+
+
     public function getDetailCategoryVatTu($id_category_vattu){
         $id_thuonglai = $this->thuongLaiService->getIdThuongLai();
         try {

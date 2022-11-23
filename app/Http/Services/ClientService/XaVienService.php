@@ -287,6 +287,42 @@ class XaVienService{
                         
     
                         break;
+
+                    case 'giaodichmuabanvattu':
+                        if($xavien->first()->id_hoptacxa == null){
+                            Session::flash('error', 'Xã viên không thuộc hợp tác xã, không thể tạo giao dịch !');
+                            return false;
+                        }
+                        $result = $xavien->join('tbl_lichmuavu', 'tbl_lichmuavu.id_hoptacxa', 'tbl_xavien.id_hoptacxa')
+                                ->join('tbl_hopdongmuaban', 'tbl_hopdongmuaban.id_lichmuavu', 'tbl_lichmuavu.id_lichmuavu')
+                                ->join('tbl_danhmucquydinh', 'tbl_hopdongmuaban.id_danhmucquydinh', 'tbl_danhmucquydinh.id_danhmucquydinh')
+                                ->whereIn('tbl_lichmuavu.status', ['start', 'upcoming'])
+                                ->select(
+                                    'tbl_xavien.id_xavien',
+                                    'tbl_user.id_user',
+                                    'tbl_xavien.id_hoptacxa',
+                                    'tbl_user.fullname',
+                                    'tbl_user.phone_number as xavien_phone_number',
+                                    'tbl_user.address',
+                                    'tbl_lichmuavu.id_lichmuavu as id_lichmuavu',
+                                    'tbl_lichmuavu.name_lichmuavu as name_lichmuavu',
+                                    'tbl_hoptacxa.name_hoptacxa',
+                                    'tbl_hoptacxa.phone_number as hoptacxa_phone_number',
+                                    'tbl_hopdongmuaban.id_hopdongmuaban',
+                                    'tbl_hopdongmuaban.title_hopdongmuaban',
+                                    'tbl_hopdongmuaban.id_danhmucquydinh',
+                                    'tbl_danhmucquydinh.name_danhmucquydinh',
+                                )
+                                ->first();
+                 
+
+                        if($result == null){
+                            Session::flash('error', 'Xã viên này không có lịch mùa vụ sẵn sàng để tạo giao dịch hoặc chưa có hợp đồng quy định vật tư sử dụng với thương lái!');
+                            return false;
+                        }
+                        
+    
+                        break;
                     
                     default:
                         Session::flash('error', 'Tìm kiếm không thành công, định dạng không khớp dữ liệu');
@@ -311,9 +347,11 @@ class XaVienService{
             }
 
 
-            if($result != null){
-             return $result;
+            if($result == null){
+                Session::flash('error', 'Không tim thấy xã viên');
+             return false;
             }
+            return $result;
             
          } catch (\Exception $error) {
              Session::flash('error', 'Tìm kiếm không thành công' . $error);
