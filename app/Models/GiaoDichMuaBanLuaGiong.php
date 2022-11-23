@@ -18,6 +18,7 @@ class GiaoDichMuaBanLuaGiong extends Model
         'id_gionglua',
         'img_lohang',
         'soluong',
+        'price',
         'status',
         'hoptacxa_xacnhan',
         'nhacungcap_xacnhan',

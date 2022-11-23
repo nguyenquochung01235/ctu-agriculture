@@ -295,6 +295,7 @@ class GiaoDichMuaBanLuaGiongService
             $id_lichmuavu = $request->id_lichmuavu;
             $id_gionglua = $request->id_gionglua;
             $soluong = $request->soluong;
+            $price = $request->price;
             $status = 0;
             $description_giaodich = $request->description_giaodich;
             $hoptacxa_xacnhan = 0;
@@ -312,6 +313,7 @@ class GiaoDichMuaBanLuaGiongService
                 'id_gionglua' => $id_gionglua,
                 'img_lohang' => $img_lohang,
                 'soluong' => $soluong,
+                'price' => $price,
                 'status' => $status,
                 'description_giaodich' => $description_giaodich,
                 'hoptacxa_xacnhan' => $hoptacxa_xacnhan,
@@ -416,6 +418,7 @@ class GiaoDichMuaBanLuaGiongService
             }
 
             $giaodichmuabanluagiong->soluong = $request->soluong;
+            $giaodichmuabanluagiong->price = $request->price;
             $giaodichmuabanluagiong->description_giaodich = $request->description_giaodich;
             $img_lohang = null;
             if ($request->hasFile('img_lohang')) {
@@ -468,7 +471,6 @@ class GiaoDichMuaBanLuaGiongService
             switch ($account_type) {
                 case 'farmer':
                     $id_xavien = $this->xaVienService->getIdXaVienByToken();
-                    $id_hoptacxa = XaVien::where('id_xavien', $id_xavien)->first()->id_hoptacxa;
                     $who = "id_xavien";
                     $id = $id_xavien;
                     break;
