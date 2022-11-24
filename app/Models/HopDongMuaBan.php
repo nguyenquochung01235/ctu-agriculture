@@ -17,6 +17,7 @@ class HopDongMuaBan extends Model
         'id_danhmucquydinh',
         'id_gionglua',
         'title_hopdongmuaban',
+        'price',
         'description_hopdongmuaban',
         'thuonglai_xacnhan',
         'hoptacxa_xacnhan',

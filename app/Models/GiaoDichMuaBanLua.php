@@ -13,19 +13,29 @@ class GiaoDichMuaBanLua extends Model
     protected $fillable = [
         'id_thuonglai',
         'id_xavien',
-        'id_lichmuvu',
-        'status_giaodich',
+        'id_hoptacxa',
+        'id_lichmuavu',
+        'status',
         'hoptacxa_xacnhan',
         'thuonglai_xacnhan',
         'xavien_xacnhan',
         'description_giaodich',
         'name_lohang',
-        'price_lohang',
+        'price',
         'soluong',
         'img_lohang',
+        'reason',
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function scopeWho($query, $who, $id)
+    {
+       
+        $query->where($who, $id);
+        
+        return $query;
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\Client\CategoryVatTuController;
 use App\Http\Controllers\Client\DanhMucQuyDinhController;
+use App\Http\Controllers\Client\GiaoDichMuaBanLuaController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaGiongController;
 use App\Http\Controllers\Client\GiaoDichMuaBanVatTuController;
 use App\Http\Controllers\Client\GiongLuaController;
@@ -184,6 +185,15 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::put("/confirm/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'confirmGiaoDichMuaBanVatTu']);
             Route::put("/approve/{id_giaodichmuabanvattu}",[GiaoDichMuaBanVatTuController::class, 'approveGiaoDichMuaBanVatTu']);
         }); 
+
+        Route::prefix("giaodichmuabanlua")->group(function(){
+            Route::get("/get-detail/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'getDetailGiaoDichMuaBanLua']);
+            Route::get("/get-list",[GiaoDichMuaBanLuaController::class, 'getListGiaoDichMuaBanLua']);
+            Route::get("/get-list/all",[GiaoDichMuaBanLuaController::class, 'getListGiaoDichMuaBanLuaForHTX']);
+            Route::post("/update/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'updateGiaoDichMuaBanLua']);
+            Route::put("/confirm/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'confirmGiaoDichMuaBanLua']);
+            Route::put("/approve/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'approveGiaoDichMuaBanLua']);
+        });
 
 
 });

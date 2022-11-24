@@ -17,19 +17,22 @@ class HopDongMuaBanService{
   protected $xaVienService;
   protected $commonService;
   protected $notificationService;
+  protected $giaoDichMuaBanLuaService;
 
   public function __construct(
     ThuongLaiService $thuongLaiService, 
     HopTacXaService $hopTacXaService,
     XaVienService  $xaVienService,
     CommonService $commonService,
-    NotificationService $notificationService)
+    NotificationService $notificationService,
+    GiaoDichMuaBanLuaService $giaoDichMuaBanLuaService)
   {
     $this->thuongLaiService = $thuongLaiService;
     $this->hopTacXaService = $hopTacXaService;
     $this->xaVienService = $xaVienService;
     $this->commonService = $commonService;
     $this->notificationService = $notificationService;
+    $this->giaoDichMuaBanLuaService = $giaoDichMuaBanLuaService;
   }
 
 
@@ -71,6 +74,11 @@ class HopDongMuaBanService{
       Session::flash('error', 'Hợp đồng mua bán không tồn tại');
       return false;
       }
+
+      if($hopDongMuaBan->status == 'confirm'){
+        Session::flash('error', 'Hợp đồng đã được xác nhận rồi');
+        return false;
+      }
       switch ($who) {
         case 'id_thuonglai':
           $hopDongMuaBan->thuonglai_xacnhan = 1;
@@ -94,7 +102,7 @@ class HopDongMuaBanService{
       }
       DB::beginTransaction();
       $hopDongMuaBan->save();
-      DB::commit();
+
       if($hopDongMuaBan != null){
         switch ($who) {
           case 'id_thuonglai':
@@ -116,6 +124,46 @@ class HopDongMuaBanService{
         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
         $this->notificationService->sendNotificationService($notify->id);
       }
+
+      // create giaodichmuabanlua if status == confirm
+          // infor thuonglai
+          $thuonglai = ThuongLai::join('tbl_user', 'tbl_user.id_user', 'tbl_thuonglai.id_user')
+              ->where('id_thuonglai', $hopDongMuaBan->id_thuonglai)
+              ->first();
+          //Get list xavien of htx
+          $listXaVienOfHTXInContract = XaVien::join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+              ->where('tbl_xavien.id_hoptacxa', $hopDongMuaBan->id_hoptacxa) 
+              ->get();
+            
+          if($listXaVienOfHTXInContract == null){
+            Session::flash('error', 'Không có xã viên nào trong hợp tác xã của bạn');
+            return false;
+          }
+
+          foreach ($listXaVienOfHTXInContract as $key => $xavien) {
+            $giaodich = $this->giaoDichMuaBanLuaService->createGiaoDichMuaBanLua(
+              $hopDongMuaBan->id_thuonglai,
+              $xavien->id_xavien,
+              $hopDongMuaBan->id_hoptacxa,
+              $hopDongMuaBan->id_lichmuavu,
+              $xavien->fullname,
+              $thuonglai->name_thuonglai,
+              $hopDongMuaBan->price
+            );
+
+            if($giaodich == null){
+              Session::flash('error', 'Không tạo được giao dịch mua bán lúa');
+              return false;
+            }
+
+            $message = "Giao dịch mua bán lúa số $giaodich->id_giaodichmuaban_lua vừa được tạo thành công do hợp đồng mua bán lúa đã được xác nhận";
+            $status_notify = 0;
+            $link = "/giaodichmuabanlua";
+            $notify = $this->notificationService->createNotificationService($message, $status_notify,$xavien->id_user,$link);
+            $this->notificationService->sendNotificationService($notify->id);
+          }
+
+      DB::commit();
       return $this->getDetailHopDong($id_hopdongmuaban);
       
     } catch (\Exception $error) {
@@ -123,8 +171,6 @@ class HopDongMuaBanService{
       Session::flash('error', 'Xác nhận hợp đồng không thành công');
       return false;
     }
-    
-
 
   }
 
@@ -295,6 +341,7 @@ class HopDongMuaBanService{
     $id_lichmuavu = $request->id_lichmuavu;
     $id_danhmucquydinh = $request->id_danhmucquydinh;
     $id_gionglua = $request->id_gionglua;
+    $price = $request->price;
     $title_hopdongmuaban = $request->title_hopdongmuaban;
     $description_hopdongmuaban = $request->description_hopdongmuaban;
     $thuonglai_xacnhan = 1;
@@ -303,6 +350,11 @@ class HopDongMuaBanService{
 
     if($id_thuonglai == false){
       Session::flash('error', 'Bạn không phải là thương lái, không thể tạo hợp đồng');
+      return false;
+    }
+
+    if($price < 0){
+      Session::flash('error', 'Giá thua mua không được nhỏ hơn 0');
       return false;
     }
 
@@ -413,6 +465,12 @@ class HopDongMuaBanService{
       $id_gionglua = $request->id_gionglua;
       $title_hopdongmuaban = $request->title_hopdongmuaban;
       $description_hopdongmuaban = $request->description_hopdongmuaban;
+      $price = $request->price;
+
+      if($price < 0){
+        Session::flash('error', 'Giá thua mua không được nhỏ hơn 0');
+        return false;
+      }
 
       $hopDongMuaBan = HopDongMuaBan::where('id_hopdongmuaban', $id_hopdongmuaban)
                       ->Who($who, $id_chuthe)
@@ -422,6 +480,12 @@ class HopDongMuaBanService{
         Session::flash('error', 'Hợp đồng mua bán không tồn tại');
         return false;
       }
+
+      if($hopDongMuaBan->status == 'confirm'){
+        Session::flash('error', 'Hợp đồng đã được xác nhận bới 2 bên, không thể chỉnh sửa !');
+        return false;
+      }
+      
       $first_date = strtotime(now());
       $second_date = strtotime($hopDongMuaBan->created_at);
       $datediff = abs($first_date - $second_date);

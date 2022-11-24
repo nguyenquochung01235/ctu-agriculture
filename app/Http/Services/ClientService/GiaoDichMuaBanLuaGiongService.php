@@ -303,6 +303,11 @@ class GiaoDichMuaBanLuaGiongService
             if ($request->hasFile('img_lohang')) {
                 $img_lohang = $this->uploadImageService->store($request->img_lohang);
             }
+            
+            if($price < 0){
+                Session::flash('error', 'Giá thua mua không được nhỏ hơn 0');
+                return false;
+            }
 
             DB::beginTransaction();
             $giaodichmuabanluagiong = GiaoDichMuaBanLuaGiong::create([
@@ -417,6 +422,11 @@ class GiaoDichMuaBanLuaGiongService
                 return false;
             }
 
+            if($request->price < 0){
+                Session::flash('error', 'Giá thua mua không được nhỏ hơn 0');
+                return false;
+            }
+
             $giaodichmuabanluagiong->soluong = $request->soluong;
             $giaodichmuabanluagiong->price = $request->price;
             $giaodichmuabanluagiong->description_giaodich = $request->description_giaodich;
@@ -460,6 +470,7 @@ class GiaoDichMuaBanLuaGiongService
             return false;
         }
     }
+    
     public function deleteGiaoDichMuaBanLuaGiong($request)
     {
         try {
