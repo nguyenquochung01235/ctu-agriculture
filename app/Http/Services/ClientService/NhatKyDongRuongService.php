@@ -7,6 +7,7 @@ use App\Models\HoatDongMuaVu;
 use App\Models\LichMuaVu;
 use App\Models\NhatKyDongRuong;
 use App\Models\ThuaDat;
+use App\Models\VatTuSuDung;
 use App\Models\XaVien;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -74,16 +75,43 @@ class NhatKyDongRuongService{
                 'tbl_lichmuavu.date_end as lichmuavu_date_end',
                 'tbl_user.fullname',
                 'tbl_thuadat.address'
-                
                 )
             ->first();
+
+
+            $detailVatTuSuDung = VatTuSuDung::where('id_nhatkydongruong', $detailNhatKyDongRuong->id_nhatkydongruong)
+            ->join('tbl_giaodichmuaban_vattu', 'tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu', 'tbl_vattusudung.id_giaodichmuaban_vattu')
+            ->join('tbl_category_vattu', 'tbl_category_vattu.id_category_vattu', 'tbl_giaodichmuaban_vattu.id_category_vattu')    
+            ->select('tbl_vattusudung.*', 'tbl_category_vattu.name_category_vattu')
+            ->get();
+
             if($detailNhatKyDongRuong == null){
                 Session::flash('error', 'Nhật ký hoạt động không tồn tại');
                 return false; 
             }
-            return $detailNhatKyDongRuong;
+            
+            $result = ([
+                "id_nhatkydongruong" => $detailNhatKyDongRuong->id_nhatkydongruong,
+                "id_thuadat" => $detailNhatKyDongRuong->id_thuadat,
+                "name_hoatdong" => $detailNhatKyDongRuong->name_hoatdong,
+                "description" => $detailNhatKyDongRuong->description,
+                "date_start" => $detailNhatKyDongRuong->date_start,
+                "date_end" => $detailNhatKyDongRuong->date_end,
+                "status" => $detailNhatKyDongRuong->status,
+                "type" => $detailNhatKyDongRuong->type,
+                "hoptacxa_xacnhan" => $detailNhatKyDongRuong->hoptacxa_xacnhan,
+                "reason" => $detailNhatKyDongRuong->reason,
+                "name_lichmuavu" => $detailNhatKyDongRuong->name_lichmuavu,
+                "lichmuavu_date_start" => $detailNhatKyDongRuong->lichmuavu_date_start,
+                "lichmuavu_date_end" => $detailNhatKyDongRuong->lichmuavu_date_end,
+                "fullname" => $detailNhatKyDongRuong->fullname,
+                "address" => $detailNhatKyDongRuong->address,
+                "vattusudung" =>  $detailVatTuSuDung
+            ]);
+            return $result;
+            // return $detailNhatKyDongRuong;
         } catch (\Exception $error) {
-            Session::flash('error', 'Không lấy được nhật ký đồng ruộng');
+            Session::flash('error', 'Không lấy được nhật ký đồng ruộng' . $error);
             return false;
         }
 
@@ -583,13 +611,16 @@ class NhatKyDongRuongService{
 
     public function updateNhatKyDongRuong($request){
         try {
+
             $id_nhatkydongruong = $request->id_nhatkydongruong;
+
+
             $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
             $id_user = $this->commonService->getIDByToken();
             $id_xavien = $this->xaVienService->getIdXaVienByToken();
             $date_start = $request->date_start;
             $date_end = $request->date_end;
-          
+            $vattusudung_update = $request->vattusudung;
            
             $checkDateStartDateEnd = $this->commonService->checkDate($date_start, $date_end);
 
@@ -636,22 +667,52 @@ class NhatKyDongRuongService{
 
             DB::beginTransaction();
             if(($checkDateStartDateEnd)){
-
                 $nhatKyDongRuong->id_xavien = $id_xavien;
                 $nhatKyDongRuong->id_thuadat = $request->id_thuadat;
                 $nhatKyDongRuong->name_hoatdong = $request->name_hoatdong;
                 $nhatKyDongRuong->description = $request->description;
                 $nhatKyDongRuong->date_start = $request->date_start;
                 $nhatKyDongRuong->date_end = $request->date_end;
-
             }
             $nhatKyDongRuong->save;
+
+            
+           if($request->has('vattusudung')){
+            $vattusudung_old = VatTuSuDung::where('id_nhatkydongruong', $id_nhatkydongruong)->get();
+            $array_id_vattusudung_old = [];
+            foreach ($vattusudung_old as $key => $vattu_old) {
+               array_push($array_id_vattusudung_old,$vattu_old->id_vattusudung);
+            }
+
+            $vattusudung_update = json_decode(json_encode($vattusudung_update));
+            $array_id_vattusudung_update = [];
+            foreach ($vattusudung_update as $key => $vattu_update) {
+                if(property_exists($vattu_update,'id_vattusudung')){
+                    $id_vattusudung = $vattu_update->id_vattusudung;
+                    $id_giaodichmuabanvattu = $vattu_update->id_giaodichmuaban_vattu;
+                    $soluong = $vattu_update->soluong;
+                    $timeuse = $vattu_update->timeuse;
+                    $this->vatTuSuDungService->updateVatTuSuDung($id_vattusudung,$id_nhatkydongruong,$id_giaodichmuabanvattu,$soluong, $timeuse);
+                    array_push($array_id_vattusudung_update,$vattu_update->id_vattusudung);
+                }else{
+                    $id_giaodichmuabanvattu = $vattu_update->id_giaodichmuaban_vattu;
+                    $soluong = $vattu_update->soluong;
+                    $timeuse = $vattu_update->timeuse;
+                    $this->vatTuSuDungService->createVatTuSuDung($id_nhatkydongruong,$id_giaodichmuabanvattu,$soluong, $timeuse);
+                }
+            }
+
+            foreach (array_diff( $array_id_vattusudung_old,$array_id_vattusudung_update) as $key => $vattu_del) {
+                $this->vatTuSuDungService->deleteVatTuSuDung($vattu_del);
+            }
+           }
+    
             DB::commit();
 
             return $this->getDetailNhatKyDongRuong($request);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thể cập nhật ký hoạt động');
+            Session::flash('error', 'Không thể cập nhật ký hoạt động' . $error);
             return false;
         }
     }
