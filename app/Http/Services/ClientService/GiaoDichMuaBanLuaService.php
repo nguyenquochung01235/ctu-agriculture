@@ -238,7 +238,7 @@ class GiaoDichMuaBanLuaService
     ){
         try {
 
-            $lichmuavu = LichMuaVu::where('id_lichmua', $id_lichmuavu)->first();
+            $lichmuavu = LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->first();
 
             $giaodichmuabanlua = GiaoDichMuaBanLua::create([
                 'id_thuonglai'=>$id_thuonglai,

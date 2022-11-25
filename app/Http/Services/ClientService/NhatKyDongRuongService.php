@@ -18,6 +18,7 @@ class NhatKyDongRuongService{
     protected $hopTacXaService;
     protected $lichMuaVuService;
     protected $thuaDatService;
+    protected $vatTuSuDungService;
     protected $notificationService;
     
 
@@ -27,6 +28,7 @@ class NhatKyDongRuongService{
         HopTacXaService $hopTacXaService ,
         LichMuaVuService $lichMuaVuService,
         ThuaDatService $thuaDatService,
+        VatTuSuDungService $vatTuSuDungService,
         NotificationService $notificationService)
     {
         $this->commonService = $commonService;
@@ -34,6 +36,7 @@ class NhatKyDongRuongService{
         $this->hopTacXaService = $hopTacXaService;
         $this->lichMuaVuService = $lichMuaVuService;
         $this->thuaDatService = $thuaDatService;
+        $this->vatTuSuDungService = $vatTuSuDungService;
         $this->notificationService = $notificationService;
 
     }
@@ -513,6 +516,7 @@ class NhatKyDongRuongService{
         $id_xavien = $this->xaVienService->getIdXaVienByToken();
         $date_start = $request->date_start;
         $date_end = $request->date_end;
+        $vattusudung = $request->vattusudung;
 
         $lichmuavu = LichMuaVu::where('id_lichmuavu', $id_lichmuavu)->where('id_hoptacxa', $id_hoptacxa)->first();
 
@@ -555,6 +559,18 @@ class NhatKyDongRuongService{
                 'status' => 0,
                 'hoptacxa_xacnhan' => 0
             ]);}
+
+            // Thêm vât tư sử dụng vào hoạt động
+            if($vattusudung != null){
+                $id_nhatkydongruong = $nhatKyDongRuong->id_nhatkydongruong;
+                foreach ($vattusudung as $key => $vattu) {
+                    $id_giaodichmuabanvattu = $vattu->id_giaodichmuabanvattu;
+                    $soluong = $vattu->soluong;
+                    $timeuse = $vattu->timeuse;
+                    $this->vatTuSuDungService->createVatTuSuDung($id_nhatkydongruong,$id_giaodichmuabanvattu,$soluong, $timeuse);
+                }
+            }
+
             DB::commit();
             return $nhatKyDongRuong;
         } catch (\Exception $error) {

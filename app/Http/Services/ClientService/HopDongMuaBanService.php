@@ -150,7 +150,6 @@ class HopDongMuaBanService{
               $thuonglai->name_thuonglai,
               $hopDongMuaBan->price
             );
-
             if($giaodich == null){
               Session::flash('error', 'Không tạo được giao dịch mua bán lúa');
               return false;
