@@ -42,7 +42,7 @@ class VatTuSuDungService{
             DB::beginTransaction();
             $vatTuSuDung = VatTuSuDung::create([
                 "id_nhatkydongruong" =>$id_nhatkydongruong,
-                "id_giaodichmuabanvattu"=>$id_giaodichmuabanvattu,
+                "id_giaodichmuaban_vattu"=>$id_giaodichmuabanvattu,
                 "soluong"=>$soluong,
                 "timeuser"=>$timeuser
             ]);

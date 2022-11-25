@@ -562,9 +562,10 @@ class NhatKyDongRuongService{
 
             // Thêm vât tư sử dụng vào hoạt động
             if($vattusudung != null){
+                $vattusudung = json_decode(json_encode($vattusudung));
                 $id_nhatkydongruong = $nhatKyDongRuong->id_nhatkydongruong;
                 foreach ($vattusudung as $key => $vattu) {
-                    $id_giaodichmuabanvattu = $vattu->id_giaodichmuabanvattu;
+                    $id_giaodichmuabanvattu = $vattu->id_giaodichmuaban_vattu;
                     $soluong = $vattu->soluong;
                     $timeuse = $vattu->timeuse;
                     $this->vatTuSuDungService->createVatTuSuDung($id_nhatkydongruong,$id_giaodichmuabanvattu,$soluong, $timeuse);
@@ -575,7 +576,7 @@ class NhatKyDongRuongService{
             return $nhatKyDongRuong;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thể tạo nhật ký hoạt động');
+            Session::flash('error', 'Không thể tạo nhật ký hoạt động' . $error);
             return false;
         }
     }
