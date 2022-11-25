@@ -59,7 +59,7 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::get("gionglua/get-list",[GiongLuaController::class, 'getListGiongLua']);
             Route::get("danhmucquydinh/get-list", [DanhMucQuyDinhController::class, 'getListDanhMucQuyDinh']);
             Route::get("lichmuavu/get-list", [LichMuaVuController::class, 'getListLichMuaVuAutoComplete']);
-            Route::get("category-vattu/get-list/{id_danhmucquydinh}", [CategoryVatTuController::class, 'autoCompleteCategoryVatTu']);
+            Route::get("category-vattu/get-list", [CategoryVatTuController::class, 'autoCompleteCategoryVatTu']);
             Route::get("vattusudung/get-list", [VatTuSuDungController::class, 'autoCompleteVatTuSuDung']);
             
         }); 

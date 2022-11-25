@@ -20,7 +20,7 @@ class CategoryVatTuService{
     }
 
     public function autoCompleteCategoryVatTu($request){
-        $id_danhmucquydinh = $request->id_danhmucquydinh;
+        $id_danhmucquydinh = $request->danhmucquydinh;
         try {
             $listCategoryVatTu = CategoryVatTu::where('id_danhmucquydinh', $id_danhmucquydinh)
             ->Search($request)
