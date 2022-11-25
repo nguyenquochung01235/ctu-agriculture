@@ -26,6 +26,33 @@ class LichMuaVuService{
         $this->hopTacXaService = $hopTacXaService;
         $this->notificationService = $notificationService;
     }
+
+    public function autoChangeStatusLichMuaVu($id_hoptacxa){
+        $lichmuavu = LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->whereIn('status', ['upcoming','start'])->first();
+        $status = $lichmuavu->status;
+        $date_start = $lichmuavu->date_start;
+        $date_end = $lichmuavu->date_end;
+        switch ($status) {
+            case 'upcoming':
+                if($date_start>= now()->format('Y-m-d')){
+                    $lichmuavu->status = 'start';
+                }
+                if($date_end<=now()->format('Y-m-d')){
+                    $lichmuavu->status = 'finish';
+                }
+                break;
+            
+            case 'start':
+                if($date_end<=now()->format('Y-m-d')){
+                    $lichmuavu->status = 'finish';
+                }
+                break;
+            
+            default:
+                break;
+        }
+    }
+
     public function isLichMuaVuExist($id_hoptacxa,$id_lichmuavu){
         try {
             $result =  LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->where('id_lichmuavu', $id_lichmuavu)->count();
@@ -114,6 +141,9 @@ class LichMuaVuService{
 
     public function getListLichMuaVu($request){
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
+
+        $this->autoChangeStatusLichMuaVu($id_hoptacxa);
+
         $id_user = $this->commonService->getIDByToken();
         $page = $request->page;
         $limit =  $request->limit;
