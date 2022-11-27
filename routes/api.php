@@ -4,6 +4,7 @@ use App\Http\Controllers\Client\LoginController;
 use App\Http\Controllers\Client\MenuClientController;
 use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\AccountTypeController;
+use App\Http\Controllers\BlockChainController\TruyXuatNguonGocController;
 use App\Http\Controllers\Client\CategoryVatTuController;
 use App\Http\Controllers\Client\DanhMucQuyDinhController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaController;
@@ -211,5 +212,9 @@ Route::prefix("service")->group(function(){
     Route::get('/get/account-type', [AccountTypeController::class, 'getAllAccountType']);
     // Create New User
     Route::post('/create/user', [UserController::class, 'createNewUser']);
+}); 
+
+Route::prefix("auto-complete")->group(function(){
+    Route::get('/blockchain/search-htx', [TruyXuatNguonGocController::class, 'autoCompleteSearchHopTacXa']);
 }); 
 
