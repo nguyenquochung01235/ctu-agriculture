@@ -48,6 +48,7 @@ class TruyXuatNguonGocService{
                     ->join('tbl_lichmuavu', 'tbl_lichmuavu.id_hoptacxa','tbl_hoptacxa.id_hoptacxa')
                     ->select(
                         'tbl_hoptacxa.id_hoptacxa',
+                        'tbl_hoptacxa.name_hoptacxa',
                         'tbl_hoptacxa.thumbnail',
                         'tbl_hoptacxa.phone_number',
                         'tbl_hoptacxa.address',
