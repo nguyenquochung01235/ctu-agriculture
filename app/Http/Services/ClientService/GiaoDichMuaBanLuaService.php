@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ClientService;
 
+use App\Http\Services\BlockChainService\BlockChainAPIService;
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
 use App\Models\GiaoDichMuaBanLua;
@@ -20,6 +21,7 @@ class GiaoDichMuaBanLuaService
     protected $notificationService;
     protected $uploadImageService;
     protected $thuongLaiService;
+    protected $blockChainAPIService;
 
     public function __construct(
         XaVienService $xaVienService,
@@ -27,7 +29,8 @@ class GiaoDichMuaBanLuaService
         ThuongLaiService $thuongLaiService,
         NotificationService $notificationService,
         CommonService $commonService,
-        UploadImageService $uploadImageService
+        UploadImageService $uploadImageService,
+        BlockChainAPIService $blockChainAPIService
     ) {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
@@ -35,6 +38,7 @@ class GiaoDichMuaBanLuaService
         $this->notificationService = $notificationService;
         $this->thuongLaiService = $thuongLaiService;
         $this->uploadImageService = $uploadImageService;
+        $this->blockChainAPIService = $blockChainAPIService;
     }
 
     public function getDetailGiaoDichMuaBanLua($id_giaodichmuabanlua)
@@ -59,6 +63,7 @@ class GiaoDichMuaBanLuaService
                     'tbl_lichmuavu.date_start',
                     'tbl_lichmuavu.date_end',
                     'tbl_gionglua.name_gionglua',
+                    'tbl_gionglua.id_gionglua',
                 )
                 ->first();
             if ($giaodich == null) {
@@ -326,6 +331,7 @@ class GiaoDichMuaBanLuaService
             }
 
             $giaodichmuabanlua->soluong = $request->soluong;
+            $giaodichmuabanlua->price = $request->price;
             $giaodichmuabanlua->description_giaodich = $request->description_giaodich;
             $img_lohang = null;
             if ($request->hasFile('img_lohang')) {
@@ -509,8 +515,8 @@ class GiaoDichMuaBanLuaService
             Session::flash('error', 'Giao dịch chưa được xác nhận bởi xã viên không thể thay đổi trạng thái !');
             return false;
         }
-        if($giaodichmuabanlua->nhacungcap_xacnhan == 0){
-            Session::flash('error', 'Giao dịch chưa được nhà cung cấp vật tư bởi không thể thay đổi trạng thái !');
+        if($giaodichmuabanlua->thuonglai_xacnhan == 0){
+            Session::flash('error', 'Giao dịch chưa được thương lái xác nhận không thể thay đổi trạng thái !');
             return false;
         }
 
@@ -541,16 +547,38 @@ class GiaoDichMuaBanLuaService
                 $notify = $this->notificationService->createNotificationService($message, $status_notify,$id_user_xavien,$link);
                 $this->notificationService->sendNotificationService($notify->id);
 
-                $id_user_nhacungcap = ThuongLai::where('id_thuonlai', $giaodichmuabanlua->id_thuonlai)->first()->id_user;
+                $id_user_nhacungcap = ThuongLai::where('id_thuonglai', $giaodichmuabanlua->id_thuonglai)->first()->id_user;
                 $notify = $this->notificationService->createNotificationService($message, $status_notify,$id_user_nhacungcap,$link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
+            $giaodichmuabanluaDetail = $this->getDetailgiaodichmuabanlua($giaodichmuabanlua->id_giaodichmuaban_lua);
+            //CREATE BLOCKCHAIN GIAODICHMUABAN_LUA NODE
+
+            if($giaodichmuabanlua->status == 1){
+                $giaodichmuabanluaBlockChain = (object) $giaodichmuabanluaDetail;
+
+                $this->blockChainAPIService->createBlockChainGiaoDichMuaBanLua(
+                    $giaodichmuabanluaBlockChain->id_giaodichmuaban_lua,
+                    $giaodichmuabanluaBlockChain->id_lichmuavu,
+                    $giaodichmuabanluaBlockChain->id_giaodichmuaban_lua,
+                    $giaodichmuabanluaBlockChain->id_xavien,
+                    $giaodichmuabanluaBlockChain->id_thuonglai,
+                    $this->commonService->convertDateTOTimeStringForBlockChain($giaodichmuabanluaBlockChain->created_at->format('Y-m-d')),
+                    $giaodichmuabanluaBlockChain->price,
+                    $giaodichmuabanluaBlockChain->id_gionglua,
+                    $this->commonService->convertDateTOTimeStringForBlockChain($giaodichmuabanluaBlockChain->updated_at->format('Y-m-d')),
+                    $giaodichmuabanluaBlockChain->name_gionglua,
+                    $giaodichmuabanluaBlockChain->soluong,
+                    $this->commonService->getWalletTypeByToken(),
+                    '1234'
+                );
+            }
 
             DB::commit();
-            return $this->getDetailgiaodichmuabanlua($giaodichmuabanlua->id_giaodichmuaban_lua);
+            return $giaodichmuabanluaDetail;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thay đổi được trạng thái');
+            Session::flash('error', 'Không thay đổi được trạng thái' .$error);
             return false;
         }
     }

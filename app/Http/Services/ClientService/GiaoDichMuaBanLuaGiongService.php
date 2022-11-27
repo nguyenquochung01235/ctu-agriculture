@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ClientService;
 
+use App\Http\Services\BlockChainService\BlockChainAPIService;
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
 use App\Models\GiaoDichMuaBanLuaGiong;
@@ -21,6 +22,7 @@ class GiaoDichMuaBanLuaGiongService
     protected $notificationService;
     protected $uploadImageService;
     protected $nhaCungCapVatTuService;
+    protected $blockChainAPIService;
 
     public function __construct(
         XaVienService $xaVienService,
@@ -28,7 +30,8 @@ class GiaoDichMuaBanLuaGiongService
         NhaCungCapVatTuService $nhaCungCapVatTuService,
         NotificationService $notificationService,
         CommonService $commonService,
-        UploadImageService $uploadImageService
+        UploadImageService $uploadImageService,
+        BlockChainAPIService $blockChainAPIService,
     ) {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
@@ -36,6 +39,7 @@ class GiaoDichMuaBanLuaGiongService
         $this->notificationService = $notificationService;
         $this->nhaCungCapVatTuService = $nhaCungCapVatTuService;
         $this->uploadImageService = $uploadImageService;
+        $this->blockChainAPIService = $blockChainAPIService;
     }
 
     public function getDetailGiaoDichMuaBanLuaGiong($id_giaodichmuabanluagiong)
@@ -84,6 +88,7 @@ class GiaoDichMuaBanLuaGiongService
                 "name_gionglua" => $giaodich->name_gionglua,
                 "img_lohang" => $giaodich->img_lohang,
                 "soluong" => $giaodich->soluong,
+                "price" => $giaodich->price,
                 "status" => $giaodich->status,
                 "hoptacxa_xacnhan" => $giaodich->hoptacxa_xacnhan,
                 "nhacungcap_xacnhan" => $giaodich->nhacungcap_xacnhan,
@@ -358,7 +363,7 @@ class GiaoDichMuaBanLuaGiongService
             return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống');
+            Session::flash('error', 'Không tạo được giao dịch mua bán lúa giống' . $error);
             return false;
         }
     }
@@ -648,9 +653,10 @@ class GiaoDichMuaBanLuaGiongService
                 $notify = $this->notificationService->createNotificationService($message, $status_notify, $user, $link);
                 $this->notificationService->sendNotificationService($notify->id);
             }
-
             DB::commit();
-            return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+
+            $giaodichmuabanluagiongDetail = $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+            return $giaodichmuabanluagiongDetail;
         } catch (\Exception $error) {
             DB::rollBack();
             Session::flash('error', 'Không thay đổi được trạng thái');
@@ -735,11 +741,26 @@ class GiaoDichMuaBanLuaGiongService
                 $this->notificationService->sendNotificationService($notify->id);
             }
 
+            $giaodichmuabanluagiongDetail = (object) $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
+            // CREATE BLOCKCHAIN GIAODICHMUABAN_LUAGIONG NODE
+            $this->blockChainAPIService->createBlockChainGiaoDichMuaBanLuaGiong(
+                $giaodichmuabanluagiongDetail->id_giaodich_luagiong,
+                $giaodichmuabanluagiongDetail->id_xavien,
+                $giaodichmuabanluagiongDetail->id_nhacungcapvattu,
+                $giaodichmuabanluagiongDetail->id_lichmuavu,
+                $giaodichmuabanluagiongDetail->id_gionglua,
+                $giaodichmuabanluagiongDetail->soluong,
+                $giaodichmuabanluagiongDetail->name_gionglua,
+                $this->commonService->convertDateTOTimeStringForBlockChain($giaodichmuabanluagiongDetail->created_at->format('Y-m-d')),
+                $this->commonService->getWalletTypeByToken(),
+                '1234'
+            );
+
             DB::commit();
             return $this->getDetailGiaoDichMuaBanLuaGiong($giaodichmuabanluagiong->id_giaodich_luagiong);
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', 'Không thay đổi được trạng thái');
+            Session::flash('error', 'Không thay đổi được trạng thái'. $error);
             return false;
         }
     }

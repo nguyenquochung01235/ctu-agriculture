@@ -50,7 +50,7 @@ class VatTuSuDungService{
         $id_nhatkydongruong,
         $id_giaodichmuabanvattu,
         $soluong,
-        $timeuser
+        $id_thuonglai
     ){
         try {
             
@@ -60,11 +60,11 @@ class VatTuSuDungService{
             }
 
             $nhatkydongruong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)->first();
-            if($timeuser < $nhatkydongruong->date_start){
+            if($id_thuonglai < $nhatkydongruong->date_start){
                 Session::flash('error', 'Thời gian sử dụng phải lớn hơn ngày bắt đầu hoạt động');
                 return false;
             }
-            if($timeuser > $nhatkydongruong->date_end){
+            if($id_thuonglai > $nhatkydongruong->date_end){
                 Session::flash('error', 'Thời gian sử dụng phải nhỏ hơn ngày kết thúc hoạt động');
                 return false;
             }
@@ -73,7 +73,7 @@ class VatTuSuDungService{
                 "id_nhatkydongruong" =>$id_nhatkydongruong,
                 "id_giaodichmuaban_vattu"=>$id_giaodichmuabanvattu,
                 "soluong"=>$soluong,
-                "timeuser"=>$timeuser
+                "id_thuonglai"=>$id_thuonglai
             ]);
             DB::commit();
             return true;
@@ -89,7 +89,7 @@ class VatTuSuDungService{
         $id_nhatkydongruong,
         $id_giaodichmuabanvattu,
         $soluong,
-        $timeuser
+        $id_thuonglai
     ){
         try {
             
@@ -99,11 +99,11 @@ class VatTuSuDungService{
             }
 
             $nhatkydongruong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)->first();
-            if($timeuser < $nhatkydongruong->date_start){
+            if($id_thuonglai < $nhatkydongruong->date_start){
                 Session::flash('error', 'Thời gian sử dụng phải lớn hơn ngày bắt đầu hoạt động');
                 return false;
             }
-            if($timeuser > $nhatkydongruong->date_end){
+            if($id_thuonglai > $nhatkydongruong->date_end){
                 Session::flash('error', 'Thời gian sử dụng phải nhỏ hơn ngày kết thúc hoạt động');
                 return false;
             }
@@ -115,7 +115,7 @@ class VatTuSuDungService{
             }
             $vatTuSuDung->id_giaodichmuaban_vattu= $id_giaodichmuabanvattu;
             $vatTuSuDung->soluong= $soluong;
-            $vatTuSuDung->timeuser = $timeuser;
+            $vatTuSuDung->id_thuonglai = $id_thuonglai;
             $vatTuSuDung->save();
             DB::commit();
             return true;

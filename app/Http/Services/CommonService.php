@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Models\User;
 use App\Models\XaVien;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
 
@@ -34,6 +35,23 @@ class CommonService{
             return false;
         }
     }
+    public function getWalletTypeByToken(){
+        try {
+            $id_user = $this->getIDByToken();
+            $user = User::where('id_user', $id_user)->first('wallet');
+            return $user->wallet;
+            
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không xác định được token user');
+            return false;
+        }
+    }
+
+    public function convertDateTOTimeStringForBlockChain($date){
+       $time =  DateTime::createFromFormat('Y-m-d H:i:s', "$date 00:00:00");
+       return $time->getTimestamp();
+    }
+
 
     public function checkDate($start, $end){
         try {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ClientService;
 
+use App\Http\Services\BlockChainService\BlockChainAPIService;
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
 use App\Models\GiaoDichMuaBanVatTu;
@@ -20,6 +21,7 @@ class GiaoDichMuaBanVatTuService
     protected $notificationService;
     protected $uploadImageService;
     protected $nhaCungCapVatTuService;
+    protected $blockChainAPIService;
 
     public function __construct(
         XaVienService $xaVienService,
@@ -27,7 +29,8 @@ class GiaoDichMuaBanVatTuService
         NhaCungCapVatTuService $nhaCungCapVatTuService,
         NotificationService $notificationService,
         CommonService $commonService,
-        UploadImageService $uploadImageService
+        UploadImageService $uploadImageService,
+        BlockChainAPIService $blockChainAPIService
     ) {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
@@ -35,6 +38,7 @@ class GiaoDichMuaBanVatTuService
         $this->notificationService = $notificationService;
         $this->nhaCungCapVatTuService = $nhaCungCapVatTuService;
         $this->uploadImageService = $uploadImageService;
+        $this->blockChainAPIService = $blockChainAPIService;
     }
 
 
@@ -83,7 +87,7 @@ class GiaoDichMuaBanVatTuService
                 "id_lichmuavu" => $giaodich->id_lichmuavu,
                 "name_lichmuavu" => $giaodich->name_lichmuavu,
                 "id_category_vattu" => $giaodich->id_category_vattu,
-                "name_category_vattu" => $giaodich->id_category_vattu,
+                "name_category_vattu" => $giaodich->name_category_vattu,
                 "img_lohang" => $giaodich->img_lohang,
                 "soluong" => $giaodich->soluong,
                 "price" => $giaodich->price,
@@ -739,8 +743,31 @@ class GiaoDichMuaBanVatTuService
                 $this->notificationService->sendNotificationService($notify->id);
             }
 
+            $giaodichmuabanvattuDetail = $this->getDetailgiaodichmuabanvattu($giaodichmuabanvattu->id_giaodichmuaban_vattu);
+            // CREATE BLOCKCHAIN GIAODICHMUABAN_VATTU NODE
+            if($giaodichmuabanvattu->status == 1){
+                $giaodichmuabanvattuBlockChain = (object) $giaodichmuabanvattuDetail;
+
+
+                $this->blockChainAPIService->createBlockChainGiaoDichMuaBanVatTu(
+                    $giaodichmuabanvattuBlockChain->id_giaodichmuaban_vattu,
+                    $giaodichmuabanvattuBlockChain->id_xavien,
+                    $giaodichmuabanvattuBlockChain->id_nhacungcapvattu,
+                    $giaodichmuabanvattuBlockChain->id_giaodichmuaban_vattu,
+                    $giaodichmuabanvattuBlockChain->id_category_vattu,
+                    $this->commonService->convertDateTOTimeStringForBlockChain($giaodichmuabanvattuBlockChain->created_at->format('Y-m-d')),
+                    $giaodichmuabanvattuBlockChain->price,
+                    $giaodichmuabanvattuBlockChain->id_lichmuavu,
+                    $giaodichmuabanvattuBlockChain->name_category_vattu,
+                    $this->commonService->convertDateTOTimeStringForBlockChain($giaodichmuabanvattuBlockChain->updated_at->format('Y-m-d')),
+                    $giaodichmuabanvattuBlockChain->soluong,
+                    $this->commonService->getWalletTypeByToken(),
+                    '1234'
+                );
+            }
+
             DB::commit();
-            return $this->getDetailgiaodichmuabanvattu($giaodichmuabanvattu->id_giaodichmuaban_vattu);
+            return $giaodichmuabanvattuDetail;
         } catch (\Exception $error) {
             DB::rollBack();
             Session::flash('error', 'Không thay đổi được trạng thái');

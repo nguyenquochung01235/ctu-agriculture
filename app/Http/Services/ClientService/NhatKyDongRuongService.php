@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ClientService;
 
+use App\Http\Services\BlockChainService\BlockChainAPIService;
 use App\Http\Services\CommonService;
 use App\Models\HoatDongMuaVu;
 use App\Models\LichMuaVu;
@@ -21,6 +22,7 @@ class NhatKyDongRuongService{
     protected $thuaDatService;
     protected $vatTuSuDungService;
     protected $notificationService;
+    protected $blockChainAPIService;
     
 
     public function __construct(
@@ -30,7 +32,8 @@ class NhatKyDongRuongService{
         LichMuaVuService $lichMuaVuService,
         ThuaDatService $thuaDatService,
         VatTuSuDungService $vatTuSuDungService,
-        NotificationService $notificationService)
+        NotificationService $notificationService,
+        BlockChainAPIService $blockChainAPIService)
     {
         $this->commonService = $commonService;
         $this->xaVienService = $xaVienService;
@@ -39,6 +42,7 @@ class NhatKyDongRuongService{
         $this->thuaDatService = $thuaDatService;
         $this->vatTuSuDungService = $vatTuSuDungService;
         $this->notificationService = $notificationService;
+        $this->blockChainAPIService = $blockChainAPIService;
 
     }
 
@@ -300,7 +304,9 @@ class NhatKyDongRuongService{
 
     public function toggleActiveNhatKyDongRuong($request)
     {
+
         $id_nhatkydongruong = $request->id_nhatkydongruong;
+
         $id_hoptacxa = $this->hopTacXaService->getIDHopTacXaByToken();
         $id_xavien = $this->xaVienService->getIdXaVienByToken();
 
@@ -314,6 +320,10 @@ class NhatKyDongRuongService{
         }
         if($nhatKyDongRuong->hoptacxa_xacnhan == 2){
             Session::flash('error', 'Hoạt động đã bị từ chối không thể cập nhật');
+            return false;
+        }
+        if($nhatKyDongRuong->status == 1){
+            Session::flash('error', 'Hoạt động đã được lưu trữ không thể thay đổi trạng thái');
             return false;
         }
         $id_lichmuavu = $nhatKyDongRuong->id_lichmuavu;
@@ -335,15 +345,70 @@ class NhatKyDongRuongService{
             return false;
         }
        try {
-        $status = 0;
+        $status = 1;
         if($nhatKyDongRuong->status != 1){
             $status = 1;
         }
         DB::beginTransaction();
-        $nhatKyDongRuong->status = $status;
+        $nhatKyDongRuong->status = 1;
         $nhatKyDongRuong->save();
-
         DB::commit();
+
+
+        // CREATE BLOCKCHAIN NODE NHATKYDONGRUONG
+        if($nhatKyDongRuong->status == 1){
+            // call api blockchain save data
+            $wallet = $this->commonService->getWalletTypeByToken();
+            $password = $this->blockChainAPIService->BASE_PASSWORD;
+            $time = $this->commonService->convertDateTOTimeStringForBlockChain($nhatKyDongRuong->date_start);
+
+            if($nhatKyDongRuong->id_hoatdongmuavu == null){
+                $id_hoatdongmuavu = 0;
+            }else{
+                $id_hoatdongmuavu = $nhatKyDongRuong->id_hoatdongmuavu;
+            }
+
+            $this->blockChainAPIService->createBlockChainNhatKyDongRuong(
+                $nhatKyDongRuong->id_xavien,
+                $nhatKyDongRuong->id_nhatkydongruong,
+                $nhatKyDongRuong->id_lichmuavu,
+                $nhatKyDongRuong->id_thuadat,
+                $time,
+                $id_hoatdongmuavu,
+                $wallet,
+                $password                
+            );
+        }
+        // CREATE BLOCKCHAIN NODE NHATKYDONGRUONG
+        $vattusudung = VatTuSuDung::where('tbl_vattusudung.id_nhatkydongruong',  $id_nhatkydongruong)
+                    ->join('tbl_giaodichmuaban_vattu', 'tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu', 'tbl_vattusudung.id_giaodichmuaban_vattu')
+                    ->join('tbl_category_vattu','tbl_category_vattu.id_category_vattu', 'tbl_giaodichmuaban_vattu.id_category_vattu')
+                    ->select(
+                        'tbl_vattusudung.id_vattusudung',
+                        'tbl_vattusudung.id_nhatkydongruong',
+                        'tbl_vattusudung.id_giaodichmuaban_vattu',
+                        'tbl_vattusudung.soluong',
+                        'tbl_vattusudung.timeuse',
+                        'tbl_category_vattu.id_category_vattu',
+                        'tbl_category_vattu.name_category_vattu',
+                        )
+                    ->get();
+        if($vattusudung != [] || $vattusudung != null){
+            foreach ($vattusudung as $key => $vattu) {
+                $this->blockChainAPIService->createBlockChainVatTuSuDung(
+                    $vattu->id_vattusudung,
+                    $vattu->id_nhatkydongruong,
+                    $vattu->id_category_vattu,
+                    $vattu->id_giaodichmuaban_vattu,
+                    $this->commonService->convertDateTOTimeStringForBlockChain($vattu->timeuse),
+                    $vattu->soluong,
+                    $vattu->name_category_vattu,
+                    $wallet,
+                    $password
+                );
+            }
+        }
+
         return $nhatKyDongRuong;
        } catch (\Exception $error) {
         Session::flash('error', 'Cập nhật trạng thái không thành công');

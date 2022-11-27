@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ClientService;
 
+use App\Http\Services\BlockChainService\BlockChainAPIService;
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
 use App\Models\Account;
@@ -18,13 +19,15 @@ class UserService{
     protected $nhaCungCapVatTuService;
     protected $uploadImageService;
     protected $commonService;
+    protected $blockChainAPIService;
 
     public function __construct(
         XaVienService $xaVienService,
         ThuongLaiService $thuongLaiService, 
         NhaCungCapVatTuService $nhaCungCapVatTuService,
         UploadImageService $uploadImageService,
-        CommonService $commonService
+        CommonService $commonService,
+        BlockChainAPIService $blockChainAPIService
         )
     {
         $this->xaVienService = $xaVienService;
@@ -32,6 +35,7 @@ class UserService{
         $this->nhaCungCapVatTuService = $nhaCungCapVatTuService;
         $this->uploadImageService = $uploadImageService;
         $this->commonService = $commonService;
+        $this->blockChainAPIService = $blockChainAPIService;
     }
     
     public function getAllUser(){
@@ -56,9 +60,10 @@ class UserService{
 
     public function createNewUser($request){
         try {
+
             $email = $request->input('email');
             $phone_number = $request->input('phone_number');
-            
+            $wallet = $this->blockChainAPIService->getAPICreateUserWallet();
             if(!$this->isEmailExist($email)){
                 Session::flash('error', 'Email đã tồn tại');
                 return false;
@@ -76,7 +81,7 @@ class UserService{
                 'phone_number' => $request->input('phone_number'),
                 'password' => bcrypt($request->input('password')),
                 'address' => $request->input('address'),
-                'wallet' => Str::uuid()->toString(),
+                'wallet' =>  $wallet,
                 'dob' => $request->input('dob'),
                 'active' => 1
             ]);
