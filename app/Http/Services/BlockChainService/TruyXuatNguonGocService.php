@@ -47,15 +47,15 @@ class TruyXuatNguonGocService{
 
         $data = HopTacXa::where('name_hoptacxa', 'LIKE', "%$search%")
                     ->where('tbl_hoptacxa.active', 1)
-                    ->join('tbl_lichmuavu', 'tbl_lichmuavu.id_hoptacxa','tbl_hoptacxa.id_hoptacxa')
                     ->select(
                         'tbl_hoptacxa.id_hoptacxa',
                         'tbl_hoptacxa.name_hoptacxa',
                         'tbl_hoptacxa.thumbnail',
                         'tbl_hoptacxa.phone_number',
                         'tbl_hoptacxa.address',
-                        'tbl_lichmuavu.name_lichmuavu',
-                        'tbl_lichmuavu.status',
+                        'tbl_hoptacxa.description',
+                        'tbl_hoptacxa.active',
+                        
                     );
         $total = $data->count();
         $meta = $this->commonService->pagination($total, $page, $limit);
