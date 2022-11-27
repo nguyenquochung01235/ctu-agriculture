@@ -216,5 +216,7 @@ Route::prefix("service")->group(function(){
 
 Route::prefix("auto-complete")->group(function(){
     Route::get('/blockchain/search-htx', [TruyXuatNguonGocController::class, 'autoCompleteSearchHopTacXa']);
+    Route::get('/blockchain/search-lmv/{id_hoptacxa}', [TruyXuatNguonGocController::class, 'autoCompleteSearchLichMuaVu']);
+    Route::get('/blockchain/get-list-lohang/{id_hoptacxa}', [TruyXuatNguonGocController::class, 'getListLoHangLua']);
 }); 
 

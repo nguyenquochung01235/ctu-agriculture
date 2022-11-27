@@ -38,4 +38,14 @@ class GiaoDichMuaBanLua extends Model
         
         return $query;
     }
+
+    public function scopeLichMuaVu($query, $request)
+    {
+        if ($request->has('id_lichmuavu')) {
+            $query->where('tbl_lichmuavu.id_lichmuavu',$request->id_lichmuavu);
+        }
+        return $query;
+    }
+
+
 }
