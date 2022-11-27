@@ -109,4 +109,36 @@ class TruyXuatNguonGocController extends Controller
             ], 400);
         }
     }
+
+
+    public function truyXuatLoHangLua(Request $request)
+    {
+        try {
+            $result = $this->truyXuatNguonGocService->truyXuatLoHangLua($request);
+
+            if ($result != false) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Chi tiết giao dịch",
+                    "errorList" => [],
+                    "data" => $result,
+                ], 200);
+            }
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không lấy được chi tiết giao dịch",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
 }

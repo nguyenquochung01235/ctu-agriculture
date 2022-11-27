@@ -2,7 +2,10 @@
 
 namespace App\Http\Services\BlockChainService;
 
+use App\Http\Services\ClientService\GiaoDichMuaBanLuaGiongService;
+use App\Http\Services\ClientService\GiaoDichMuaBanLuaService;
 use App\Http\Services\ClientService\HopTacXaService;
+use App\Http\Services\ClientService\NhatKyDongRuongService;
 use App\Http\Services\CommonService;
 use App\Models\GiaoDichMuaBanLua;
 use App\Models\HopTacXa;
@@ -12,13 +15,25 @@ use Illuminate\Support\Facades\Session;
 
 class TruyXuatNguonGocService{
 
+    protected $BASE_API_URL_BLOCKCHAIN = "http://45.32.55.194/api/v1/blockchain";
+
     protected $commonService;
+    protected $giaoDichMuaBanLuaService;
+    protected $giaoDichMuaBanLuaGiongService;
+    protected $nhatKyDongRuongService;
+    
 
     public function __construct(
-        CommonService $commonService
+        CommonService $commonService,
+        GiaoDichMuaBanLuaService $giaoDichMuaBanLuaService,
+        GiaoDichMuaBanLuaGiongService $giaoDichMuaBanLuaGiongService,
+        NhatKyDongRuongService $nhatKyDongRuongService
     )
     {
         $this->commonService = $commonService;
+        $this->giaoDichMuaBanLuaService = $giaoDichMuaBanLuaService;
+        $this->giaoDichMuaBanLuaGiongService = $giaoDichMuaBanLuaGiongService;
+        $this->nhatKyDongRuongService = $nhatKyDongRuongService;
     }
     
     public function autoCompleteSearchHopTacXa($request){
@@ -154,5 +169,66 @@ class TruyXuatNguonGocService{
         }
     }
 
+    public function truyXuatLoHangLua($request){
+        try {
+            $id_giaodichmuaban_lua = $request->id_giaodichmuaban_lua;
+            $response = Http::get($this->BASE_API_URL_BLOCKCHAIN."/tracing/rice-product/$id_giaodichmuaban_lua");
+
+            $data_response = json_decode($response->body())->results->hoatdong;
+            
+            $giaoDichMuaBanLuaResponseBlockChain = $data_response->hoatdongmuabanlua;
+            $hoatDongMuaBanLuaGiongResponseBlockChain = $data_response->hoatDongMuaBanGiongLua;
+            $nhatKyHoatDongResponseBlockChain = $data_response->danhsachhoatdongnhatky;
+
+            $id_giaodichmuaban_lua = $giaoDichMuaBanLuaResponseBlockChain->id_giaodich;
+            $id_giaodich_luagiong = $hoatDongMuaBanLuaGiongResponseBlockChain->id_giaodichluagiong;
+            
+            
+            $detail_giaodichmuaban_lua = $this->giaoDichMuaBanLuaService->getDetailGiaoDichMuaBanLua($id_giaodichmuaban_lua);
+            $detail_giaodich_luagiong =(object) $this->giaoDichMuaBanLuaGiongService->getDetailGiaoDichMuaBanLuaGiong($id_giaodich_luagiong);
+            
+            
+
+            $giaodich_luagiong = ([
+                "updated_at"=> $detail_giaodich_luagiong->updated_at,
+                "name_gionglua"=> $detail_giaodich_luagiong->name_gionglua,
+                "soluong"=> $detail_giaodich_luagiong->soluong,
+                "price"=> $detail_giaodich_luagiong->price,
+                "description_giaodich"=> $detail_giaodich_luagiong->description_giaodich,
+                "name_xavien"=> $detail_giaodich_luagiong->name_xavien,
+                "nhacungcapvattu_name"=> $detail_giaodich_luagiong->nhacungcapvattu_name,
+            ]);
+
+            $hoatdongnhatky = [];
+            foreach ($nhatKyHoatDongResponseBlockChain as $key => $nhatKyDongRuong) {
+            $nhatky = $this->nhatKyDongRuongService->getDetailNhatKyDongRuongBlockChain($nhatKyDongRuong);
+                array_push( $hoatdongnhatky,$nhatky);
+            }
+
+
+            $giaodichmubanlua = ([
+                "name_lohang"=>$detail_giaodichmuaban_lua->name_lohang,
+                "img_lohang"=>$detail_giaodichmuaban_lua->img_lohang,
+                "name_gionglua"=>$detail_giaodichmuaban_lua->name_gionglua,
+                "name_hoptacxa"=>$detail_giaodichmuaban_lua->name_hoptacxa,
+                "name_thuonglai"=>$detail_giaodichmuaban_lua->name_thuonglai,
+                "name_xavien"=>$detail_giaodichmuaban_lua->name_xavien,
+                "price"=>$detail_giaodichmuaban_lua->price,
+                "soluong"=>$detail_giaodichmuaban_lua->soluong,
+                "description_giaodich"=>$detail_giaodichmuaban_lua->description_giaodich,
+                "updated_at"=>$detail_giaodichmuaban_lua->updated_at,
+                "hoatdongnhatky" => $hoatdongnhatky
+                
+            ]);
+
+            return ([
+                "giaodichmubanlua"=>$giaodichmubanlua,
+                "giaodichmubanluagiong"=>$giaodich_luagiong
+            ]);
+        } catch (\Exception $error) {
+            Session::flash('error', 'Có lỗi trong lúc truy xuất thông tin'. $error);
+            return false;
+        }
+    }
 
 }

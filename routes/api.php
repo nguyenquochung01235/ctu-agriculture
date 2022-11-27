@@ -218,5 +218,9 @@ Route::prefix("auto-complete")->group(function(){
     Route::get('/blockchain/search-htx', [TruyXuatNguonGocController::class, 'autoCompleteSearchHopTacXa']);
     Route::get('/blockchain/search-lmv/{id_hoptacxa}', [TruyXuatNguonGocController::class, 'autoCompleteSearchLichMuaVu']);
     Route::get('/blockchain/get-list-lohang/{id_hoptacxa}', [TruyXuatNguonGocController::class, 'getListLoHangLua']);
-}); 
+});
+
+
+Route::get('blockchain/tracing/{id_giaodichmuaban_lua}', [TruyXuatNguonGocController::class, 'truyXuatLoHangLua']);
+
 

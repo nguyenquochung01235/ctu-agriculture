@@ -121,6 +121,48 @@ class NhatKyDongRuongService{
 
         
     }
+    public function getDetailNhatKyDongRuongBlockChain($request){
+        $id_nhatkydongruong = $request->id_nhatkydongruong;
+        try {
+            $detailNhatKyDongRuong = NhatKyDongRuong::where('id_nhatkydongruong', $id_nhatkydongruong)
+            ->join('tbl_thuadat', 'tbl_thuadat.id_thuadat', 'tbl_nhatkydongruong.id_thuadat')
+            ->select(
+                'tbl_nhatkydongruong.id_nhatkydongruong',
+                'tbl_nhatkydongruong.name_hoatdong',
+                'tbl_nhatkydongruong.date_start',
+                'tbl_nhatkydongruong.date_end',
+                'tbl_nhatkydongruong.id_thuadat',
+                'tbl_thuadat.address'
+                )
+            ->first();
+
+            $detailVatTuSuDung = VatTuSuDung::where('id_nhatkydongruong', $detailNhatKyDongRuong->id_nhatkydongruong)
+            ->join('tbl_giaodichmuaban_vattu', 'tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu', 'tbl_vattusudung.id_giaodichmuaban_vattu')
+            ->join('tbl_category_vattu', 'tbl_category_vattu.id_category_vattu', 'tbl_giaodichmuaban_vattu.id_category_vattu')    
+            ->select('tbl_vattusudung.*',
+            'tbl_category_vattu.name_category_vattu',
+            'tbl_giaodichmuaban_vattu.id_giaodichmuaban_vattu',
+            )
+            ->get();
+
+            $result = ([
+                "id_nhatkydongruong" => $detailNhatKyDongRuong->id_nhatkydongruong,
+                "id_thuadat" => $detailNhatKyDongRuong->id_thuadat,
+                "address" => $detailNhatKyDongRuong->address,
+                "name_hoatdong" => $detailNhatKyDongRuong->name_hoatdong,
+                "date_start" => $detailNhatKyDongRuong->date_start,
+                "date_end" => $detailNhatKyDongRuong->date_end,
+                "vattusudung" =>  $detailVatTuSuDung
+            ]);
+
+            return $result;
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không lấy được nhật ký đồng ruộng');
+            return false;
+        }
+
+        
+    }
 
     // forXaVien
     public function getListNhatKyDongRuong($request){
