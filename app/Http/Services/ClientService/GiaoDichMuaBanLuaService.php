@@ -263,6 +263,7 @@ class GiaoDichMuaBanLuaService
                 Session::flash('error', 'Tạo giao dịch mua bán lúa không thành công');
                 return false;
             }
+
             return $giaodichmuabanlua;
         } catch (\Exception $error) {
             Session::flash('error', 'Không thể tạo giao dịch mua bán lúa cho tất cả các xã viên' . $error);
