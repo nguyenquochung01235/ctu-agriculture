@@ -112,7 +112,7 @@ class GiaoDichMuaBanLuaService
             $search = "";
         }
         if ($order == null || $order == "") {
-            $order = "id_giaodichmuaban_lua";
+            $order = "updated_at";
         }
         if ($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")) {
             $sort = "desc";
@@ -184,7 +184,7 @@ class GiaoDichMuaBanLuaService
             $search = "";
         }
         if ($order == null || $order == "") {
-            $order = "id_giaodichmuaban_lua";
+            $order = "updated_at";
         }
         if ($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")) {
             $sort = "desc";

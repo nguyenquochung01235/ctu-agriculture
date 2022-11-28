@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome', ['name' => 'Samantha']);
-});
-
-
-
+Route::get('/administrator/login', [LoginController::class, 'index'])->name('admin-login');
+Route::get('/administrator/logout', [LoginController::class, 'index']);
+Route::post('/administrator/login/store', [LoginController::class, 'store']);
+Route::get('administrator/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
+Route::get('/administrator/approve-htx', [LoginController::class, 'dashboard'])->name('approve-htx');
+Route::get('/administrator/approve-post', [LoginController::class, 'dashboard'])->name('approve-post');
