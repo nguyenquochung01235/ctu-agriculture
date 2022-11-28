@@ -6,6 +6,7 @@ use App\Http\Controllers\Client\UserController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\BlockChainController\TruyXuatNguonGocController;
 use App\Http\Controllers\Client\CategoryVatTuController;
+use App\Http\Controllers\Client\CommentController;
 use App\Http\Controllers\Client\DanhMucQuyDinhController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaGiongController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Client\LichMuaVuController;
 use App\Http\Controllers\Client\NhaCungCapVatTuController;
 use App\Http\Controllers\Client\NhatKyDongRuongController;
 use App\Http\Controllers\Client\NotificationController;
+use App\Http\Controllers\Client\PostController;
 use App\Http\Controllers\Client\ThuaDatController;
 use App\Http\Controllers\Client\ThuongLaiController;
 use App\Http\Controllers\Client\VatTuSuDungController;
@@ -198,6 +200,18 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::put("/approve/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'approveGiaoDichMuaBanLua']);
         });
 
+        Route::prefix("post")->group(function(){
+            Route::post("/create",[PostController::class, 'createPost']);
+            Route::post("/update/{id_post}",[PostController::class, 'updatePost']);
+            Route::delete("/delete/{id_post}",[PostController::class, 'deletePost']);
+        });
+
+        Route::prefix("comment")->group(function(){
+            Route::post("/create",[CommentController::class, 'createComment']);
+            Route::post("/update/{id_comment}",[CommentController::class, 'updateComment']);
+            Route::delete("/delete/{id_comment}",[CommentController::class, 'deleteComment']);
+        });
+
 
 });
 
@@ -224,3 +238,7 @@ Route::prefix("auto-complete")->group(function(){
 Route::get('blockchain/tracing/{id_giaodichmuaban_lua}', [TruyXuatNguonGocController::class, 'truyXuatLoHangLua']);
 
 
+Route::prefix("post")->group(function(){
+    Route::get("/get-detail/{id_post}",[PostController::class, 'getDetailPost']);
+    Route::get("/get-list",[PostController::class, 'getListPost']);
+});
