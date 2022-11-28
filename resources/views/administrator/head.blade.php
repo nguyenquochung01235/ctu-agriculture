@@ -15,7 +15,7 @@
     <!-- JQVMap -->
     <link rel="stylesheet" href="/AdminTemplate/plugins/jqvmap/jqvmap.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="/Admintemplate/dist/css/adminlte.css">
+    <link rel="stylesheet" href="/AdminTemplate/dist/css/adminlte.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="/AdminTemplate/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <!-- Daterange picker -->
