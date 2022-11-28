@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="/administrator/dashboard" class="brand-link">
-      <img src="/admintemplate/img/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <img src="/AdminTemplate/img/logo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-bold">Nông Nghiệp Xanh</span>
       <!-- <h6>Version 1.0.1</h6> -->
     </a>
