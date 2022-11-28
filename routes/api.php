@@ -201,6 +201,7 @@ Route::middleware(['auth.jwt'])->group(function(){
         });
 
         Route::prefix("post")->group(function(){
+            Route::get("/get-list/user",[PostController::class, 'getListPostOfUser']);
             Route::post("/create",[PostController::class, 'createPost']);
             Route::post("/update/{id_post}",[PostController::class, 'updatePost']);
             Route::delete("/delete/{id_post}",[PostController::class, 'deletePost']);

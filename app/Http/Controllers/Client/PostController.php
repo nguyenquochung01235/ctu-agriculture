@@ -76,6 +76,36 @@ class PostController extends Controller
          }
     }
 
+    public function getListPostOfUser(Request $request){
+        try {
+            $result = $this->postService->getListPostOfUser($request);
+            if($result){
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Danh sách bài viết",
+                    "errorList" => [],
+                    "data" => $result[0],
+                    "meta" => $result[1]
+                ],200);
+            }
+    
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Chi tiết bài viết",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ],400);
+         } catch (\Exception $error) {
+           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc lấy thông tin bài viết",
+                "errorList" => [$error],
+                "data" => null
+            ],400);
+         }
+    }
+
     
 
     public function createPost(Request $request){

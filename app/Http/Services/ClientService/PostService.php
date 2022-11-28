@@ -129,6 +129,65 @@ class PostService{
       }
 }
 
+  public function getListPostOfUser($request){
+    $id_user = $this->commonService->getIDByToken();
+    $page = $request->page;
+    $limit =  $request->limit;
+    $search = $request->search;
+    $order = $request->order;
+    $sort = $request->sort;
+
+    if($page == null || $page == 0 || $page < 0){
+        $page = 1;
+    }
+    if($limit == null || $limit == 0 || $limit < 0){
+        $limit = 15;
+    }
+    if($search == null){
+        $search = "";
+    }
+    if($order == null || $order == ""){
+        $order = "updated_at";
+    }
+    if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
+        $sort = "desc";
+    }
+    
+    try {
+        $data =  Post::where('tbl_post.id_user', $id_user)
+        ->join('tbl_user', 'tbl_user.id_user', 'tbl_post.id_user')
+        ->select(
+          'tbl_post.id_post',
+          'tbl_post.title_post',
+          'tbl_post.short_description',
+          'tbl_post.description',
+          'tbl_post.image',
+          'tbl_post.view',
+          'tbl_post.updated_at',
+          'tbl_user.fullname',
+          'tbl_user.avatar',
+          )
+        ->Search($request);
+
+        $total = $data->count();
+        $meta = $this->commonService->pagination($total,$page,$limit);
+
+        $result =  $data
+        ->skip(($page-1)*$limit)
+        ->take($limit)
+        ->orderBy($order, $sort)
+        ->get();
+        
+        
+        if($result != []){
+          return [$result,$meta];
+        }
+      } catch (\Exception $error) {
+          Session::flash('error', 'Không lấy được danh sách bài viết');
+          return false;
+      }
+}
+
   public function createPost($request){
     try {
       $id_user = $this->commonService->getIDByToken();
