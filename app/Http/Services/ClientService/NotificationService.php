@@ -78,9 +78,9 @@ class NotificationService{
     }
 
     public function sendNotificationService($id){
-        // $message = Notification::where('id', $id)->first();
-        // broadcast(new EventsNotification($message))->toOthers();
-        return true;
+        $message = Notification::where('id', $id)->first();
+        broadcast(new EventsNotification($message))->toOthers();
+        // return true;
     }
 
 }
