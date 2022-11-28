@@ -25,6 +25,6 @@
     <link rel="stylesheet" href="/AdminTemplate/plugins/jsgrid/jsgrid.min.css">
     <link rel="stylesheet" href="/AdminTemplate/plugins/jsgrid/jsgrid-theme.min.css">
     
-    <link rel="shortcut icon" href="/admintemplate/img/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/AdminTemplate/img/logo.png" type="image/x-icon">
     <script src="https://cdn.ckeditor.com/ckeditor5/33.0.0/classic/ckeditor.js"></script>
     
