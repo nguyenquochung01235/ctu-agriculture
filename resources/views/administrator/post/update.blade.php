@@ -57,7 +57,7 @@
                         <div class="form-group">
                             <label for="exampleInputEmail1">Nội dung</label>
                             </br>
-                            {{$post->content}}
+                            {!!$post->content!!}
                         </div>
 
                         
