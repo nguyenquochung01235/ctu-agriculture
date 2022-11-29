@@ -7,6 +7,7 @@ use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\BlockChainController\TruyXuatNguonGocController;
 use App\Http\Controllers\Client\CategoryVatTuController;
 use App\Http\Controllers\Client\CommentController;
+use App\Http\Controllers\Client\DanhGiaCuoiMuaController;
 use App\Http\Controllers\Client\DanhMucQuyDinhController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaController;
 use App\Http\Controllers\Client\GiaoDichMuaBanLuaGiongController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Client\ThuongLaiController;
 use App\Http\Controllers\Client\VatTuSuDungController;
 use App\Http\Controllers\Client\XaVienController;
 use App\Http\Controllers\UploadImageController;
+use App\Models\DanhGiaCuoiMua;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -198,6 +200,15 @@ Route::middleware(['auth.jwt'])->group(function(){
             Route::post("/update/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'updateGiaoDichMuaBanLua']);
             Route::put("/confirm/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'confirmGiaoDichMuaBanLua']);
             Route::put("/approve/{id_giaodichmuabanlua}",[GiaoDichMuaBanLuaController::class, 'approveGiaoDichMuaBanLua']);
+        });
+
+        Route::prefix("danhgiacuoimua")->group(function(){
+            Route::get("/get-detail/{id_danhgiacuoimua}",[DanhGiaCuoiMuaController::class, 'getDetailDanhGiaCuoiMua']);
+            Route::get("/get-list",[DanhGiaCuoiMuaController::class, 'getListDanhGiaCuoiMua']);
+            Route::get("/get-list/all",[DanhGiaCuoiMuaController::class, 'getListDanhGiaCuoiMuaHTX']);
+            Route::post("/create",[DanhGiaCuoiMuaController::class, 'createDanhGiaCuoiMua']);
+            Route::post("/update/{id_danhgiacuoimua}",[DanhGiaCuoiMuaController::class, 'updateDanhGiaCuoiMua']);
+            Route::delete("/delete/{id_danhgiacuoimua}",[DanhGiaCuoiMuaController::class, 'deleteDanhGiaCuoiMua']);
         });
 
         Route::prefix("post")->group(function(){
