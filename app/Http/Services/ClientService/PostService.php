@@ -210,7 +210,7 @@ class PostService{
         "id_user" =>$id_user,
         "view" =>0,
         "type" =>'new',
-        "status" =>0,
+        "status" =>1,
       ]);
       DB::commit();
      return  $post;

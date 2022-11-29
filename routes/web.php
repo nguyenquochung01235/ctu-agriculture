@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/administrator/login', [LoginController::class, 'index'])->name('admin-login');
-Route::get('/administrator/logout', [LoginController::class, 'index']);
-Route::post('/administrator/login/store', [LoginController::class, 'store']);
-Route::get('administrator/dashboard', [LoginController::class, 'dashboard'])->name('dashboard');
-Route::get('/administrator/approve-htx', [LoginController::class, 'dashboard'])->name('approve-htx');
-Route::get('/administrator/approve-post', [LoginController::class, 'dashboard'])->name('approve-post');
+Route::get('/', [AdminController::class, 'index']);
+Route::get('/administrator/login', [AdminController::class, 'index'])->name('admin-login');
+Route::get('/administrator/logout', [AdminController::class, 'index']);
+Route::post('/administrator/login/store', [AdminController::class, 'store']);
+Route::get('/administrator/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+Route::get('/administrator/approve-htx', [AdminController::class, 'hoptacxa'])->name('approve-htx');
+Route::get('/administrator/hoptacxa/view/{id_hoptacxa}', [AdminController::class, 'detailHopTacXa']);
+Route::post('/administrator/hoptacxa/active/{id_hoptacxa}', [AdminController::class, 'activeHopTacXa']);
+
+
+
+Route::get('/administrator/approve-post', [AdminController::class, 'post']);
+Route::get('/administrator/post/view/{id_post}', [AdminController::class, 'detailPost']);
+Route::post('/administrator/post/active/{id_post}', [AdminController::class, 'activePost']);
+

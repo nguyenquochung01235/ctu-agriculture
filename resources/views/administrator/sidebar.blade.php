@@ -12,7 +12,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="https://cdn2.vectorstock.com/i/1000x1000/37/11/man-manager-administrator-consultant-avatar-vector-35753711.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="/AdminTemplate/img/admin.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href=""class="d-block">Administator</a>

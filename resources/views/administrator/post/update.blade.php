@@ -15,54 +15,66 @@
                 @include('administrator.alert')
                 <!-- /.card-header -->
                 <!-- Form Add Department -->
-                <form method="post" action="/administrator/news/update/{{$news->news_id}}">
+                <form method="post" action="/administrator/post/active/{{$post->id_post}}">
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Danh Mục Bài Viết</label>
-                            <select class="form-control" name="id_news_category">
-                                @foreach($category as $key => $data)
-                                <option 
-                                {{ $data->id_news_category == $news->id_news_category ? 'selected' : ''}}
-                                value="{{$data->id_news_category}}">{{$data->news_category}}</option>
-                                @endforeach
-                            </select>
+                        
+                    <div class="info-box" style="max-width: 300px;">
+                        <span class="info-box-icon"><img style="border-radius: 100%;" src="{{$post->avatar}}" alt=""></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-number">{{$post->fullname}}</span>
+                            <span style="font-style: italic;">{{$post->updated_at}}</span>
                         </div>
+                        <!-- /.info-box-content -->
+                    </div>
                         
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Tựa đề bài viết</label>
-                            <input required value="{{$news->news_title}}" type="text" class="form-control" id="newTitle" name="newTitle" placeholder="Nhập Tiêu Đề Tin Tức">
+                            <label for="exampleInputEmail1">Tựa đề</label>
+                            <input value="{{$post->title_post}}" type="text" class="form-control" id="newTitle" name="name_post" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Lượt xem</label>
+                            <input value="{{$post->view}}" type="text" class="form-control" id="newTitle" name="name_post" disabled>
                         </div>
 
                         <div class="form-group">
                             
-                            <img id="img_news" style="max-width: 350px;" src="{{$news->news_img}}" alt="">
+                            <img id="img_news" style="max-width: 350px;" src="{{$post->image}}" alt="">
                           
                         </div>
 
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Hình Ảnh</label>
-                    
-                            <input type="file" name="file" id="upload_new_img">
-                            <input type="text" hidden id="news_img" name="news_img" value="{{$news->news_img}}">
+                            <label for="exampleInputEmail1">Mô tả ngắn</label>
+                            <input value="{{$post->short_description}}" type="text" class="form-control" id="newTitle" name="name_post" disabled>
                         </div>
 
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Nội dung bài viết</label>
-                            <!-- <input required type="text" class="form-control" id="editor" name="content" placeholder="Nhập Tiêu Đề Tin Tức"> -->
-                            <textarea name="content" id="content" class="form-control">{{$news->news_content}}</textarea>
+                            <label for="exampleInputEmail1">Mô tả</label>
+                            <input value="{{$post->description}}" type="text" class="form-control" id="newTitle" name="name_post" disabled>
                         </div>
 
-
-
-                        <div class="form-check">
-                            <input  {{$news->active == 1 ? 'checked = ""' : ''}} type="checkbox" checked class="form-check-input" id="active" name="active">
-                            <label class="form-check-label" for="exampleCheck1">Active</label>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Nội dung</label>
+                            </br>
+                            {{$post->content}}
                         </div>
+
+                        
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Trạng thái</label>
+                            <input value="{{ $post->status == 1 ? 'Đang hoạt động' : 'Chờ xét duyệt'}}" type="text" class="form-control" id="newTitle" name="active" disabled>
+                        </div>
+                        
                     </div>
                     <!-- /.card-body -->
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        @if($post->status == 1)
+                        <button type="submit" class="btn btn-sm btn-danger">Hủy kích hoạt</button>
+                        @else
+                        <button type="submit" class="btn btn-sm btn-success">Kích hoạt</button>
+                        @endif
                     </div>
                     @csrf
                 </form>
@@ -74,13 +86,6 @@
     <!-- /.content -->
 </div>
 
-<script>
-    ClassicEditor
-        .create(document.querySelector('#content'))
-        .catch(error => {
-            console.error(error);
-        });
-</script>
 
 <!-- ./wrapper -->
 @endsection
