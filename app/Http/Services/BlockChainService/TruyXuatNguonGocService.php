@@ -142,7 +142,7 @@ class TruyXuatNguonGocService{
             ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
             ->join('tbl_thuonglai', 'tbl_thuonglai.id_thuonglai', '=', 'tbl_giaodichmuaban_lua.id_thuonglai')
             ->where('tbl_giaodichmuaban_lua.id_hoptacxa', $id_hoptacxa)
-            ->Lichmuavu($request)
+            ->LichMuaVu($request)
                 ->select(
                     "tbl_giaodichmuaban_lua.id_giaodichmuaban_lua",
                     "tbl_giaodichmuaban_lua.name_lohang",
@@ -151,6 +151,7 @@ class TruyXuatNguonGocService{
                     "tbl_giaodichmuaban_lua.img_lohang",
                     "tbl_giaodichmuaban_lua.soluong",
                     "tbl_giaodichmuaban_lua.price",
+                    "tbl_giaodichmuaban_lua.updated_at",
                 );
         $total = $data->count();
         $meta = $this->commonService->pagination($total, $page, $limit);
