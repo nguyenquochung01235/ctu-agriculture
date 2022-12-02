@@ -226,6 +226,21 @@ class HopDongMuaBanService{
       return false;
     };
 
+      $first_date = strtotime(now());
+      $second_date = strtotime($hopDongMuaBan->created_at);
+      $datediff = abs($first_date - $second_date);
+      $ruleDate = $datediff / (60*60*24);
+
+      if(($ruleDate >= 30.0)){
+        if($hopDongMuaBan->status != 'confirm'){
+          DB::beginTransaction();
+          $hopDongMuaBan->delete();
+          DB::commit();
+          Session::flash('error', 'Hợp đồng đã bị xóa vì quá hạn xác nhận 30 ngày kể từ ngày tạo hợp đồng');
+          return false;
+        }
+      }
+
     $thuonglai = ThuongLai::where('id_thuonglai',$hopDongMuaBan->id_thuonglai)
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_thuonglai.id_user')
                 ->first();
@@ -509,8 +524,13 @@ class HopDongMuaBanService{
       $ruleDate = $datediff / (60*60*24);
 
       if(($ruleDate >= 30.0)){
-        Session::flash('error', 'Hợp đồng đã quá thời gian cập nhật 30 ngày kể từ ngày tạo hợp đồng');
-        return false;
+        if($hopDongMuaBan->status != 'confirm'){
+          DB::beginTransaction();
+          $hopDongMuaBan->delete();
+          DB::commit();
+          Session::flash('error', 'Hợp đồng đã bị xóa vì quá hạn xác nhận 30 ngày kể từ ngày tạo hợp đồng');
+          return false;
+        }
       }
   
       DB::beginTransaction();

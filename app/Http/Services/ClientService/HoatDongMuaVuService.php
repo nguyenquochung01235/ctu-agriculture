@@ -71,7 +71,7 @@ class HoatDongMuaVuService{
             $order = "date_start";
         }
         if($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")){
-            $sort = "asc";
+            $sort = "desc";
         }
 
         if(!$this->xaVienService->checkXaVienIsChuNhiemHTX($id_hoptacxa)){
@@ -204,8 +204,15 @@ class HoatDongMuaVuService{
 
         $lichmuavu = LichMuaVu::where('id_lichmuavu',  $id_lichmuavu)
             ->where('id_hoptacxa',  $id_hoptacxa)->first();
+
+
         if($lichmuavu->status == 'finish'){
             Session::flash('error', 'Lịch mùa vụ đã kết thúc không thể cập nhật hoạt động');
+            return false;
+        }
+
+        if(NhatKyDongRuong::where('id_hoatdongmuavu', $id_hoatdongmuavu)->where('status', 1)->count() > 0){
+            Session::flash('error', 'Hoạt động đã được xã viên thực hiện, không thể cập nhật');
             return false;
         }
 
@@ -277,8 +284,13 @@ class HoatDongMuaVuService{
             }
 
             if($hoatDongMuaVu != null){
-                $hoatDongMuaVu->delete();
-                NhatKyDongRuong::where('id_hoatdongmuavu', $id_hoatdongmuavu)->delete();
+                if(NhatKyDongRuong::where('id_hoatdongmuavu', $id_hoatdongmuavu)->where('status', 1)->count() > 0){
+                    Session::flash('error', 'Hoạt động đã được xã viên thực hiện, không thể xóa');
+                    return false;
+                }else{
+                    $hoatDongMuaVu->delete();
+                    NhatKyDongRuong::where('id_hoatdongmuavu', $id_hoatdongmuavu)->delete();
+                }
             }else{
                 DB::rollBack();
                 Session::flash('error', 'Hoạt động không tồn tại');

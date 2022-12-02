@@ -66,7 +66,7 @@ class NotificationService{
     public function createNotificationService($message,$status,$user,$link){
         try {
             $notify = Notification::create([
-                'message' => $message,
+                'message' => $message . ". Vào lúc " . date('H:i:s d-m-Y',strtotime(now())),
                 'status' => $status,
                 'user' => $user,
                 'link' => $link,

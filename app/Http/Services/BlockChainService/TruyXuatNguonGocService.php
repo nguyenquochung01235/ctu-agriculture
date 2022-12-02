@@ -203,7 +203,9 @@ class TruyXuatNguonGocService{
             $hoatdongnhatky = [];
             foreach ($nhatKyHoatDongResponseBlockChain as $key => $nhatKyDongRuong) {
             $nhatky = $this->nhatKyDongRuongService->getDetailNhatKyDongRuongBlockChain($nhatKyDongRuong);
-                array_push( $hoatdongnhatky,$nhatky);
+                if($nhatky != false){
+                    array_push( $hoatdongnhatky,$nhatky);
+                }
             }
 
 
