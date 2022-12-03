@@ -236,6 +236,9 @@ class PostService{
         Session::flash('error', 'Bài viết không tồn tại');
         return false;
       }
+      if($image == ""){
+        $image = "";
+      }
       if($request->hasFile('image')){
         if($post->image != null){
           $this->uploadImageService->delete($post->image);
@@ -248,6 +251,9 @@ class PostService{
       $post->short_description = $short_description;
       $post->description = $description;
       $post->content = $content;
+      if($image != null){
+        $post->image = $image;
+      }
       $post->image = $image;
       $post->status = 1;
       $post->type = "update";
