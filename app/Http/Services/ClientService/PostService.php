@@ -229,17 +229,19 @@ class PostService{
       $short_description = $request->short_description;
       $description = $request->description;
       $content = $request->content;
-      $image = null;
+
 
       $post = Post::where('id_post', $id_post)->where('id_user', $id_user)->first();
       if($post == null){
         Session::flash('error', 'Bài viết không tồn tại');
         return false;
       }
-      if($image == ""){
-        $image = "";
+
+      if($request->image == ""){
+        $image = null; //Xóa hình
       }
-      if($request->hasFile('image')){
+
+      if($request->hasFile('image')){ //có file update
         if($post->image != null){
           $this->uploadImageService->delete($post->image);
         }
@@ -251,10 +253,9 @@ class PostService{
       $post->short_description = $short_description;
       $post->description = $description;
       $post->content = $content;
-      if($image != null){
+      if($request->image != null){ //Khong truyen hinh thi giu nguyen
         $post->image = $image;
       }
-      $post->image = $image;
       $post->status = 1;
       $post->type = "update";
       $post->save();
