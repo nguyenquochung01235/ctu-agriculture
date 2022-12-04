@@ -40,6 +40,7 @@ class PostService{
         'tbl_post.type',
         'tbl_post.view',
         'tbl_post.updated_at',
+        'tbl_post.created_at',
         'tbl_user.id_user',
         'tbl_user.fullname',
         'tbl_user.avatar',
@@ -105,6 +106,7 @@ class PostService{
           'tbl_post.image',
           'tbl_post.view',
           'tbl_post.updated_at',
+          'tbl_post.created_at',
           'tbl_user.fullname',
           'tbl_user.avatar',
           )
@@ -164,6 +166,7 @@ class PostService{
           'tbl_post.image',
           'tbl_post.view',
           'tbl_post.updated_at',
+          'tbl_post.created_at',
           'tbl_user.fullname',
           'tbl_user.avatar',
           )
