@@ -79,7 +79,7 @@ class CommentService
 
             $message = "$user_comment->fullname đã bình luận bài viết $post->title_post";
             $status_notify = 0;
-            $link = "/post";
+            $link = "/post/$id_post";
 
             //Send to create user 
             $notify = $this->notificationService->createNotificationService($message, $status_notify,$post->id_user,$link);
