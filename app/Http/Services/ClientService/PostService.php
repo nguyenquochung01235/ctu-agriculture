@@ -238,6 +238,7 @@ class PostService{
       }
 
       if($request->image == ""){
+      
         $image = null; //Xóa hình
       }
 

@@ -4,6 +4,7 @@ namespace App\Http\Services\ClientService;
 
 use App\Http\Services\CommonService;
 use App\Models\HoatDongMuaVu;
+use App\Models\HopDongMuaBan;
 use App\Models\LichMuaVu;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -309,7 +310,7 @@ class LichMuaVuService{
             Session::flash('error', 'Bạn không chỉnh sửa mùa vụ đã kết thúc');
             return false;
         }
-
+        // Check hoạt động có trong lịch mùa vụ
         $hoatdong_in_lichmuavu_max_date_start = HoatDongMuaVu::where('id_lichmuavu', $id_lichmuavu)->min('date_start');
         $hoatdong_in_lichmuavu_max_date_end = HoatDongMuaVu::where('id_lichmuavu', $id_lichmuavu)->max('date_end');
         if($hoatdong_in_lichmuavu_max_date_start != null){
@@ -319,14 +320,16 @@ class LichMuaVuService{
             }
         }
 
-        // return dd($hoatdong_in_lichmuavu_max_date_end);
-
         if($hoatdong_in_lichmuavu_max_date_end != null){
             if($hoatdong_in_lichmuavu_max_date_end > $date_end){
                 Session::flash('error', 'Ngày kết thúc lịch mùa vụ nhỏ hơn ngày kết thúc hoạt động mùa vụ, vui lòng cập nhật hoạt động mùa vụ trước khi thay đổi');
                 return false;
             }
         }
+
+        //Check hợp đồng.
+        // $hopDongMuaBan = HopDongMuaBan::where('id_lichmuavu');
+
        
 
 
