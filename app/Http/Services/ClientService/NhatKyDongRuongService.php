@@ -475,6 +475,10 @@ class NhatKyDongRuongService{
             Session::flash('error', 'Hoạt động không tồn tại');
             return false;
         }
+        if($nhatKyDongRuong->status == 1){
+            Session::flash('error', 'Hoạt động đã được thực hiện không thể thay đổi trạng thái');
+            return false;
+        }
         if($nhatKyDongRuong->type != 'outside'){
             Session::flash('error', 'Đây là hoạt động chung bạn không cần duyệt');
             return false;

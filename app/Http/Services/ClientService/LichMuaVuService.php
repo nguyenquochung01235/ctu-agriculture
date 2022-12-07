@@ -33,25 +33,32 @@ class LichMuaVuService{
         $status = $lichmuavu->status;
         $date_start = $lichmuavu->date_start;
         $date_end = $lichmuavu->date_end;
-        switch ($status) {
-            case 'upcoming':
-                if($date_start>= now()->format('Y-m-d')){
-                    $lichmuavu->status = 'start';
-                }
-                if($date_end<=now()->format('Y-m-d')){
-                    $lichmuavu->status = 'finish';
-                }
-                break;
-            
-            case 'start':
-                if($date_end<=now()->format('Y-m-d')){
-                    $lichmuavu->status = 'finish';
-                }
-                break;
-            
-            default:
-                break;
+        if($lichmuavu != null){
+            switch ($status) {
+                case 'upcoming':
+                    if($date_start>= now()->format('Y-m-d')){
+                        $lichmuavu->status = 'start';
+                    }
+                    if($date_end<=now()->format('Y-m-d')){
+                        $lichmuavu->status = 'finish';
+                    }
+                    break;
+                
+                case 'start':
+                    if($date_end<=now()->format('Y-m-d')){
+                        $lichmuavu->status = 'finish';
+                    }
+                    break;
+                
+                default:
+                    break;
+            }
+            DB::beginTransaction();
+            $lichmuavu->save();
+            DB::commit();
         }
+        
+        
     }
 
     public function isLichMuaVuExist($id_hoptacxa,$id_lichmuavu){
@@ -328,8 +335,8 @@ class LichMuaVuService{
         }
 
         //Check hợp đồng.
-        // $hopDongMuaBan = HopDongMuaBan::where('id_lichmuavu');
-
+        // $hopDongMuaBan = HopDongMuaBan::where('id_lichmuavu')->where('status');
+        
        
 
 

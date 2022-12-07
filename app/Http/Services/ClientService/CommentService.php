@@ -32,6 +32,7 @@ class CommentService
         try {
             $list_comment = Comment::with('replies')
             ->where('id_post', $id_post)
+            ->where('parent_id', null)
             ->join('tbl_user', 'tbl_user.id_user', 'tbl_comment.id_user')
             ->select(
                 'tbl_comment.*',

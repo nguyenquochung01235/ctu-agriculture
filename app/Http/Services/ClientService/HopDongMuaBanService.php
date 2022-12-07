@@ -5,6 +5,7 @@ namespace App\Http\Services\ClientService;
 use App\Http\Services\CommonService;
 use App\Models\HopDongMuaBan;
 use App\Models\HopTacXa;
+use App\Models\LichMuaVu;
 use App\Models\ThuongLai;
 use App\Models\XaVien;
 use Illuminate\Support\Facades\DB;
@@ -517,7 +518,12 @@ class HopDongMuaBanService{
         Session::flash('error', 'Hợp đồng đã được xác nhận bới 2 bên, không thể chỉnh sửa !');
         return false;
       }
-      
+
+      $lichmuavu = LichMuaVu::where('id_licmuavu', $hopDongMuaBan->id_lichmuavu)->first();
+      if($lichmuavu->status == 'finish'){
+        Session::flash('error', 'Lịch mùa vụ trong hợp đồng đã kết thúc, không thể chỉnh sửa !');
+        return false;
+      }
       $first_date = strtotime(now());
       $second_date = strtotime($hopDongMuaBan->created_at);
       $datediff = abs($first_date - $second_date);
@@ -534,9 +540,7 @@ class HopDongMuaBanService{
       }
   
       DB::beginTransaction();
-      $hopDongMuaBan->id_lichmuavu =  $id_lichmuavu;
       $hopDongMuaBan->id_danhmucquydinh =  $id_danhmucquydinh;
-      $hopDongMuaBan->id_gionglua =  $id_gionglua;
       $hopDongMuaBan->title_hopdongmuaban =  $title_hopdongmuaban;
       $hopDongMuaBan->price =  $price;
       $hopDongMuaBan->description_hopdongmuaban =  $description_hopdongmuaban;
