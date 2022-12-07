@@ -335,15 +335,18 @@ class LichMuaVuService{
         }
 
         //Check hợp đồng.
-        // $hopDongMuaBan = HopDongMuaBan::where('id_lichmuavu')->where('status');
+        $hopDongMuaBan = HopDongMuaBan::where('id_lichmuavu', $id_lichmuavu)->where('status', 'confirm')->first();
+
+        if($hopDongMuaBan != null){
+            if($lichmuavu->id_gionglua != $request->input('id_gionglua')){
+                Session::flash('error', 'Lịch mùa vụ có trong hợp đồng đã được xác nhận, không thể chỉnh sửa giống lúa');
+                return false;
+            }
+        }
         
-       
-
-
         try {
             DB::beginTransaction();
             if(($checkDateStartDateEnd)){
-
                 
                     $lichmuavu->id_gionglua = $request->input('id_gionglua');
                     $lichmuavu->name_lichmuavu = $request->input('name_lichmuavu');
