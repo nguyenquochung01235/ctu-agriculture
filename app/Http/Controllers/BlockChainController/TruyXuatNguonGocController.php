@@ -111,6 +111,37 @@ class TruyXuatNguonGocController extends Controller
     }
 
 
+    public function searchLoHang(Request $request)
+    {
+        try {
+            $result = $this->truyXuatNguonGocService->searchLoHang($request);
+
+            if ($result != false) {
+                return response()->json([
+                    "statusCode" => 200,
+                    "message" => "Kết quả tìm kiếm lô hàng",
+                    "errorList" => [],
+                    "data" => $result[0],
+                    "meta" => $result[1]
+                ], 200);
+            }
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Không tìm thấy kết quả",
+                "errorList" => [Session::get('error')],
+                "data" => null
+            ], 400);
+        } catch (\Exception $error) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Có lỗi trong lúc thực hiện",
+                "errorList" => [$error],
+                "data" => null
+            ], 400);
+        }
+    }
     public function truyXuatLoHangLua(Request $request)
     {
         try {

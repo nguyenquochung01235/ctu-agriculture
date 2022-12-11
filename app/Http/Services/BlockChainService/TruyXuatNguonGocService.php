@@ -170,6 +170,62 @@ class TruyXuatNguonGocService{
         }
     }
 
+    public function searchLoHang($request){
+        try {
+            $page = $request->page;
+            $limit =  $request->limit;
+            $search = $request->search;
+            $order = $request->order;
+            $sort = $request->sort;
+    
+            if ($page == null || $page == 0 || $page < 0) {
+                $page = 1;
+            }
+            if ($limit == null || $limit == 0 || $limit < 0) {
+                $limit = 15;
+            }
+            if ($search == null) {
+                $search = "";
+            }
+            if ($order == null || $order == "") {
+                $order = "id_giaodichmuaban_lua";
+            }
+            if ($sort == null || $sort == "" || ($sort != "desc" && $sort != "asc")) {
+                $sort = "desc";
+            }
+    
+            $data = GiaoDichMuaBanLua::join('tbl_lichmuavu', 'tbl_lichmuavu.id_lichmuavu', '=', 'tbl_giaodichmuaban_lua.id_lichmuavu')
+                ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodichmuaban_lua.id_xavien')
+                ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
+                ->join('tbl_thuonglai', 'tbl_thuonglai.id_thuonglai', '=', 'tbl_giaodichmuaban_lua.id_thuonglai')
+                ->where('tbl_giaodichmuaban_lua.id_giaodichmuaban_lua', $search)
+                ->select(
+                    "tbl_giaodichmuaban_lua.id_giaodichmuaban_lua",
+                    "tbl_giaodichmuaban_lua.name_lohang",
+                    "tbl_user.fullname as name_xavien",
+                    "tbl_thuonglai.name_thuonglai",
+                    "tbl_giaodichmuaban_lua.img_lohang",
+                    "tbl_giaodichmuaban_lua.soluong",
+                    "tbl_giaodichmuaban_lua.price",
+                    "tbl_giaodichmuaban_lua.updated_at",
+                );
+            $total = $data->count();
+            $meta = $this->commonService->pagination($total, $page, $limit);
+    
+            $result = $data
+                ->skip(($page - 1) * $limit)
+                ->take($limit)
+                ->orderBy($order, $sort)
+                ->get();
+    
+      
+                return [$result, $meta];
+            } catch (\Exception $error) {
+                Session::flash('error', 'Có lỗi trong lúc truy xuất thông tin'. $error);
+                return false;
+            }
+    }
+
     public function truyXuatLoHangLua($request){
         try {
             $id_giaodichmuaban_lua = $request->id_giaodichmuaban_lua;

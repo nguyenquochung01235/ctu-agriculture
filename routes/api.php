@@ -248,6 +248,7 @@ Route::prefix("auto-complete")->group(function(){
 
 
 Route::get('blockchain/tracing/{id_giaodichmuaban_lua}', [TruyXuatNguonGocController::class, 'truyXuatLoHangLua']);
+Route::get('blockchain/search', [TruyXuatNguonGocController::class, 'searchLoHang']);
 
 
 Route::prefix("post")->group(function(){
