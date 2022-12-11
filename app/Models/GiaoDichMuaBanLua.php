@@ -51,6 +51,9 @@ class GiaoDichMuaBanLua extends Model
     public function scopeSearch($query, $request)
     {
         if ($request->has('search')) {
+            if($request->search == "" ||$request->search == null){
+                return $query;
+            }
             $query->where('tbl_giaodichmuaban_lua.id_giaodichmuaban_lua', $request->search);
         }
         return $query;
