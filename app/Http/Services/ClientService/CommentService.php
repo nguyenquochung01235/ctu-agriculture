@@ -39,6 +39,7 @@ class CommentService
                 'tbl_user.avatar',
                 'tbl_user.fullname',
             )
+            ->orderBy('tbl_comment.created_at', 'desc')
             ->get();
             return  $list_comment;
         } catch (\Exception $error) {

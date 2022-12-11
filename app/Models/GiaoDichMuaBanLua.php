@@ -48,6 +48,13 @@ class GiaoDichMuaBanLua extends Model
         }
         return $query;
     }
+    public function scopeSearch($query, $request)
+    {
+        if ($request->has('search')) {
+            $query->where('tbl_giaodichmuaban_lua.id_giaodichmuaban_lua', $request->search);
+        }
+        return $query;
+    }
 
 
 }

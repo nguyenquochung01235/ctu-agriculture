@@ -14,6 +14,7 @@ class ThuaDat extends Model
         'id_xavien',
         'address',
         'location',
+        'dientich',
         'thumbnail',
         'description',
         'active',

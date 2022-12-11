@@ -153,6 +153,7 @@ class ThuaDatService{
         $xavien = XaVien::where('id_user', $id_user)->first('id_xavien');
         $thumbnail = "";
         $location = "";
+        $dientich = null;
         try {
             DB::beginTransaction();
             try {
@@ -166,10 +167,14 @@ class ThuaDatService{
             if($request->location != null){
                 $location = $request->location;
             }
+            if($request->dientich != null){
+                $dientich = $request->dientich;
+            }
             $thuadat = ThuaDat::create([
                 "id_xavien" => $xavien->id_xavien,
                 "address" => $request->address,
                 "location"=> $location,
+                "dientich" => $dientich,
                 "thumbnail" => $thumbnail,
                 "description" => $request->description,
                 "active" => 1,
@@ -178,7 +183,7 @@ class ThuaDatService{
             return $thuadat;
         } catch (\Exception $error) {
             DB::rollBack();
-            Session::flash('error', "Không thể tạo thửa đất");
+            Session::flash('error', "Không thể tạo thửa đất" . $error);
             return false;
         }
     }
@@ -200,6 +205,7 @@ class ThuaDatService{
             DB::beginTransaction();
             $thuadat->address = $request->address;
             $thuadat->location = $request->location;
+            $thuadat->dientich = $request->dientich;
             $thuadat->description = $request->description;
             try {
                 if($request->hasFile('thumbnail')){

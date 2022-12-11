@@ -198,7 +198,7 @@ class TruyXuatNguonGocService{
                 ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodichmuaban_lua.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
                 ->join('tbl_thuonglai', 'tbl_thuonglai.id_thuonglai', '=', 'tbl_giaodichmuaban_lua.id_thuonglai')
-                ->where('tbl_giaodichmuaban_lua.id_giaodichmuaban_lua', $search)
+                ->Search($request)
                 ->select(
                     "tbl_giaodichmuaban_lua.id_giaodichmuaban_lua",
                     "tbl_giaodichmuaban_lua.name_lohang",
