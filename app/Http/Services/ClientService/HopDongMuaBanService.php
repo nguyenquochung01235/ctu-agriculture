@@ -262,6 +262,7 @@ class HopDongMuaBanService{
       'title_hopdongmuaban' => $hopDongMuaBan->title_hopdongmuaban,
       'description_hopdongmuaban' => $hopDongMuaBan->description_hopdongmuaban,
       'status' => $hopDongMuaBan->status,
+      'price' => $hopDongMuaBan->price,
       'thuonglai_xacnhan'=> $hopDongMuaBan->thuonglai_xacnhan,
       'hoptacxa_xacnhan'=> $hopDongMuaBan->hoptacxa_xacnhan,
       'created_at'=> $hopDongMuaBan->created_at,
@@ -398,7 +399,7 @@ class HopDongMuaBanService{
                       ->count();
                 
     if($isHopDongExistWithCurrentThuongLai != 0){
-      Session::flash('error', 'Hợp đồng đã tồn tại, vui lòng thay đổi hoặc kiểm tra thông tin');
+      Session::flash('error', 'Hợp đồng giữa bạn và hợp tác xã này đã tồn tại, vui lòng thay đổi hoặc kiểm tra thông tin');
       return false;
     }
 
