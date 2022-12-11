@@ -5,6 +5,8 @@ namespace App\Http\Services\ClientService;
 use App\Http\Services\CommonService;
 use App\Http\Services\UploadImageService;
 use App\Models\Account;
+use App\Models\GiaoDichMuaBanLuaGiong;
+use App\Models\GiaoDichMuaBanVatTu;
 use App\Models\NhaCungCapVatTu;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -24,23 +26,22 @@ class NhaCungCapVatTuService{
     }
 
     public function getInfoDashBoard(){
-        // return dd($this->commonService->getAccountTypeByToken());
-        // try {
-        //     $id_user = $this->commonService->getIDByToken();
-        //     $thuonglai = ThuongLai::where('id_user', $id_user)->first();
-        //     $lohang_count = GiaoDichMuaBanLua::where('id_thuonglai',$thuonglai->id_thuonglai)->count();
-        //     $hopdong_count = HopDongMuaBan::where('id_thuonglai',$thuonglai->id_thuonglai)->count();
-        //     $danhmuc_count = DanhMucQuyDinh::where('id_thuonglai',$thuonglai->id_thuonglai)->count();
-        //     return $result = ([
-        //         'lohang_count' => $lohang_count,
-        //         'hopdong_count' => $hopdong_count,
-        //         'sanluong_ount' => 968484,
-        //         'danhmuc_count' => $danhmuc_count,
-        //     ]);
-        //     } catch (\Exception $error) {
-        //     Session::flash('error', 'Không thể lấy dữ liệu');
-        //     return false;
-        //     }
+        try {
+            $id_user = $this->commonService->getIDByToken();
+            $nhacungcapvattu = NhaCungCapVatTu::where('id_user', $id_user)->first();
+            $luagiong_count = GiaoDichMuaBanLuaGiong::where('id_nhacungcapvattu',$nhacungcapvattu->id_nhacungcapvattu)->count();
+            $vattu_count = GiaoDichMuaBanVatTu::where('id_nhacungcapvattu',$nhacungcapvattu->id_nhacungcapvattu)->count();
+            $tongsanluong_count = $luagiong_count + $vattu_count;
+            return $result = ([
+                'lohang_count' => $tongsanluong_count,
+                'luagiong_count' => $luagiong_count,
+                'vattu_count' => $vattu_count,
+                'tongsanluong_count' => $tongsanluong_count,
+            ]);
+            } catch (\Exception $error) {
+            Session::flash('error', 'Không thể lấy dữ liệu');
+            return false;
+            }
     }
 
     public function searchNhaCungCapByPhoneNumber($request){
