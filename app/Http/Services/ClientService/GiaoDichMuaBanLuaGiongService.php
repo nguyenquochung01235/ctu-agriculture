@@ -90,6 +90,7 @@ class GiaoDichMuaBanLuaGiongService
                 "soluong" => $giaodich->soluong,
                 "price" => $giaodich->price,
                 "status" => $giaodich->status,
+                "reason" => $giaodich->reason,
                 "hoptacxa_xacnhan" => $giaodich->hoptacxa_xacnhan,
                 "nhacungcap_xacnhan" => $giaodich->nhacungcap_xacnhan,
                 "xavien_xacnhan" => $giaodich->xavien_xacnhan,
