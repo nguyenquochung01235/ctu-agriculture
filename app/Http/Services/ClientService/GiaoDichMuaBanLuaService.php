@@ -332,7 +332,6 @@ class GiaoDichMuaBanLuaService
             }
 
             $giaodichmuabanlua->soluong = $request->soluong;
-            $giaodichmuabanlua->price = $request->price;
             $giaodichmuabanlua->description_giaodich = $request->description_giaodich;
             $img_lohang = null;
             if ($request->hasFile('img_lohang')) {

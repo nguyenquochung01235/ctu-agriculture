@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Session;
 
 class TruyXuatNguonGocService{
 
-    protected $BASE_API_URL_BLOCKCHAIN = "http://45.32.55.194/api/v1/blockchain";
+    protected $BASE_API_URL_BLOCKCHAIN = "http://198.13.38.141:8000/api/v1/blockchain";
 
     protected $commonService;
     protected $giaoDichMuaBanLuaService;
@@ -230,9 +230,13 @@ class TruyXuatNguonGocService{
         try {
             $id_giaodichmuaban_lua = $request->id_giaodichmuaban_lua;
             $response = Http::get($this->BASE_API_URL_BLOCKCHAIN."/tracing/rice-product/$id_giaodichmuaban_lua");
-
-            $data_response = json_decode($response->body())->results->hoatdong;
             
+            $data = json_decode($response->body())->results;
+            if($data == null){
+                return false;
+            }
+            $data_response = json_decode($response->body())->results->hoatdong;
+                    
             $giaoDichMuaBanLuaResponseBlockChain = $data_response->hoatdongmuabanlua;
             $hoatDongMuaBanLuaGiongResponseBlockChain = $data_response->hoatDongMuaBanGiongLua;
             $nhatKyHoatDongResponseBlockChain = $data_response->danhsachhoatdongnhatky;

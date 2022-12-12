@@ -167,6 +167,7 @@ class GiaoDichMuaBanLuaGiongService
                     "tbl_giaodich_luagiong.img_lohang",
                     "tbl_giaodich_luagiong.soluong",
                     "tbl_giaodich_luagiong.status",
+                    "tbl_giaodich_luagiong.reason",
                     "tbl_giaodich_luagiong.hoptacxa_xacnhan",
                     "tbl_giaodich_luagiong.nhacungcap_xacnhan",
                     "tbl_giaodich_luagiong.xavien_xacnhan"
