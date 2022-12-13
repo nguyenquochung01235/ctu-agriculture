@@ -142,6 +142,7 @@ class TruyXuatNguonGocService{
             ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
             ->join('tbl_thuonglai', 'tbl_thuonglai.id_thuonglai', '=', 'tbl_giaodichmuaban_lua.id_thuonglai')
             ->where('tbl_giaodichmuaban_lua.id_hoptacxa', $id_hoptacxa)
+            ->where('tbl_giaodichmuaban_lua.status','1')
             ->LichMuaVu($request)
                 ->select(
                     "tbl_giaodichmuaban_lua.id_giaodichmuaban_lua",
@@ -198,6 +199,7 @@ class TruyXuatNguonGocService{
                 ->join('tbl_xavien', 'tbl_xavien.id_xavien', '=', 'tbl_giaodichmuaban_lua.id_xavien')
                 ->join('tbl_user', 'tbl_user.id_user', 'tbl_xavien.id_user')
                 ->join('tbl_thuonglai', 'tbl_thuonglai.id_thuonglai', '=', 'tbl_giaodichmuaban_lua.id_thuonglai')
+                ->where('tbl_giaodichmuaban_lua.status','1')
                 ->Search($request)
                 ->select(
                     "tbl_giaodichmuaban_lua.id_giaodichmuaban_lua",
