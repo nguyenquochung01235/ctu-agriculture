@@ -206,6 +206,10 @@ class XaVienService{
             $account = $request->type;
             $id_user = $this->commonService->getIDByToken();
             $xavien =  XaVien::with('role')->with('hop_tac_xa')->where('id_user',$id_user)->first();
+            $hoptacxa_active = false;
+            if($xavien->hop_tac_xa->active == 1){
+                $hoptacxa_active = true;
+            }
             $role = $xavien->role[0]->role;
             if($account != null){
                 switch ($account) {
@@ -234,6 +238,7 @@ class XaVienService{
                 'id_hoptacxa'=> $xavien->id_hoptacxa,
                 'name_hoptacxa'=> $xavien->hop_tac_xa->name_hoptacxa,
                 'role'=> $role,
+                'active'=>$hoptacxa_active
             ]);
             return  $result;
         } catch (\Exception $error) {
