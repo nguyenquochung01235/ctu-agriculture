@@ -516,7 +516,7 @@ class NhatKyDongRuongService{
                 $message = "Chủ nhiệm hợp tác xã của bạn đã duyệt hoạt động số $nhatKyDongRuong->id_nhatkydongruong: $nhatKyDongRuong->name_hoatdong";
             }
             $status_notify = 0;
-            $link = `/htx/manage-story/detail/$nhatKyDongRuong->id_lichmuavu?limit=5&page=1&search=`;
+            $link = "/htx/manage-story/detail/$nhatKyDongRuong->id_lichmuavu?limit=5&page=1&search=";
             $user = XaVien::where('id_xavien', $nhatKyDongRuong->id_xavien)->first()->id_user;
             $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
             $this->notificationService->sendNotificationService($notify->id);
@@ -525,7 +525,7 @@ class NhatKyDongRuongService{
         DB::commit();
         return $nhatKyDongRuong;
        } catch (\Exception $error) {
-        Session::flash('error', 'Cập nhật trạng thái không thành công');
+        Session::flash('error', 'Cập nhật trạng thái không thành công' . $error);
         return false;
        } 
     }
@@ -632,7 +632,7 @@ class NhatKyDongRuongService{
         if($this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
             $message = "Chủ nhiệm hợp tác xã của bạn vừa cập nhật hoạt động chung mùa vụ số $id_lichmuavu. Vui lòng kiểm tra nhật ký hoạt động" ;
             $status_notify = 0;
-            $link = `/htx/manage-story/detail/$id_lichmuavu?limit=5&page=1&search=`;
+            $link = "/htx/manage-story/detail/$id_lichmuavu?limit=5&page=1&search=";
             $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
             foreach ($list_user as $key => $user) {
                 $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
