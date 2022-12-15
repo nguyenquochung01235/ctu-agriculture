@@ -516,7 +516,7 @@ class NhatKyDongRuongService{
                 $message = "Chủ nhiệm hợp tác xã của bạn đã duyệt hoạt động số $nhatKyDongRuong->id_nhatkydongruong: $nhatKyDongRuong->name_hoatdong";
             }
             $status_notify = 0;
-            $link = "/nhatkyhoatdong";
+            $link = `/htx/manage-story/detail/$nhatKyDongRuong->id_lichmuavu?limit=5&page=1&search=`;
             $user = XaVien::where('id_xavien', $nhatKyDongRuong->id_xavien)->first()->id_user;
             $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
             $this->notificationService->sendNotificationService($notify->id);
@@ -632,7 +632,7 @@ class NhatKyDongRuongService{
         if($this->lichMuaVuService->isLichMuaVuExist($id_hoptacxa, $id_lichmuavu)){
             $message = "Chủ nhiệm hợp tác xã của bạn vừa cập nhật hoạt động chung mùa vụ số $id_lichmuavu. Vui lòng kiểm tra nhật ký hoạt động" ;
             $status_notify = 0;
-            $link = "/nhatkyhoatdong";
+            $link = `/htx/manage-story/detail/$id_lichmuavu?limit=5&page=1&search=`;
             $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
             foreach ($list_user as $key => $user) {
                 $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
@@ -743,6 +743,10 @@ class NhatKyDongRuongService{
                 return false;
             }
 
+            if($nhatKyDongRuong->hoptacxa_xacnhan == null){
+                Session::flash('error', 'Hoạt động chung không thể cập nhật');
+                return false;
+            }
             if($nhatKyDongRuong->hoptacxa_xacnhan == 1){
                 Session::flash('error', 'Hoạt động đã được phê duyệt không thể cập nhật');
                 return false;
@@ -785,7 +789,7 @@ class NhatKyDongRuongService{
                 $nhatKyDongRuong->date_start = $request->date_start;
                 $nhatKyDongRuong->date_end = $request->date_end;
             }
-            $nhatKyDongRuong->save;
+            $nhatKyDongRuong->save();
 
             
            if($request->has('vattusudung')){

@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Session;
 
 class BlockChainAPIService{
     
-    // protected $BASE_API_URL_BLOCKCHAIN = "http://198.13.38.141:8000/api/v1/blockchain";
-    protected $BASE_API_URL_BLOCKCHAIN = "http://45.32.55.194/api/v1/blockchain";
+    protected $BASE_API_URL_BLOCKCHAIN = "http://198.13.38.141:8000/api/v1/blockchain";
+    // protected $BASE_API_URL_BLOCKCHAIN = "http://45.32.55.194/api/v1/blockchain";
 
     public $BASE_ADDRESS = "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1"; //if blockchain not return address
     public $BASE_PASSWORD = "1234"; //if blockchain not REQ PASSWORD

@@ -23,11 +23,17 @@ class NotificationController extends Controller
                     "statusCode" => 200,
                     "message" => "Danh sách thông báo",
                     "errorList" => [],
+                    // "data" => 123
                     "data" => $result
                 ],200);
             }
          } catch (\Exception $error) {
-           
+            return response()->json([
+                "statusCode" => 400,
+                "message" => "Lỗi danh sách thông báo",
+                "errorList" => [$error],
+                "data" => []
+            ],400);
          }
     }
     public function makeReadNotification($id){

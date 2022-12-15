@@ -232,7 +232,7 @@ class TruyXuatNguonGocService{
         try {
             $id_giaodichmuaban_lua = $request->id_giaodichmuaban_lua;
             $response = Http::get($this->BASE_API_URL_BLOCKCHAIN."/tracing/rice-product/$id_giaodichmuaban_lua");
-            
+            // return dd($response->body());
             $data = json_decode($response->body())->results;
             if($data == null){
                 return false;

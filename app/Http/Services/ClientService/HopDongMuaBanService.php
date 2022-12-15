@@ -435,7 +435,7 @@ class HopDongMuaBanService{
         $message = "Bạn vừa được tạo một hợp đồng với thương lái: " . $thuonglai->name_thuonglai;
         $user = $this->hopTacXaService->getChuNhiemHTX($id_hoptacxa)->id_user;
         $status_notify = 0;
-        $link = "/hopdongmuaban";
+        $link = `/htx/contract-management/detail/$hopDongMuaBan->id_hopdongmuaban`;
         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
         $this->notificationService->sendNotificationService($notify->id);
       }
@@ -571,7 +571,7 @@ class HopDongMuaBanService{
             break;
         }
         $status_notify = 0;
-        $link = "/hopdongmuaban";
+        $link = `/htx/contract-management/detail/$id_hopdongmuaban`;
         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
         $this->notificationService->sendNotificationService($notify->id);
       }
@@ -652,7 +652,7 @@ class HopDongMuaBanService{
             break;
         }
         $status_notify = 0;
-        $link = "/hopdongmuaban";
+        $link = "/htx/contract-management?limit=5&page=1&search=";
         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user,$link);
         $this->notificationService->sendNotificationService($notify->id);
       }

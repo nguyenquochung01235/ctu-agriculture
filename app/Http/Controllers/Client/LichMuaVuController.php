@@ -124,7 +124,6 @@ class LichMuaVuController extends Controller
                 "data" => null
             ],400);
          } catch (\Exception $error) {
-           
             return response()->json([
                 "statusCode" => 400,
                 "message" => "Có lỗi trong lúc thực hiện",

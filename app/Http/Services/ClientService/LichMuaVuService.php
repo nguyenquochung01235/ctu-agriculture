@@ -29,33 +29,40 @@ class LichMuaVuService{
     }
 
     public function autoChangeStatusLichMuaVu($id_hoptacxa){
-        $lichmuavu = LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->whereIn('status', ['upcoming','start'])->first();
-        $status = $lichmuavu->status;
-        $date_start = $lichmuavu->date_start;
-        $date_end = $lichmuavu->date_end;
-        if($lichmuavu != null){
-            switch ($status) {
-                case 'upcoming':
-                    if($date_start>= now()->format('Y-m-d')){
-                        $lichmuavu->status = 'start';
-                    }
-                    if($date_end<=now()->format('Y-m-d')){
-                        $lichmuavu->status = 'finish';
-                    }
-                    break;
-                
-                case 'start':
-                    if($date_end<=now()->format('Y-m-d')){
-                        $lichmuavu->status = 'finish';
-                    }
-                    break;
-                
-                default:
-                    break;
+        try {
+            $lichmuavu = LichMuaVu::where('id_hoptacxa', $id_hoptacxa)->whereIn('status', ['upcoming','start'])->first();
+            if($lichmuavu != null){
+                $status = $lichmuavu->status;
+                $date_start = $lichmuavu->date_start;
+                $date_end = $lichmuavu->date_end;
             }
-            DB::beginTransaction();
-            $lichmuavu->save();
-            DB::commit();
+            if($lichmuavu != null){
+                switch ($status) {
+                    case 'upcoming':
+                        if($date_start>= now()->format('Y-m-d')){
+                            $lichmuavu->status = 'start';
+                        }
+                        if($date_end<=now()->format('Y-m-d')){
+                            $lichmuavu->status = 'finish';
+                        }
+                        break;
+                    
+                    case 'start':
+                        if($date_end<=now()->format('Y-m-d')){
+                            $lichmuavu->status = 'finish';
+                        }
+                        break;
+                    
+                    default:
+                        break;
+                }
+                DB::beginTransaction();
+                $lichmuavu->save();
+                DB::commit();
+            }
+        } catch (\Exception $error) {
+            Session::flash('error', 'Không thay đổi được trạng thái lịch mùa vụ');
+            return false;
         }
         
         
@@ -267,7 +274,7 @@ class LichMuaVuService{
                 if($lichmuavu != null){
                     $message = "Chủ nhiệm hợp tác xã của bạn vừa tạo lịch mùa vụ mới. Mùa vụ số ". $lichmuavu->id_lichmuavu;
                     $status_notify = 0;
-                    $link = "/lichmuavu";
+                    $link = "/htx/manage-story?limit=5&page=1&search=";
                     $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
                     foreach ($list_user as $key => $user) {
                         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
@@ -359,7 +366,7 @@ class LichMuaVuService{
                 if($lichmuavu != null){
                     $message = "Chủ nhiệm hợp tác xã của bạn vừa cập nhật lịch mùa vụ số ". $lichmuavu->id_lichmuavu;
                     $status_notify = 0;
-                    $link = "/lichmuavu";
+                    $link = "/htx/manage-story?limit=5&page=1&search=";
                     $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
                     foreach ($list_user as $key => $user) {
                         $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
@@ -396,8 +403,13 @@ class LichMuaVuService{
         try {
             $lichmuavu = LichMuaVu::find($id_lichmuavu);
                 
-            if($lichmuavu->status != 'upcoming'){
-                Session::flash('error', 'Lịch mùa vụ không thể xóa vì đang hoạt động hoặc đã kết thúc');
+        
+            if($lichmuavu->status == 'start'){
+                Session::flash('error', 'Lịch mùa vụ không thể xóa vì mùa vụ đang hoạt động');
+                return false;
+            }
+            if($lichmuavu->status == 'finish'){
+                Session::flash('error', 'Lịch mùa vụ không thể xóa vì mùa vụ đã kết thúc');
                 return false;
             }
 
@@ -407,7 +419,7 @@ class LichMuaVuService{
             if($lichmuavu != null){
                 $message = "Chủ nhiệm hợp tác xã của bạn vừa xóa lịch mùa vụ số ". $lichmuavu->id_lichmuavu;
                 $status_notify = 0;
-                $link = "/lichmuavu";
+                $link = "/htx/manage-story?limit=5&page=1&search=";
                 $list_user = $this->hopTacXaService->getAllMemberOfHopTacXa($id_hoptacxa);
                 foreach ($list_user as $key => $user) {
                     $notify = $this->notificationService->createNotificationService($message, $status_notify,$user->id_user,$link);
